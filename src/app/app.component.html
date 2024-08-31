@@ -2,32 +2,34 @@
 
   <ion-menu-toggle>
 
-    <ion-menu contentId="summonmenu">
+    <ion-menu contentId="summonmenu" class="summonmenu">
 
       <ion-header>
         <ion-toolbar>
-          <ion-title> Menu Principal </ion-title>
+          <ion-title class="textB"> GENERAL </ion-title>
         </ion-toolbar>
       </ion-header>
 
       <ion-content>
-        <ion-list>
-          <ion-item [routerDirection]="'root'" [routerLink]="'/menu'">
-            <ion-icon name="heart"></ion-icon>
-            <ion-label> Menú principal </ion-label>
+        <ion-list class="itemfiller" lines="none">
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/configuracion'">
+            <ion-icon name="accessibility-outline"></ion-icon><p> USERNAME </p>
           </ion-item>
-          <ion-item>
-            <ion-icon name="heart"></ion-icon>
-            <ion-label> Opcion 01 </ion-label>
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/menu'" >
+            <ion-icon name="apps-outline"></ion-icon><p> MENU </p>
           </ion-item>
-          <ion-item>
-            <ion-icon name="heart"></ion-icon>
-            <ion-label> Opcion 02 </ion-label>
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/sala'">
+            <ion-icon name="game-controller-outline"></ion-icon><p> SALAS </p>
           </ion-item>
-          <ion-item>
-            <ion-icon name="heart"></ion-icon>
-            <ion-label> Opcion 03 </ion-label>
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/biblioteca'">
+            <ion-icon name="dice-outline"></ion-icon><p> BIBLIOTECA </p>  
           </ion-item>
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/rolldice'">
+            <ion-icon name="dice-outline"></ion-icon><p> DADOS </p>
+          </ion-item>
+            <ion-item class="summonmenuitemsalir" [routerDirection]="'root'" [routerLink]="'/login'">
+              <ion-icon name="heart"></ion-icon> <p> SALIR </p>
+          </ion-item>      
         </ion-list>
         
       </ion-content>

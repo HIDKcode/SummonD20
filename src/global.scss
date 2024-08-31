@@ -35,3 +35,83 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+
+/*
+nEGRo: #171717
+VERDE: #1fea00
+-
+blanco: #fffdee
+VERDE oscuro: #0d271e
+dorado: #d3ae4e 
+
+rojo claro: #f25165
+*/
+
+.summonmenu{
+margin-top: 10vh;
+margin-bottom: 13vh;
+max-width: 47vw;
+--max-width: 45vw;
+border-top-right-radius: 10px;
+border-bottom-right-radius: 10px;
+border-right: 3px solid #d3ae4e!important;
+border-top: 3px solid #d3ae4e!important;
+border-bottom: 3px solid #d3ae4e!important;
+background: #0d271e !important;
+--ion-toolbar-background: #0d271e !important;
+}
+
+.summonmenuitem{
+margin-top: 10px;
+margin-bottom: 10px;
+border-radius: 51px;
+max-width: 43vw;
+color: #171717 !important;
+--background: #fffdee !important;
+font-weight: bold;
+font-family: 'Times New Roman' !important;
+}
+
+.summonmenuitemsalir{
+margin-top: 10px;
+margin-bottom: 10px;
+border-radius: 51px;
+max-width: 43vw;
+color: #f25165!important;
+--background: #fffdee !important;
+font-weight: bold;
+font-family: 'Times New Roman' !important;
+position:sticky;
+}
+
+
+.itemfiller{
+min-width: 100vw;
+min-height: 100vh;
+background-color: #0d271e  !important;
+}
+
+.textVO{color: #0d271e !important; font-family: 'Times New Roman' !important;}
+.textVC{color: #1fea00 !important; font-family: 'Times New Roman' !important;}
+.textN{color: #171717 !important; font-family: 'Times New Roman' !important;}
+.textB{color:#fffdee !important; font-family: 'Times New Roman' !important;}
+
+.verdeO{color: #0d271e !important;}
+.verdeC{color: #1fea00 !important;}
+.negro{color: #171717 !important;}
+.blanco{color:#fffdee !important;}
+.dorado{color:#d3ae4e !important;}
+
+.center {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-content: center;
+    align-items: center;
+}
+
+.summonbackground{
+    background-color: #fffdee !important;
+    
+}
