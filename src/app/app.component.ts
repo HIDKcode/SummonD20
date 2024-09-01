@@ -11,7 +11,8 @@ export class AppComponent {
 
   Usuario: string = "ID-invitado";
   Correo: string = "";
-  
+  Acceso: number = 1;
+
 
   constructor(private router: Router, private activatedroute: ActivatedRoute) {
     //realizar la captura de la informacion que viene por navigationExtras
@@ -20,7 +21,8 @@ export class AppComponent {
     if(this.router.getCurrentNavigation()?.extras.state){
       //capturamos informacion
       this.Usuario = this.router.getCurrentNavigation()?.extras?.state?.['user'];
-      this.Correo = this.router.getCurrentNavigation()?.extras?.state?.['mail'];
+      this.Correo = this.router.getCurrentNavigation()?.extras?.state?.['corr'];
+      this.Acceso = this.router.getCurrentNavigation()?.extras?.state?.['acce'];
 
      }
     });

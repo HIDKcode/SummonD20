@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,9 +8,51 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginPage implements OnInit {
 
-  constructor() { }
+  //variables
+  nuevoUsuario: any;
+  IDuser!: string;
+  password!: string;
+
+  //fakeDB
+  invitado: any ={
+  IDuser: "Invitado",
+  ACCESSuser: 0,
+  }
+  temporalUSER: any = {
+    IDuser: "Demon666",
+    email: "d666n@gmail.com",
+    profile: "defaultuser.png",
+    password: 123123123,
+    ACCESSuser: 1
+  };
+  temporalROOM: any = {
+    IDroom: 1001,
+    Creator: "Demon666",
+    keyword: 1234
+  };
+
+  
+
+  constructor(private router: Router, private activatedroute: ActivatedRoute) { }
 
   ngOnInit() {
   }
 
+
+  Ingreso(){
+    if(this.IDuser == this.temporalUSER && this.password == this.temporalUSER.password){
+      // Si su acceso es 1 (Mayor a rol invitado), entra al menú html
+      // Para accesos 0 deben ser redireccionados a sala html
+      if(this.temporalUSER.ACCESSuser == 1){
+        let navigationextras: NavigationExtras = {
+          state:{
+            nuevoUsuario: this.temporalUSER
+          }
+        }
+        this.router.navigate(['/pages/menu'],navigationextras);
+      } 
+    }
+  }
+
 }
+
