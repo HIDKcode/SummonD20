@@ -1,20 +1,33 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      SUMMON APP LOGIN
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<div id="container" class="divfondo1">
+  <h1> SUMMONING </h1>
+
+  <div id="container" >
+    <ion-input class="inputsummon" label="User ID" placeholder="Nickname" type="email" label-placement="floating" fill="outline">
+    </ion-input>
+  </div>
 
   <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline">
+    </ion-input>
   </div>
+
+  <a href="#">He olvidado mi contraseña</a>
+
+  <div id="container">
+    <ion-button> INGRESO </ion-button>
+  </div>
+
+  <div id="container">
+    <ion-button> REGISTRO</ion-button>
+  </div>
+</div>
 </ion-content>
