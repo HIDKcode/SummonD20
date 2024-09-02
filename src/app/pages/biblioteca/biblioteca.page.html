@@ -5,9 +5,45 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div id="container" class="divfondo2">
+  <div id="container" class="divfondo1">
 
     <p class="textN"> Estás en BIBLIOTECA </p>
+    
+    
 
+    <div id="container"> 
+      <!---->
+      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content
+          pullingIcon="chevron-down-circle-outline"
+          pullingText="Arrastra para refrescar"
+          refreshingSpinner="circles"
+          refreshingText="Refrescando..."
+        >
+        </ion-refresher-content>
+      </ion-refresher>
+      
+      <ion-segment>
+        <ion-segment-button value="Subidos" class="textB" style="background-color: #0d271e">
+          Subidos
+        </ion-segment-button>
+        <ion-segment-button value="Galeria" class="textB" style="background-color: #0d271e">
+          Galeria
+        </ion-segment-button>
+      </ion-segment>
+      
+      
+      <div> 
+        <ion-grid> 
+          <ion-row>
+            <!-- *ngFor=let image of [1,2,3...]""-->
+            <ion-col col-6 col-md-4 col-xl-3>
+              <div class="image-container"></div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>  
+      </div>
+      
+    </div>
   </div>
 </ion-content>

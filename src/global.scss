@@ -1,39 +1,14 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
 
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 
@@ -48,6 +23,11 @@ dorado: #d3ae4e
 rojo claro: #f25165
 */
 
+.flex-container {
+display: flex;
+flex-direction: row;
+}
+   
 .summonmenu{
 margin-top: 10vh;
 margin-bottom: 13vh;
@@ -66,11 +46,6 @@ background: #0d271e !important;
 min-width: 100vw;
 min-height: 100vh;
 background-color: grey;
-}
-.divfondo2{
-min-width: 100vw;
-min-height: 100vh;
-background-color: #fffdee;
 }
 
 .divitem{
@@ -118,8 +93,8 @@ background-color: #0d271e  !important;
 
 .textVO{color: #0d271e !important; font-family: 'Times New Roman' !important;}
 .textVC{color: #1fea00 !important; font-family: 'Times New Roman' !important;}
-.textN{color: #171717 !important; font-family: 'Times New Roman' !important;}
-.textB{color:#fffdee !important; font-family: 'Times New Roman' !important;}
+//.textN{color: #171717 !important; font-family: 'Times New Roman' !important;}
+//.textB{color:#fffdee !important; font-family: 'Times New Roman' !important;}
 
 .verdeO{color: #0d271e !important;}
 .verdeC{color: #1fea00 !important;}
@@ -135,7 +110,3 @@ background-color: #0d271e  !important;
     align-items: center;
 }
 
-.summonbackground{
-    background-color: #fffdee !important;
-    
-}

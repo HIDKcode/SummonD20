@@ -1,5 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    
     <ion-title>
       SUMMON APP LOGIN
     </ion-title>
@@ -11,19 +12,19 @@
   <h1> SUMMONING </h1>
 
   <div id="container" >
-    <ion-input class="inputsummon" label="User ID" placeholder="Nickname" type="email" label-placement="floating" fill="outline">
+    <ion-input class="inputsummon" label="User ID" placeholder="Nickname" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
     </ion-input>
   </div>
 
   <div id="container">
-    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline">
+    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
     </ion-input>
   </div>
 
   <a href="#">He olvidado mi contraseña</a>
 
   <div id="container">
-    <ion-button> INGRESO </ion-button>
+    <ion-button (click)="Ingreso()"> INGRESO </ion-button>
   </div>
 
   <div id="container">

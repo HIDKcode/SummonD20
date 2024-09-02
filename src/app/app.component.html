@@ -1,20 +1,22 @@
 <ion-app>
 
+  <ion-buttons slot="start">
+    <ion-menu-button></ion-menu-button>
+  </ion-buttons>
+
   <ion-menu-toggle>
 
     <ion-menu contentId="summonmenu" class="summonmenu">
 
       <ion-header>
         <ion-toolbar>
-          <ion-title class="textB"> GENERAL </ion-title>
+          <ion-title class="textB"> {{IDuser}} </ion-title>
         </ion-toolbar>
       </ion-header>
 
       <ion-content>
         <ion-list class="itemfiller" lines="none">
-          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/configuracion'">
-            <ion-icon name="accessibility-outline"></ion-icon><p> {{Usuario}} </p>
-          </ion-item>
+          
           <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/menu'" >
             <ion-icon name="apps-outline"></ion-icon><p> MENU </p>
           </ion-item>
@@ -27,8 +29,11 @@
           <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/rolldice'">
             <ion-icon name="dice-outline"></ion-icon><p> DADOS </p>
           </ion-item>
-            <ion-item class="summonmenuitemsalir" [routerDirection]="'root'" [routerLink]="'/login'">
-              <ion-icon name="heart"></ion-icon> <p> SALIR </p>
+          <ion-item class="summonmenuitem" [routerDirection]="'root'" [routerLink]="'/configuracion'">
+            <ion-icon name="accessibility-outline"></ion-icon><p> CONFIGURACION </p>
+          </ion-item>
+          <ion-item class="summonmenuitemsalir" [routerDirection]="'root'" [routerLink]="'/login'">
+            <ion-icon name="heart"></ion-icon> <p> SALIR </p>
           </ion-item>      
         </ion-list>
         

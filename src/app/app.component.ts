@@ -7,11 +7,14 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['app.component.scss'],
 })
 
+
+
 export class AppComponent {
 
-  Usuario: string = "ID-invitado";
+  IDuser: string = "Invitado";
   Correo: string = "";
   Acceso: number = 1;
+
 
 
   constructor(private router: Router, private activatedroute: ActivatedRoute) {
@@ -20,7 +23,7 @@ export class AppComponent {
     //validamos si viene o no información
     if(this.router.getCurrentNavigation()?.extras.state){
       //capturamos informacion
-      this.Usuario = this.router.getCurrentNavigation()?.extras?.state?.['user'];
+      this.IDuser = this.router.getCurrentNavigation()?.extras?.state?.['user'];
       this.Correo = this.router.getCurrentNavigation()?.extras?.state?.['corr'];
       this.Acceso = this.router.getCurrentNavigation()?.extras?.state?.['acce'];
 

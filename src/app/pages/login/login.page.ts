@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -33,14 +34,14 @@ export class LoginPage implements OnInit {
 
   
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute) { }
-
+  constructor(private router: Router, private activatedroute: ActivatedRoute, private alertcontroller: AlertController) { }
+  
   ngOnInit() {
   }
 
 
   Ingreso(){
-    if(this.IDuser == this.temporalUSER && this.password == this.temporalUSER.password){
+    if(this.IDuser == this.temporalUSER.IDuser && this.password == this.temporalUSER.password){
       // Si su acceso es 1 (Mayor a rol invitado), entra al menú html
       // Para accesos 0 deben ser redireccionados a sala html
       if(this.temporalUSER.ACCESSuser == 1){
@@ -49,10 +50,23 @@ export class LoginPage implements OnInit {
             nuevoUsuario: this.temporalUSER
           }
         }
-        this.router.navigate(['/pages/menu'],navigationextras);
+        this.router.navigate(['/menu'],navigationextras);
       } 
+    }
+    else{const titulo = "Usuario o contraseña incorrecto";
+      const mensaje = "Reintente por favor";
+      this.alerta1(titulo, mensaje);
+      return;
     }
   }
 
+  async alerta1(titulo:string , mensaje: string){
+    const alert = await this.alertcontroller.create({
+      header: titulo,
+      message: mensaje,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
 }
 
