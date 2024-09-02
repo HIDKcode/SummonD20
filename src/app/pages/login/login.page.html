@@ -8,26 +8,27 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
 <div id="container" class="divfondo1">
-  <h1> SUMMONING </h1>
+  <h1 class="center"> SUMMONING </h1>
 
-  <div id="container" >
-    <ion-input class="inputsummon" label="User ID" placeholder="Nickname" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
+  <div id="container" class="center">
+    <ion-input class="inputsummon center" label="User ID" placeholder="Nickname" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
     </ion-input>
   </div>
 
-  <div id="container">
-    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
+  <div id="container" class="center">
+    <ion-input class="inputsummon center" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
     </ion-input>
   </div>
 
-  <a href="#">He olvidado mi contraseña</a>
+  <a href="#" class="textVC center">He olvidado mi contraseña</a>
 
-  <div id="container">
+  <div id="container" class="center">
     <ion-button (click)="Ingreso()"> INGRESO </ion-button>
   </div>
 
-  <div id="container">
+  <div id="container" class="center">
     <ion-button> REGISTRO</ion-button>
   </div>
 </div>

@@ -11,5 +11,7 @@ export class SalacreatePage implements OnInit {
 
   ngOnInit() {
   }
-
+  customCounterFormatter2(inputLength: number, maxLength: number) {
+    return `${maxLength - inputLength} characters remaining`;
+  }
 }

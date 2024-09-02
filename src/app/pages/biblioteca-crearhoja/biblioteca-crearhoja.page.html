@@ -10,33 +10,44 @@
     <H2> ¡Crea tu propia hoja de personaje! </H2>
     <p> Cantidad de atributos PRINCIPALES:</p>
     <div id="container" class="center">
-      
+      <ion-input id="custom-input"class="divitemHOJA" type="number" [counter]="true" maxlength="1" [counterFormatter]="customCounterFormatter">
+      </ion-input>
     </div>
     <p> Cantidad de secundarios:</p>
     <div id="container" class="center">
-      
+      <ion-input id="custom-input"class="divitemHOJA" type="number" [counter]="true" maxlength="1" [counterFormatter]="customCounterFormatter">
+      </ion-input>  
     </div>
     <p> Cantidad de atributos ESPECIALES: </p>
     <div id="container" class="center">
-      
+      <ion-input id="custom-input"class="divitemHOJA" type="number" [counter]="true" maxlength="1" [counterFormatter]="customCounterFormatter">
+      </ion-input>
     </div>
     <p> Cantidad de habilidades:</p>
     <div id="container" class="center">
-      
+      <ion-input id="custom-input"class="divitemHOJA" type="number" [counter]="true" maxlength="2" [counterFormatter]="customCounterFormatter">
+      </ion-input>
     </div>
     <p> Categoría de imagen de fondo: </p>
-    <div id="container" class="divitemHOJA">
-      <ion-list>
-        <ion-item>
-          <ion-select aria-label="Theme" value="d&d">
-            <ion-select-option value="d&d">Dungeon & Dragons</ion-select-option>
-            <ion-select-option value="CoC">Call of Cthulhu</ion-select-option>
-            <ion-select-option value="WoW">World of Warcraft</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
+    <div id="container" class="center">
+      <div id="container" class="divitemHOJA">
+        <ion-list>
+          <ion-item>
+            <ion-select aria-label="Theme" value="d&d">
+              <ion-select-option value="d&d">Dungeon & Dragons</ion-select-option>
+              <ion-select-option value="CoC">Call of Cthulhu</ion-select-option>
+              <ion-select-option value="WoW">World of Warcraft</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </div>
     </div>
-    <p>Descargar como PDF rellenable:</p>
     
+    <p><ion-checkbox justify="start">Descargar respaldo como PDF:</ion-checkbox></p>
+
+    <div id="container">
+      <ion-button> CREAR HOJA </ion-button>
+    </div>
   </div>
 </ion-content>
+

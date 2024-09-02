@@ -27,7 +27,24 @@ rojo claro: #f25165
 display: flex;
 flex-direction: row;
 }
-   
+
+ion-button{
+min-width: 200px;
+min-height: 50px;
+--background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+--background-hover: #0d271e;
+--background-activated: #000000;
+--background-focused: #d3ae4e;
+--color: #fffdee;
+--border-radius: 30px;
+--border-color: #0d271e;
+--border-style: solid;
+--border-width: 3px;
+--ripple-color: rgb(238, 255, 0);
+--padding-top: 10px;
+--padding-bottom: 10px;
+}
+
 .summonmenu{
 margin-top: 10vh;
 margin-bottom: 13vh;
@@ -79,6 +96,7 @@ position:sticky;
 }
 
 .inputsummon{
+max-width: 815px;
 margin-top: 10px;
 margin-bottom: 10px;
 border: 5px solid #0d271e;

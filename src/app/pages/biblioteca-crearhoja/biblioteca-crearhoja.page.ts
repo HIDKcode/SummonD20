@@ -12,4 +12,8 @@ export class BibliotecaCrearhojaPage implements OnInit {
   ngOnInit() {
   }
 
+  customCounterFormatter(inputLength: number, maxLength: number) {
+    return `${maxLength - inputLength} characters remaining`;
+  }
+  
 }
