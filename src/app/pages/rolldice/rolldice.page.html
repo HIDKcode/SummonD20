@@ -5,47 +5,29 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div id="container" class="divfondo1 body"> 
-  
-  <ion-card>
-    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-    <ion-card-header>
-      <ion-card-title>Tira tu/s Dados</ion-card-title>
-      <ion-card-subtitle>Elige que dado/s tirar</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D20
-      </ion-button>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D12
-      </ion-button>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D10
-      </ion-button>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D8
-      </ion-button>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D6
-      </ion-button>
-      <ion-button size="small">
-        <ion-icon slot="start" name="star"></ion-icon>
-        D4
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
-  <div id="container" class="divfondo1">
+  <div id="container" class="divfondo1 body">
+    <div class="center">
+      <ion-card>
+        <img alt="dado-d20" src="https://c.tenor.com/1KlVOl9NxMkAAAAC/tenor.gif"/>
+        <ion-card-header>
+          <h3>Elige que dado tirar</h3>
+        </ion-card-header>
+        <ion-card-content>
+        </ion-card-content>
+        <ion-grid class="center">
+          <ion-col>
+        <ion-button fill="clear">D20</ion-button>
+        <ion-button fill="clear">D12</ion-button>
+        <ion-button fill="clear">D10</ion-button>
+          </ion-col>
+          <ion-col>
+        <ion-button fill="clear">D8</ion-button>
+        <ion-button fill="clear">D6</ion-button>
+        <ion-button fill="clear">D4</ion-button>
+          </ion-col>
+      </ion-grid>
+      </ion-card>
 
-    <p class="textN"> Estás en ROLL DADO </p>
-
-  </div>
-
-</div>
+    </div>
+ </div>
 </ion-content>
