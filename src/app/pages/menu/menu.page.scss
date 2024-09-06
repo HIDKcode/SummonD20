@@ -1,0 +1,32 @@
+p{
+    font-family: 'Chau';
+}
+
+.L{
+    font-size: larger;
+    color: #171717;
+}
+
+
+h3{
+    color: #fffdee;
+    font-family: 'Chau';
+}
+
+
+.divitem{
+min-height: 10vh;
+min-width: 350px;
+max-width: 30vw !important;
+background-color: #d3ae4e;
+border: 3px solid #171717;
+border-radius: 20px;
+}
+
+#imagen1{
+    border-radius: 18px;
+}
+
+#imagen1:hover{
+        opacity: 0.3;
+}

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-login',
@@ -10,17 +11,16 @@ import { AlertController } from '@ionic/angular';
 export class LoginPage implements OnInit {
 
   //variables
-  nuevoUsuario: any;
-  IDuser!: string;
+  IDuser: string = "Invitado";
   password!: string;
 
   //fakeDB
   invitado: any ={
-  IDuser: "Invitado",
+  invitadouser: "Invitado",
   ACCESSuser: 0,
   }
   temporalUSER: any = {
-    IDuser: "Demon666",
+    Loginuser: "Demon666",
     email: "d666n@gmail.com",
     profile: "defaultuser.png",
     password: 123123123,
@@ -34,22 +34,34 @@ export class LoginPage implements OnInit {
 
   
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute, private alertcontroller: AlertController) { }
+  constructor(private router: Router, private activatedroute: ActivatedRoute, private alertcontroller: AlertController) { 
+    this.activatedroute.queryParams.subscribe(params => {
+      //Validamos si viene o no información desde la pagina
+      if(this.router.getCurrentNavigation()?.extras.state){
+        //Capturamos la información
+        this.IDuser = this.router.getCurrentNavigation()?.extras?.state?.['IDuser']
+      }
+    });
+  }
   
   ngOnInit() {
   }
 
 
   Ingreso(){
-    if(this.IDuser == this.temporalUSER.IDuser && this.password == this.temporalUSER.password){
+    if(this.IDuser == this.temporalUSER.Loginuser && this.password == this.temporalUSER.password){
       // Si su acceso es 1 (Mayor a rol invitado), entra al menú html
       // Para accesos 0 deben ser redireccionados a sala html
       if(this.temporalUSER.ACCESSuser == 1){
+        console.log("holamundo")
         let navigationextras: NavigationExtras = {
           state:{
-            nuevoUsuario: this.temporalUSER
+            user: this.IDuser,
+            acce: this.temporalUSER.ACCESSuser,
           }
         }
+        console.log("holamundo2")
+        this.router.navigate(['/app.component.html'],navigationextras);
         this.router.navigate(['/menu'],navigationextras);
       } 
     }

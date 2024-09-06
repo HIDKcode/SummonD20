@@ -11,6 +11,7 @@
           "meta[name=color-scheme]"
         ]
       }
-    ]
+    ],
+    "no-inline-styles": "off"
   }
 }

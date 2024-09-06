@@ -12,21 +12,11 @@
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 
+
+  
 /*
-nEGRo: #171717
-VERDE: #1fea00
--
-blanco: #fffdee
-VERDE oscuro: #0d271e
-dorado: #d3ae4e 
-
-rojo claro: #f25165
+nEGRo: #171717 VERDE: #1fea00 blanco: #fffdee VERDE oscuro: #0d271e dorado: #d3ae4e  rojo claro: #f25165
 */
-
-.flex-container {
-display: flex;
-flex-direction: row;
-}
 
 ion-button{
 min-width: 200px;
@@ -45,56 +35,15 @@ min-height: 50px;
 --padding-bottom: 10px;
 }
 
-.summonmenu{
-margin-top: 10vh;
-margin-bottom: 13vh;
-max-width: 47vw;
---max-width: 45vw;
-border-top-right-radius: 10px;
-border-bottom-right-radius: 10px;
-border-right: 3px solid #d3ae4e!important;
-border-top: 3px solid #d3ae4e!important;
-border-bottom: 3px solid #d3ae4e!important;
-background: #0d271e !important;
---ion-toolbar-background: #0d271e !important;
-}
-
+// Color y forma fondo
 .divfondo1{
+position: absolute;
 min-width: 100vw;
 min-height: 100vh;
 background-color: grey;
 }
 
-.divitem{
-    min-height: 10vh;
-    min-width: 80vw;
-    max-width: 80vw;
-    background-color: #d3ae4e;
-}
-
-.summonmenuitem{
-margin-top: 10px;
-margin-bottom: 10px;
-border-radius: 51px;
-max-width: 43vw;
-color: #171717 !important;
---background: #fffdee !important;
-font-weight: bold;
-font-family: 'Times New Roman' !important;
-}
-
-.summonmenuitemsalir{
-margin-top: 10px;
-margin-bottom: 10px;
-border-radius: 51px;
-max-width: 43vw;
-color: #f25165!important;
---background: #fffdee !important;
-font-weight: bold;
-font-family: 'Times New Roman' !important;
-position:sticky;
-}
-
+// Formularios SASS
 .inputsummon{
 margin-left: 15px;
 margin-right: 15px;
@@ -105,14 +54,9 @@ border: 5px solid #0d271e;
 border-radius: 10px;
 }
 
-.itemfiller{
-min-width: 100vw;
-min-height: 100vh;
-background-color: #0d271e  !important;
-}
-
-.textVO{color: #0d271e !important; font-family: 'Times New Roman' !important;}
-.textVC{color: #1fea00 !important; font-family: 'Times New Roman' !important;}
+// Textos SAAS 
+.textVO{color: #0d271e !important; font-family: 'Chau' !important;}
+.textVC{color: #1fea00 !important; font-family: 'Chau' !important;}
 //.textN{color: #171717 !important; font-family: 'Times New Roman' !important;}
 //.textB{color:#fffdee !important; font-family: 'Times New Roman' !important;}
 
@@ -122,11 +66,26 @@ background-color: #0d271e  !important;
 .blanco{color:#fffdee !important;}
 .dorado{color:#d3ae4e !important;}
 
+@font-face{
+    font-family: Chau;
+    src: url(assets/fonts/ChauPhilomeneOne-Regular.ttf)
+}
+@font-face{
+    font-family: Chau-It;
+    src: url(assets/fonts/ChauPhilomeneOne-Italic.ttf)
+}
+
+// Utilidades
 .center {
     display: flex;
     justify-content: center;
     text-align: center;
     align-content: center;
-    align-items: center;
+    align-items: center; 
 }
 
+.center-img{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
