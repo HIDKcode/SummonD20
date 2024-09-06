@@ -11,7 +11,7 @@ import { AlertController } from '@ionic/angular';
 export class LoginPage implements OnInit {
 
   //variables
-  IDuser: string = "Invitado";
+  IDuser: string = " ";
   password!: string;
 
   //fakeDB
