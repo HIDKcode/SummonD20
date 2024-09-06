@@ -16,30 +16,50 @@
   </div>
   
   <h1 class="center"> ¡LA AVENTURA TE LLAMA! ÚNETE </h1>
+  
+  <div id="container" class="center">
+    <ion-input 
+    class="inputsummon" label="Usuario" placeholder="Usuario" type="text" label-placement="floating"  
+    fill="outline" [(ngModel)]="IDuser" maxlength="20"></ion-input>
+  </div>
 
   <div id="container" class="center">
-    <ion-input class="inputsummon" label="Nickname" placeholder="ID User" type="text" label-placement="floating" >
+    <div #error1 class="error-form"><p> Ingrese Usuario </p> </div>
+  </div>
+
+  <div id="container" class="center">
+    <ion-input class="inputsummon .ion-text-center" label="Correo" placeholder="@" type="email" label-placement="floating"
+     fill="outline" [(ngModel)]="email" maxlength="70"></ion-input>
+  </div>
+
+  <div id="container" class="center">
+    <div #error2 class="error-form"><p> Ingrese correo </p> </div>
+  </div>
+
+
+  <div id="container" class="center">
+    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating"
+     fill="outline" [(ngModel)]="pass1" maxlength="20" >
     </ion-input>
   </div>
 
   <div id="container" class="center">
-    <ion-input class="inputsummon" label="Correo" placeholder="@" type="email" label-placement="floating">
-    </ion-input>
-  </div>
-
-  <div id="container" class="center">
-    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating">
-    </ion-input>
-  </div>
-
-  <div id="container" class="center">
-    <ion-input class="inputsummon" label="Verif Contraseña" placeholder="******" type="password" label-placement="floating">
-    </ion-input>
+    <div #error3 class="error-form"><p> Ingrese clave </p> </div>
   </div>
 
 
   <div id="container" class="center">
-    <ion-button> UNIRSE </ion-button>
+    <ion-input class="inputsummon" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"
+     fill="outline" [(ngModel)]="pass2" maxlength="20">
+    </ion-input>    
+  </div>
+
+  <div id="container" class="center">
+    <div #error4 class="error-form"><p> Claves no coinciden </p> </div>
+  </div>
+
+  <div id="container" class="center">
+    <ion-button (click)="Registro()"> UNIRSE </ion-button>
   </div>
     
   <p class="textVC center">Ya tienes una cuenta?</p>

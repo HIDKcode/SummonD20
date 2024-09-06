@@ -34,7 +34,11 @@ export class LoginPage implements OnInit {
 
   
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute, private alertcontroller: AlertController) { 
+  constructor(
+    private router: Router,
+     private activatedroute: ActivatedRoute,
+      private alertcontroller: AlertController
+      ) { 
     this.activatedroute.queryParams.subscribe(params => {
       //Validamos si viene o no información desde la pagina
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -61,7 +65,6 @@ export class LoginPage implements OnInit {
           }
         }
         console.log("holamundo2")
-        this.router.navigate(['/app.component.html'],navigationextras);
         this.router.navigate(['/menu'],navigationextras);
       } 
     }
@@ -80,6 +83,5 @@ export class LoginPage implements OnInit {
     });
     await alert.present();
   }
-  
 }
 

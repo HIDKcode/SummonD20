@@ -17,14 +17,14 @@
   </div>
 
   <h1 class="center"> Invocando a ... </h1>
-
+  
   <div id="container" class="center">
-    <ion-input class="inputsummon center" label="Usuario" placeholder="Usuario" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
+    <ion-input class="inputsummon" label="Usuario" placeholder="Usuario" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
     </ion-input>
   </div>
 
   <div id="container" class="center">
-    <ion-input class="inputsummon center" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
+    <ion-input  class="inputsummon center" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
     </ion-input>
   </div>
 
@@ -33,6 +33,7 @@
   <div id="container" class="center">
     <ion-button (click)="Ingreso()"> INGRESO </ion-button>
   </div>
+
 
   <div id="container" class="center">
     <ion-button [routerDirection]="'root'" [routerLink]="'/registro'"> REGISTRO</ion-button>
