@@ -36,7 +36,6 @@ border-radius: 51px;
 color: #171717 !important;
 --background: #fffdee !important;
 font-weight: bold;
-font-family: 'Chau' !important;
 font-size: large;
 max-height: 50px;
 }
@@ -44,6 +43,10 @@ max-height: 50px;
 .salir{
 margin-top: 27vh;
 color: #f25165!important;
-font-family: 'Chau' !important;
 }
 
+ion-title {
+    white-space: normal !important;  
+    overflow: visible !important;       
+    word-wrap: break-word !important;   
+  }

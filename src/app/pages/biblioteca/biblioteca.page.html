@@ -6,11 +6,7 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-
-    <p class="textN"> Estás en BIBLIOTECA </p>
     
-    
-
     <div id="container"> 
       <!---->
       <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
@@ -24,11 +20,11 @@
       </ion-refresher>
       
       <ion-segment>
-        <ion-segment-button value="Subidos" class="textB" style="background-color: #0d271e">
-          Subidos
+        <ion-segment-button value="Subidos" style="background-color: #0d271e">
+          <h3 class="blanco"> SUBIDOS </h3>
         </ion-segment-button>
-        <ion-segment-button value="Galeria" class="textB" style="background-color: #0d271e">
-          Galeria
+        <ion-segment-button value="Galeria" style="background-color: #0d271e">
+          <h3 class="blanco"> GALERÍA </h3>
         </ion-segment-button>
       </ion-segment>
       
@@ -45,11 +41,11 @@
       </div>
       
       <div id="container" class="center">
-        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-archivo'"> Editar archivo </ion-button>
+        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-archivo'"> EDITAR ARCHIVO </ion-button>
       </div>
 
       <div id="container" class="center">
-        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> Crear hoja </ion-button>
+        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> CREAR HOJA </ion-button>
       </div>
 
     </div>

@@ -15,57 +15,56 @@
     </ion-card>
   </div>
   
-  <h1 class="center"> ¡LA AVENTURA TE LLAMA! ÚNETE </h1>
+  <h2 class="center blanco"> ¡LA AVENTURA TE LLAMA! ÚNETE </h2>
   
   <div id="container" class="center">
-    <ion-input 
-    class="inputsummon" label="Usuario" placeholder="Usuario" type="text" label-placement="floating"  
+    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating"  
     fill="outline" [(ngModel)]="IDuser" maxlength="20"></ion-input>
   </div>
 
   <div id="container" class="center">
-    <div #error1 class="error-form"><p> Ingrese Usuario </p> </div>
+    <div #error1 class="error-form"><p class="error-text"> Usuario inválido (Min 5 char.)</p> </div>
   </div>
 
   <div id="container" class="center">
-    <ion-input class="inputsummon .ion-text-center" label="Correo" placeholder="@" type="email" label-placement="floating"
+    <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating"
      fill="outline" [(ngModel)]="email" maxlength="70"></ion-input>
   </div>
 
   <div id="container" class="center">
-    <div #error2 class="error-form"><p> Ingrese correo </p> </div>
+    <div #error2 class="error-form"><p class="error-text"> Correo inválido </p> </div>
   </div>
 
 
   <div id="container" class="center">
-    <ion-input class="inputsummon" label="Contraseña" placeholder="******" type="password" label-placement="floating"
+    <ion-input class="inputsummon  blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating"
      fill="outline" [(ngModel)]="pass1" maxlength="20" >
     </ion-input>
   </div>
 
   <div id="container" class="center">
-    <div #error3 class="error-form"><p> Ingrese clave </p> </div>
+    <div #error3 class="error-form"><p class="error-text"> Contraseña inválida (Min: 7 char. 1 Máyus. 1 Signo.) </p> </div>
   </div>
 
 
   <div id="container" class="center">
-    <ion-input class="inputsummon" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"
+    <ion-input class="inputsummon  blanco" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"
      fill="outline" [(ngModel)]="pass2" maxlength="20">
     </ion-input>    
   </div>
 
   <div id="container" class="center">
-    <div #error4 class="error-form"><p> Claves no coinciden </p> </div>
+    <div #error4 class="error-form"><p class="error-text"> Claves no coinciden </p> </div>
   </div>
 
   <div id="container" class="center">
-    <ion-button (click)="Registro()"> UNIRSE </ion-button>
+    <ion-button class="blanco" (click)="Registro()"> UNIRSE </ion-button>
   </div>
     
-  <p class="textVC center">Ya tienes una cuenta?</p>
+  <h3 class="verdeC center"> Ya tienes una cuenta?</h3>
 
   <div id="container" class="center">
-    <ion-button [routerDirection]="'root'" [routerLink]="'/login'"> INICIA SESIÓN </ion-button>
+    <ion-button class="blanco" [routerDirection]="'root'" [routerLink]="'/login'"> INICIA SESIÓN </ion-button>
   </div>
   
 </div>

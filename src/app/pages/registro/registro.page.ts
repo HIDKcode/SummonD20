@@ -18,6 +18,8 @@ export class RegistroPage implements OnInit {
   @ViewChild('error4', {static: true}) er4!: ElementRef
 
   //variables
+  exprMail = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+  exprPass = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{7,}$/;
   variable: boolean = false;
   IDuser: string = "";
   email: string = "";
@@ -47,39 +49,51 @@ export class RegistroPage implements OnInit {
 
  
   Registro(){
-  
-  while(this.variable == false){
-    if(this.IDuser == "" || this.IDuser.length <= 5){
-      this.renderer2.setStyle(
-      this.er1.nativeElement, 'display', 'flex');
-      return false;
-        } else { this.renderer2.setStyle(
-          this.er1.nativeElement, 'display', 'none'); }
-  
-  if(!this.email.includes("@")){
-      this.renderer2.setStyle(
-      this.er2.nativeElement, 'display', 'flex');
-      return false;
-        } else { this.renderer2.setStyle(
-          this.er2.nativeElement, 'display', 'none'); }
-  
-  if(this.pass1 == ""){
-      this.renderer2.setStyle(
-      this.er3.nativeElement, 'display', 'flex');
-      return false;
-        } else { this.renderer2.setStyle(
-          this.er3.nativeElement, 'display', 'none'); }
-
-  if(this.pass1 != this.pass2){
-      this.renderer2.setStyle(
-      this.er4.nativeElement, 'display', 'flex');
-      return false;
-        } else { this.renderer2.setStyle(
-          this.er4.nativeElement, 'display', 'none'); }
     
+  // While loop con variable boolean
+  while(this.variable == false){
+    // inicia If para errores
+    let hasE = false;
+
+  // Valida usuario
+  if (this.IDuser == "" || this.IDuser.length <= 5) {
+    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
+  }
+
+  // Valida email
+  if (this.email == "" || !this.exprMail.test(this.email)) {
+    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+  }
+
+  // Valida pass 1
+  if (this.pass1 == "" || !this.exprPass.test(this.pass1)) {
+    this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
+  }
+
+  // Revisa si Pass1 = Pass2
+  if (this.pass1 != this.pass2) {
+    this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
+  }
+
+  // If there are any errors, stop here
+  if (hasE) {
+    return false;
+  }
     this.variable = true;
   }
-    
+
     let navigationextras: NavigationExtras = {
       state:{
         user: this.IDuser,

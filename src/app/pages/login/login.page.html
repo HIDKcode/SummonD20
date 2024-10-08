@@ -16,27 +16,27 @@
     </ion-card>
   </div>
 
-  <h1 class="center"> Invocando a ... </h1>
+  <h1 class="center blanco"> Invocando a ... </h1>
   
   <div id="container" class="center">
-    <ion-input class="inputsummon" label="Usuario" placeholder="Usuario" type="email" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
+    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="IDuser">
     </ion-input>
   </div>
 
   <div id="container" class="center">
-    <ion-input  class="inputsummon center" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
+    <ion-input  class="inputsummon blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="password">
     </ion-input>
   </div>
 
-  <a href="#" class="textVC center">He olvidado mi contraseña</a>
-
+  <a href="#" class="verdeC center">He olvidado mi contraseña</a>
+  <br>
   <div id="container" class="center">
-    <ion-button (click)="Ingreso()"> INGRESO </ion-button>
+    <ion-button class="blanco" (click)="Ingreso()"> INGRESO </ion-button>
   </div>
-
+  <br>
 
   <div id="container" class="center">
-    <ion-button [routerDirection]="'root'" [routerLink]="'/registro'"> REGISTRO</ion-button>
+    <ion-button class="blanco" [routerDirection]="'root'" [routerLink]="'/registro'"> REGISTRO</ion-button>
   </div>
 </div>
 </ion-content>
