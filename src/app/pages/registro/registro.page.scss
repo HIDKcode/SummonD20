@@ -4,16 +4,24 @@ ion-card{
 }
 
 .error-form{
-    max-height: 40px;
-    color: #ff0000;
+    border-radius: 3px;
+    background: #171717;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #f25165;
     font-family: 'Chau';
     display: none;
     overflow: visible;
     white-space: normal;
 }
 
+.error-div{
+    padding-left: 5vw;
+    padding-right: 5vw;
+
+}
+
 .error-text{
-    font-size: 4vw;  
     white-space: normal;     /* Allows text to wrap to the next line */
     overflow: visible;       /* Ensures the text doesn't get hidden */
     word-wrap: break-word;
