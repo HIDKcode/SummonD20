@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar >
+   <img class="center-img" src="assets/images/lettering.png" width="110px"  alt="logo"> 
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="container" class="divfondo1 body">
+
+    <div id="container"> 
+      <!---->
+      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content
+          pullingIcon="chevron-down-circle-outline"
+          pullingText="Arrastra para refrescar"
+          refreshingSpinner="circles"
+          refreshingText="Refrescando..."
+        >
+        </ion-refresher-content>
+      </ion-refresher>
+      <br>
+      <ion-segment>
+        <ion-segment-button value="Subidos" class="textB">
+          Subidos
+        </ion-segment-button>
+        <ion-segment-button value="Galeria" class="textB">
+          Galeria
+        </ion-segment-button>
+      </ion-segment>
+      
+      
+      <div> 
+        <ion-grid> 
+          <ion-row>
+            <!-- *ngFor=let image of [1,2,3...]""-->
+            <ion-col col-6 col-md-4 col-xl-3>
+              <div class="image-container"></div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>  
+      </div>
+      
+      <div id="container" class="center">
+        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-archivo'"> Editar archivo </ion-button>
+      </div>
+
+      <div id="container" class="center">
+        <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> Crear hoja </ion-button>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

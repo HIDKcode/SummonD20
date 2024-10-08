@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar >
+   <img class="center-img" src="assets/images/lettering.png" width="110px"  alt="logo"> 
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="container" class="divfondo1 body">
+
+    <div class="center"> <h2 class="textN"> ¡Crea tu propia hoja de personaje!</h2> </div>
+    <div class="center"> <h3 class="textN"> Cantidad de atributos PRINCIPALES: </h3> </div>
+    <div id="container" class="center">
+      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
+      </ion-input>
+    </div>
+    <div class="center"> <h3 class="textN"> Cantidad de secundarios:: </h3> </div>
+    <div id="container" class="center">
+      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
+      </ion-input>  
+    </div>
+    <div class="center"> <h3 class="textN"> Cantidad de atributos ESPECIALES: </h3> </div>
+    <div id="container" class="center">
+      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
+      </ion-input>
+    </div>
+    <div class="center"> <h3 class="textN"> Cantidad de habilidades: </h3> </div>
+    <div id="container" class="center">
+      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="2">
+      </ion-input>
+    </div>
+    <div class="center"> <h3 class="textN"> Categoría de imagen de fondo: </h3> </div>
+    <div id="container" class="center">
+      <div id="container" class="divitemHOJA">
+        <ion-list>
+          <ion-item>
+            <ion-select aria-label="Theme" value="d&d">
+              <ion-select-option value="d&d">Dungeon & Dragons</ion-select-option>
+              <ion-select-option value="CoC">Call of Cthulhu</ion-select-option>
+              <ion-select-option value="WoW">World of Warcraft</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+    <h3 class="textN"> <ion-checkbox justify="start">Descargar respaldo como PDF:</ion-checkbox> </h3>
+    
+
+    <div id="container">
+      <ion-button> CREAR HOJA </ion-button>
+    </div>
+  </div>
+</ion-content>
+

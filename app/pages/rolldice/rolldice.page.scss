@@ -1,0 +1,11 @@
+ion-card{
+    background-color: transparent;
+}
+ion-card::part(background){
+    background-color: transparent;
+}
+
+h3{
+    color: #fffdee;
+    font-family: 'Chau';
+}
