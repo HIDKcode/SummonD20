@@ -20,6 +20,7 @@ nEGRo: #171717 VERDE: #1fea00 blanco: #fffdee VERDE oscuro: #0d271e dorado: #d3a
     font-family: 'Chau'
 }
 
+
 ion-button{
 min-width: 200px;
 min-height: 50px;
@@ -65,6 +66,7 @@ border-radius: 10px;
 .negro{color: #171717 !important;}
 .blanco{color:#fffdee !important;}
 .dorado{color:#d3ae4e !important;}
+.sombraV{text-shadow: #1fea00 1px 0 10px;}
 
 // Formularios
 
@@ -119,7 +121,12 @@ border-radius: 10px;
 
 // Imagen de fondo
 @media (prefers-color-scheme: dark) {
+    ion-menu-button{
+        --ion-color-primary: #fffdee !important;
+    }
+        
     .body{
+        
         background-image: url(assets/images/background.jpg);
         background-repeat: no-repeat;
         background-position: center;

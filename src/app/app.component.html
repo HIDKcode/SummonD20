@@ -1,5 +1,6 @@
 <ion-app>
 
+  
   <ion-buttons slot="start">
     <ion-menu-button></ion-menu-button>
   </ion-buttons>
@@ -10,30 +11,29 @@
 
       <ion-header>
         <ion-toolbar>
-          <ion-title class="blanco"> MENÚ </ion-title>
+            <div class="center"> <h2 class="blanco">MENÚ</h2> </div>
         </ion-toolbar>
       </ion-header>
 
       <ion-content>
-        <ion-list class="itemfiller" lines="none">
+        <ion-list class="itemfiller" lines="none"> 
           
-          
-          <ion-item [routerDirection]="'root'" [routerLink]="'/menu'" >
+          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/menu'" detail="false" >
             <p> PRINCIPAL </p>
           </ion-item>
-          <ion-item  [routerDirection]="'root'" [routerLink]="'/sala'">
+          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/sala'" detail="false">
             <p> SALAS </p>
           </ion-item>
-          <ion-item  [routerDirection]="'root'" [routerLink]="'/biblioteca'">
+          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/biblioteca'" detail="false">
             <p> BIBLIOTECA </p>  
           </ion-item>
-          <ion-item [routerDirection]="'root'" [routerLink]="'/rolldice'">
+          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/rolldice'" detail="false">
             <p> DADOS </p>
           </ion-item>
-          <ion-item [routerDirection]="'root'" [routerLink]="'/configuracion'">
-            <p> CONFIGURACION </p>
+          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/configuracion'" detail="false">
+            <p> PERFIL</p>
           </ion-item>
-          <ion-item class="salir" [routerDirection]="'root'" [routerLink]="'/login'">
+          <ion-item class="menuitem salir" [routerDirection]="'root'" [routerLink]="'/login'" detail="false">
             <p> SALIR </p>
           </ion-item>      
         </ion-list>
