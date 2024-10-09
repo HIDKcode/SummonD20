@@ -87,10 +87,11 @@ export class RegistroPage implements OnInit {
     this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
   }
 
-  // If there are any errors, stop here
+  // Si hay algún error, parará aquí.
   if (hasE) {
     return false;
   }
+  
     this.variable = true;
   }
 

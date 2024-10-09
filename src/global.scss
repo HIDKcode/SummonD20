@@ -66,6 +66,31 @@ border-radius: 10px;
 .blanco{color:#fffdee !important;}
 .dorado{color:#d3ae4e !important;}
 
+// Formularios
+
+.error-form{
+    border-radius: 3px;
+    background: #171717;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #f25165;
+    font-family: 'Chau';
+    display: none;
+    overflow: visible;
+    white-space: normal;
+}
+
+.error-div{
+    padding-left: 5vw;
+    padding-right: 5vw;
+}
+
+.error-text{
+    white-space: normal;   
+    overflow: visible;  
+    word-wrap: break-word;
+    font-family: 'Chau' !important;
+}
 
 
 // Utilidades
