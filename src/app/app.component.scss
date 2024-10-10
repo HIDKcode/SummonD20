@@ -41,7 +41,12 @@ ion-menu{
   font-size: large;
   max-height: 50px;
   }
-  
+
+  ion-item::part(detail-icon) {
+    color: rgb(0, 0, 0);
+    font-size: 2rem;
+  }
+
   .salir{
   margin-top: 23vh;
   color: #f25165!important;

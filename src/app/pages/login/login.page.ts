@@ -38,7 +38,9 @@ export class LoginPage implements OnInit {
     Creator: "Demon666",
     keyword: 1234
   };
-  constructor(private router: Router,private alerta: AlertService,private activatedroute: ActivatedRoute,private alertcontroller: AlertController,private renderer2: Renderer2){ 
+
+  // Router: Para enviar a paginas, AlertService es propio, Activatedroute es para capturar datos del usuario activo, renderer2 edición de CSS ya renderizado
+  constructor(private router: Router,private alerta: AlertService,private activatedroute: ActivatedRoute,private renderer2: Renderer2){ 
     this.activatedroute.queryParams.subscribe(params => {
       //Validamos si viene o no información desde la pagina
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -100,5 +102,6 @@ export class LoginPage implements OnInit {
       return true;
     }//fin else
   }
+
 }
 

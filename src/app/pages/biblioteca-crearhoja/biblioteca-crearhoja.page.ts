@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-biblioteca-crearhoja',
@@ -11,7 +13,9 @@ export class BibliotecaCrearhojaPage implements OnInit {
   //variables
   num1!: number;
 
-  constructor() { }
+  ArchivoID!: number;
+
+  constructor(private alerta: AlertService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -22,5 +26,26 @@ export class BibliotecaCrearhojaPage implements OnInit {
   
   Valida(){
     
-  }
+      // Validador de limite valor
+      if(this.num1 > 0 && this.num1 < 9){
+        
+          let navigationextras: NavigationExtras = {
+            state:{
+              aID: this.ArchivoID,
+            }
+          }
+          console.log("Paso2Valida")
+          this.router.navigate(['/biblioteca-archivo'],navigationextras);
+        } 
+        else{
+          const titulo = "Titulo";
+          const mensaje = "Mensaje";
+          this.alerta.presentAlert(titulo, mensaje);
+          return;
+      }
+      return true;
+    }//fin else
+
 }
+  
+
