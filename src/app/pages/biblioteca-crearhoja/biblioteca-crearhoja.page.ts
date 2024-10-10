@@ -12,7 +12,11 @@ export class BibliotecaCrearhojaPage implements OnInit {
 
   //variables
   num1!: number;
+  num2!: number;
+  num3!: number;
+  num4!: number;
 
+  Booleanpdf: boolean = false;
   ArchivoID!: number;
 
   constructor(private alerta: AlertService, private router: Router) { }
@@ -25,27 +29,31 @@ export class BibliotecaCrearhojaPage implements OnInit {
   }
   
   Valida(){
-    
+      let hasE = false;
+
       // Validador de limite valor
-      if(this.num1 > 0 && this.num1 < 9){
-        
+      if(this.num1 == undefined || (this.num1 < 1 || this.num1 > 9)){hasE = true;}
+      if(this.num2 == undefined || (this.num2 < 1 || this.num2 > 9)){hasE = true;}
+      if(this.num3 == undefined || (this.num3 < 1 || this.num3 > 9)){hasE = true;}
+      if(this.num4 == undefined || (this.num4 < 1 || this.num4 > 24)){hasE = true;}
+      // Si hay algún error, parará aquí.
+      if (hasE) {
+          const titulo = "Números inválidos";
+          const mensaje = "Ingrese números dentro del rango índicado";
+          this.alerta.presentAlert(titulo, mensaje);
+        return false;
+        // Si no hay errores, continúa creando el archivo
+
+        //Programar Creación de archivo && Programar descarga en PDF
+        } else { 
           let navigationextras: NavigationExtras = {
-            state:{
+            state:{ 
               aID: this.ArchivoID,
             }
           }
-          console.log("Paso2Valida")
           this.router.navigate(['/biblioteca-archivo'],navigationextras);
         } 
-        else{
-          const titulo = "Titulo";
-          const mensaje = "Mensaje";
-          this.alerta.presentAlert(titulo, mensaje);
-          return;
-      }
       return true;
-    }//fin else
+    }
 
-}
-  
-
+  }
