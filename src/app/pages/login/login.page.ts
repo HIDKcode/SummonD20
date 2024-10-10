@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { AlertService } from 'src/app/services/alert.service';
 
 
 @Component({
@@ -37,7 +38,7 @@ export class LoginPage implements OnInit {
     Creator: "Demon666",
     keyword: 1234
   };
-  constructor(private router: Router,private activatedroute: ActivatedRoute,private alertcontroller: AlertController,private renderer2: Renderer2){ 
+  constructor(private router: Router,private alerta: AlertService,private activatedroute: ActivatedRoute,private alertcontroller: AlertController,private renderer2: Renderer2){ 
     this.activatedroute.queryParams.subscribe(params => {
       //Validamos si viene o no información desde la pagina
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -90,22 +91,14 @@ export class LoginPage implements OnInit {
           this.router.navigate(['/menu'],navigationextras);
         } 
       }
-        else{const titulo = "Usuario o contraseña incorrecto";
+        else{
+          const titulo = "Usuario o contraseña incorrecto";
           const mensaje = "Reintente por favor";
-          this.alerta1(titulo, mensaje);
+          this.alerta.presentAlert(titulo, mensaje);
           return;
       }
       return true;
     }//fin else
-  }
-
-  async alerta1(titulo:string , mensaje: string){
-    const alert = await this.alertcontroller.create({
-      header: titulo,
-      message: mensaje,
-      buttons: ['OK']
-    });
-    await alert.present();
   }
 }
 
