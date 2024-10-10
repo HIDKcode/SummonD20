@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./biblioteca-crearhoja.page.scss'],
 })
 export class BibliotecaCrearhojaPage implements OnInit {
+  
+
+  //variables
+  num1!: number;
 
   constructor() { }
 
@@ -16,4 +20,7 @@ export class BibliotecaCrearhojaPage implements OnInit {
     return `${maxLength - inputLength} characters remaining`;
   }
   
+  Valida(){
+    
+  }
 }

@@ -8,26 +8,23 @@
   <div id="container" class="divfondo1 body">
 
     <div class="center"> <h2 class="sombraV"> ¡Crea tu propia hoja de personaje!</h2> </div>
-    <div class="center"> <h3 class="sombraV"> Cantidad de atributos PRINCIPALES: </h3> </div>
-    <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
-      </ion-input>
-    </div>
-    <div class="center"> <h3 class="sombraV"> Cantidad de secundarios: </h3> </div>
-    <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
-      </ion-input>  
-    </div>
-    <div class="center"> <h3 class="sombraV"> Cantidad de atributos ESPECIALES: </h3> </div>
-    <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="1">
-      </ion-input>
-    </div>
-    <div class="center"> <h3 class="sombraV"> Cantidad de habilidades: </h3> </div>
-    <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemHOJA" type="number" maxlength="2">
-      </ion-input>
-    </div>
+
+    <div class="center"> <h3 class="sombraV"> Atributos Principales (1 a 9) </h3> </div>
+      <div id="container" class="center">
+        <ion-input id="custom-input" class="divitemHOJA" type="number" min="1" max="9" maxlength="1" [(ngModel)]="num1"></ion-input>
+      </div>
+    <div class="center"> <h3 class="sombraV"> Atributos Secundarios (1 a 9)  </h3> </div>
+      <div id="container" class="center"> 
+        <ion-input id="custom-input" class="divitemHOJA" type="number" min="1" max="9" maxlength="1"></ion-input>  
+      </div>
+    <div class="center"> <h3 class="sombraV"> Atributos Especiales (1 a 9) </h3> </div>
+      <div id="container" class="center">
+        <ion-input id="custom-input" class="divitemHOJA" type="number" min="1" max="9" maxlength="1"></ion-input>
+      </div>
+    <div class="center"> <h3 class="sombraV"> Habilidades de personaje (1 a 24) </h3> </div>
+      <div id="container" class="center">
+        <ion-input id="custom-input" class="divitemHOJA" type="number" min="1" max="24" maxlength="2"></ion-input>
+      </div>
     <div class="center"> <h3 class="sombraV"> Categoría de imagen de fondo: </h3> </div>
     <div id="container" class="center">
       <div id="container" class="divitemHOJA">
@@ -47,7 +44,7 @@
     </div>
 
     <div id="container" class="center">
-      <ion-button> CREAR HOJA </ion-button>
+      <ion-button (click)="Valida()"> CREAR HOJA </ion-button>
     </div>
   </div>
 </ion-content>
