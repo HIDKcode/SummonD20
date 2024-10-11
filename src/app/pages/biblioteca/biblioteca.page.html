@@ -19,23 +19,27 @@
         </ion-refresher-content>
       </ion-refresher>
       
-      <ion-segment>
-        <ion-segment-button value="Subidos" style="background-color: #0d271e">
-          <h3 class="blanco"> SUBIDOS </h3>
-        </ion-segment-button>
-        <ion-segment-button value="Galeria" style="background-color: #0d271e">
+      <ion-segment class="padding">
+        <ion-segment-button value="GALERIA">
           <h3 class="blanco"> GALERÍA </h3>
+        </ion-segment-button>
+        <ion-segment-button value="NUBE">
+          <h3 class="blanco"> SUBIDO </h3>
         </ion-segment-button>
       </ion-segment>
       
       
-      <div> 
-        <ion-grid> 
+      <div class="center padding"> 
+        <ion-grid fixed="true"> 
           <ion-row>
             <!-- *ngFor=let image of [1,2,3...]""-->
-            <ion-col col-6 col-md-4 col-xl-3>
-              <div class="image-container"></div>
-            </ion-col>
+            <ion-col size="6"> Archivo </ion-col>
+            <ion-col > Archivo2 </ion-col>
+            <ion-col size="6"> Archivo3 </ion-col>
+            <ion-col > Archivo4 </ion-col>
+            
+            <ion-col size="6"> Archivo5 </ion-col>
+            <ion-col > Archivo6 </ion-col>
           </ion-row>
         </ion-grid>  
       </div>

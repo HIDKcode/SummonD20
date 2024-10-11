@@ -12,14 +12,16 @@
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 
-/*
-nEGRo: #171717 VERDE: #1fea00 blanco: #fffdee VERDE oscuro: #0d271e dorado: #d3ae4e  rojo claro: #f25165
-*/
+
 
 *{
     font-family: 'Chau'
 }
 
+.NoSeUsa{
+    --background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
+}
+ 
 
 ion-button{
 min-width: 200px;
@@ -125,10 +127,10 @@ border-radius: 10px;
 
 // Imagen de fondo
 @media (prefers-color-scheme: dark) {
-    ion-menu-button{
-        --ion-color-primary: #fffdee !important;
-    }
-        
+  
+    :root{
+        --ion-color-primary: #1fea00;
+        }    
     .body{
         
         background-image: url(assets/images/background.jpg);
@@ -141,6 +143,9 @@ border-radius: 10px;
 }
 
 @media (prefers-color-scheme: light) {
+    :root{
+    --ion-color-primary: #1fea00;
+    }
     .body{
         background-image: url(assets/images/backgroundwhite.png);
         background-repeat: no-repeat;
