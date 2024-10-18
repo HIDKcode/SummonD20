@@ -110,6 +110,7 @@ export class DatabaseService {
           //agregar el registro a mi variable
           items.push({
             userID: res.rows.item(i).userID,
+            nick: res.rows.item(i).nick,
             clave: res.rows.item(i).clave,
             correo: res.rows.item(i).correo,
             perfil_media: res.rows.item(i).perfil_media
