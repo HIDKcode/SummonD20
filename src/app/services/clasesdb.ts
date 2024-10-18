@@ -2,8 +2,9 @@
 // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS").
 export class User{
     userID!: number;
+    nick!: string;
     clave!: string;
-    email!: string;
+    correo!: string;
     perfil_media!: Blob;
 }
 
