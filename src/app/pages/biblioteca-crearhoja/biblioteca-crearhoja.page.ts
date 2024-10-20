@@ -23,10 +23,6 @@ export class BibliotecaCrearhojaPage implements OnInit {
 
   ngOnInit() {
   }
-
-  customCounterFormatter(inputLength: number, maxLength: number) {
-    return `${maxLength - inputLength} characters remaining`;
-  }
   
   Valida(){
       let hasE = false;
@@ -43,7 +39,6 @@ export class BibliotecaCrearhojaPage implements OnInit {
           this.alerta.presentAlert(titulo, mensaje);
         return false;
         // Si no hay errores, continúa creando el archivo
-
         //Programar Creación de archivo && Programar descarga en PDF
         } else { 
           let navigationextras: NavigationExtras = {

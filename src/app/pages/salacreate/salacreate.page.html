@@ -8,23 +8,30 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-    <H2> ¡Convierte en el Dungeon Master! </H2>
 
-    <p> Nombra tu sala: </p>
+    <div class="center"> <h2 class="sombraV"> !Convierte en el Dungeon Master! </h2> </div>
+
+
+    <div class="center"> <h3 class="sombraV"> Nombre de sala </h3> </div>
     <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemSALA" type="text" [counter]="true" maxlength="20" [counterFormatter]="customCounterFormatter2">
+      <ion-input id="custom-input" class="divitemSALA" type="text" maxlength="20">
       </ion-input>  
     </div>
 
-    <p><ion-checkbox justify="start">Privada con contraseña:</ion-checkbox></p>
-
-    <p> Contraseña de la sala: </p>
+    <div class="center"> <h3 class="sombraV"> Descripcion de sala </h3> </div>
     <div id="container" class="center">
-      <ion-input id="custom-input" class="divitemSALA" type="text" [counter]="true" maxlength="6" [counterFormatter]="customCounterFormatter2">
+      <ion-input id="custom-input" class="divitemSALA" type="text" maxlength="45">
       </ion-input>  
     </div>
 
-    <div id="container">
+
+    <div class="center"> <h3 class="sombraV"> Privada con contraseña <ion-checkbox justify="start"></ion-checkbox> </h3> </div>
+    <div id="container" class="center">
+      <ion-input id="custom-input" class="divitemSALA" type="text"maxlength="6">
+      </ion-input>  
+    </div>
+
+    <div id="container" class="center">
       <ion-button> CREAR SALA </ion-button>
     </div>
 

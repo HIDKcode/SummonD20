@@ -17,6 +17,8 @@ export class DatabaseService {
   clave!: string;
   correo!: string;
   perfil_media!: Blob;
+  Vnick!: string;
+
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB);";
   //tablas del usuario
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
@@ -120,6 +122,8 @@ export class DatabaseService {
     })
   }
 
+  // inserts
+
     insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
       
       return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{
@@ -128,4 +132,15 @@ export class DatabaseService {
         this.alerta.presentAlert("Creación de sala", "Error: " + JSON.stringify(e));
       })
     }
-    }
+
+  // Selects
+  getUsuario(){
+    return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[this.Vnick]).then(res=>{
+      this.alerta.presentAlert("Select", "UserID");
+    }).catch(e=>{
+      this.alerta.presentAlert("Select userID", "Error: " + JSON.stringify(e));
+    })
+  }
+
+
+}

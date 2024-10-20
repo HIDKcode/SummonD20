@@ -1,6 +1,4 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 
 
@@ -11,43 +9,14 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class LoginPage implements OnInit {
 
-  //variables
-  VIDuser: string = "";
+  VuserID: number = 0;
   Vpassword: string = "";
-
-  //errores
+  Vnick: string = "";
   errores = '@ViewChild';
-
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
 
-  //fakeDB
-  invitado: any ={
-  invitadouser: "Invitado",
-  ACCESSuser: 0,
-  }
-  temporalUSER: any = {
-    Loginuser: "Demon666",
-    email: "d666n@gmail.com",
-    profile: "defaultuser.png",
-    password: 123123123,
-    ACCESSuser: 1
-  };
-  temporalROOM: any = {
-    IDroom: 1001,
-    Creator: "Demon666",
-    keyword: 1234
-  };
-
-  // Router: Para enviar a paginas, AlertService es propio, Activatedroute es para capturar datos del usuario activo, renderer2 edición de CSS ya renderizado
-  constructor(private router: Router,private alerta: AlertService,private activatedroute: ActivatedRoute,private renderer2: Renderer2){ 
-    this.activatedroute.queryParams.subscribe(params => {
-      //Validamos si viene o no información desde la pagina
-      if(this.router.getCurrentNavigation()?.extras.state){
-        //Capturamos la información
-        this.VIDuser = this.router.getCurrentNavigation()?.extras?.state?.['IDuser']
-      }
-    });
+  constructor(private alerta: AlertService, private renderer2: Renderer2){ 
   }
   
   ngOnInit() {
@@ -58,7 +27,7 @@ export class LoginPage implements OnInit {
     let hasE = false;
 
     // Valida usuario
-    if (this.VIDuser == "") {
+    if (this.Vnick == "") {
       this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
       hasE = true;
     } else {
@@ -78,20 +47,8 @@ export class LoginPage implements OnInit {
     } 
     else{
       // Validador de Usuario
-      if(this.VIDuser == this.temporalUSER.Loginuser && this.Vpassword == this.temporalUSER.password){
-        // Si su acceso es 1 (Mayor a rol invitado), entra al menú html
-        // Para accesos 0 deben ser redireccionados a sala html
-        if(this.temporalUSER.ACCESSuser == 1){
-          console.log("Paso1Valida")
-          let navigationextras: NavigationExtras = {
-            state:{
-              user: this.VIDuser,
-              acce: this.temporalUSER.ACCESSuser,
-            }
-          }
-          console.log("Paso2Valida")
-          this.router.navigate(['/menu'],navigationextras);
-        } 
+      if(this.Vnick == "Demon666" && this.Vpassword == "123456"){       
+
       }
         else{
           const titulo = "Usuario o contraseña incorrecto";
