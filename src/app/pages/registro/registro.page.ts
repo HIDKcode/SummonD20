@@ -27,10 +27,7 @@ export class RegistroPage implements OnInit {
   pass2: string = "";
   ACCESSuser: number = 1;
 
-  constructor(private router: Router,
-    private activatedroute: ActivatedRoute,
-    private alertcontroller: AlertController,
-    private renderer2: Renderer2
+  constructor(private router: Router,private activatedroute: ActivatedRoute,private alertcontroller: AlertController,private renderer2: Renderer2
   ) {
       this.activatedroute.queryParams.subscribe(params => {
         //Validamos si viene o no información desde la pagina

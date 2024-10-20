@@ -12,12 +12,14 @@ export class DatabaseService {
 
   public database!: SQLiteObject
 
+  //varaibles any
+  Vvalida: any;
 
   userID!: number;
   clave!: string;
   correo!: string;
   perfil_media!: Blob;
-  Vnick!: string;
+
 
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB);";
   //tablas del usuario
@@ -37,6 +39,8 @@ export class DatabaseService {
   //insert por defecto en la Base de Datos
   ins_USER: string = "INSERT or IGNORE INTO USER(nick,clave,correo,perfil_media) VALUES('demon666', 'Lvame80d', 'demon666@example.com', NULL);";
   ins_USER2: string = "INSERT or IGNORE INTO USER(nick,clave,correo,perfil_media) VALUES('azath123', 'Azath321', 'azath123@example.com', NULL);";
+  ins_ESTADO: string = "INSERT OR IGNORE INTO ESTADO VALUES(1,1)"
+  ins_ESTADO2: string = "INSERT OR IGNORE INTO ESTADO VALUES(0,2)"
   
   //variables para guardar los registros resultantes de un select. l = Listado
   lUser = new BehaviorSubject<User[]>([]);
@@ -82,6 +86,7 @@ export class DatabaseService {
     try{
       //mandar a ejecutar las tablas en el orden especifico
       await this.database.executeSql(this.t_USER,[]);
+      console.log("Tabla t_USER created");
       await this.database.executeSql(this.t_ULT_CONEX,[]);
       await this.database.executeSql(this.t_ESTADO,[]);
       await this.database.executeSql(this.t_BENEFICIO,[]);
@@ -94,7 +99,9 @@ export class DatabaseService {
       await this.database.executeSql(this.t_ADJUNTO,[]);
       //generamos los insert en caso que existan
       await this.database.executeSql(this.ins_USER,[]);
-
+      await this.database.executeSql(this.ins_USER2,[]);
+      await this.database.executeSql(this.ins_ESTADO,[]);
+      await this.database.executeSql(this.ins_ESTADO2,[]);
     }catch(e){
       this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
     }
@@ -134,13 +141,24 @@ export class DatabaseService {
     }
 
   // Selects
-  getUsuario(){
-    return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[this.Vnick]).then(res=>{
-      this.alerta.presentAlert("Select", "UserID");
-    }).catch(e=>{
-      this.alerta.presentAlert("Select userID", "Error: " + JSON.stringify(e));
-    })
+  getuserID(Vnick: string){
+    return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[Vnick])
+  }
+  getCorreo(Vnick: string){
+    return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[Vnick])
+  }
+  validaClave(Vnick: string, Vpassword: string){
+   this.database.executeSql('SELECT password FROM USER WHERE nick = ?;',[Vnick]) 
+    if(Vpassword == ){
+      return true
+    } else{
+      return false
+    }
   }
 
+   //funciones de retorno de observables
+   fetchClave(): Observable<User[]>{
+    return this.listadoNoticias.asObservable();
+  }
 
 }
