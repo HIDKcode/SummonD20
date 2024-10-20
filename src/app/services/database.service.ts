@@ -3,7 +3,7 @@ import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from './clasesdb.ts';
+import { User } from './clasesdb';
 
 @Injectable({
   providedIn: 'root'
@@ -17,28 +17,27 @@ export class DatabaseService {
   clave!: string;
   correo!: string;
   perfil_media!: Blob;
-  t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY autoincrement, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB);";
+  t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB);";
   //tablas del usuario
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_ESTADO: string = "CREATE TABLE IF NOT EXISTS ESTADO(activo BOOLEAN NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
+  t_ESTADO: string = "CREATE TABLE IF NOT EXISTS ESTADO(activo INTEGER NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, page_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   //tablas biblioteca usuario
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,parent_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));";
+  t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,tamaño INTEGER NOT NULL,filepath_arc TEXT NOT NULL,tipo_archivo TEXT NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   //tablas sistema de salas
-  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,clave TEXT NOT NULL,descripcion TEXT,fechacreado TEXT NOT NULL);";
-  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER,GRUPO_grupoID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID));";
+  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL,clave INTEGER NOT NULL,descripcion TEXT,fechacreado TEXT NOT NULL,owner INTEGER NOT NULL);";
+  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER,GRUPO_grupoID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID));";
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
-  t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL,  -- Use TEXT for ISO8601 date formatfilepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
+  t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
 
   //insert por defecto en la Base de Datos
-  ins_USER: string = "INSERT or IGNORE INTO USER VALUES('demon666', 'Lvame80d', 'demon666@example.com', NULL);";
-  ins_USER2: string = "INSERT or IGNORE INTO USER VALUES('azath123', 'Azath321', 'azath123@example.com', NULL);";
-  ins_BIBL2: string = "INSERT or IGNORE INTO USER VALUES('azath123', 'Azath321', 'azath123@example.com', NULL);";
+  ins_USER: string = "INSERT or IGNORE INTO USER(nick,clave,correo,perfil_media) VALUES('demon666', 'Lvame80d', 'demon666@example.com', NULL);";
+  ins_USER2: string = "INSERT or IGNORE INTO USER(nick,clave,correo,perfil_media) VALUES('azath123', 'Azath321', 'azath123@example.com', NULL);";
   
   //variables para guardar los registros resultantes de un select. l = Listado
-  lUser = new BehaviorSubject([]);
+  lUser = new BehaviorSubject<User[]>([]);
 
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -68,7 +67,7 @@ export class DatabaseService {
         this.database = db;
         //llamar a la función de creación de tablas
         this.crearTablas();
-        this.consultarUsuario();
+        this.ListaUsers();
         //modificar el observable del status de la base de datos
         this.isDBReady.next(true);
       }).catch(e=>{
@@ -99,7 +98,7 @@ export class DatabaseService {
     }
   }
 
-  consultarUsuario(){
+  ListaUsers(){
     return this.database.executeSql('SELECT * FROM USER',[]).then(res=>{
       //variable para almacenar el resultado de la consulta
       let items: User[] = [];
@@ -120,4 +119,13 @@ export class DatabaseService {
       this.lUser.next(items as any);
     })
   }
-}
+
+    insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
+      
+      return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{
+        this.alerta.presentAlert("Creación de sala", "Proceso exitoso");
+      }).catch(e=>{
+        this.alerta.presentAlert("Creación de sala", "Error: " + JSON.stringify(e));
+      })
+    }
+    }
