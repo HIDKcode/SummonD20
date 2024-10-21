@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -18,13 +18,17 @@ export class LoginPage implements OnInit {
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
 
-  constructor(private alerta: AlertService, private renderer2: Renderer2, private datab: DatabaseService,private router: Router){ 
-  }
+  constructor(
+    private alerta: AlertService,
+    private renderer2: Renderer2,
+    private datab: DatabaseService,
+    private router: Router
+  ) {}
   
   ngOnInit() {
   }
 
-  Ingreso(){
+  async Ingreso(){
     // inicia If para errores
     let hasE = false;
 
@@ -50,8 +54,16 @@ export class LoginPage implements OnInit {
     else{
       // Validador de Usuario
       
-      if(this.datab.validaClave(this.Vnick,this.Vpassword)){       
-        this.router.navigate(['/menu'])
+      this.datab.validaClave(this.Vnick);
+      const ClaveBD = await this.datab.getPass();
+      if(ClaveBD == this.Vpassword){       
+
+        let navigationExtras: NavigationExtras = {
+          state: {
+            Vnick: this.Vnick
+          }
+        }
+        this.router.navigate(['/menu'],navigationExtras)
       }
         else{
           const titulo = "Usuario o contraseña incorrecto";
@@ -63,5 +75,6 @@ export class LoginPage implements OnInit {
     }//fin else
   }
 
+  
 }
 

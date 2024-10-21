@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
-import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
-import { BehaviorSubject, Observable } from 'rxjs';
+
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { User } from './clasesdb';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -48,14 +50,13 @@ export class DatabaseService {
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  constructor(private sqlite: SQLite, private platform: Platform, private alerta: AlertService) {
+  constructor(
+      private sqlite: SQLite, 
+      private platform: Platform,
+      private alerta: AlertService, 
+      private nativeStorage: NativeStorage) {
     this.crearDB();
    }
-
-   //funciones de retorno de observables
-  fetchNoticias(): Observable<User[]>{
-    return this.lUser.asObservable();
-  }
   
    dbState(){
     return this.isDBReady.asObservable();
@@ -73,7 +74,6 @@ export class DatabaseService {
         this.database = db;
         //llamar a la función de creación de tablas
         this.crearTablas();
-        this.ListaUsers();
         //modificar el observable del status de la base de datos
         this.isDBReady.next(true);
       }).catch(e=>{
@@ -82,7 +82,19 @@ export class DatabaseService {
     })
    }
 
-   async crearTablas(){
+
+   async crearTablas() {
+    try {
+        console.log('Paso1');
+        await this.database.executeSql(this.t_USER, []);
+        console.log("Tabla t_USER Valid");
+        // ... (rest of the table creation calls)
+    } catch (e) {
+        this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
+        console.error('Tabla creacion error:', e);
+    }
+}
+   /*async crearTablas(){
     try{
       //mandar a ejecutar las tablas en el orden especifico
       await this.database.executeSql(this.t_USER,[]);
@@ -106,28 +118,9 @@ export class DatabaseService {
       this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
     }
   }
+  */
 
-  ListaUsers(){
-    return this.database.executeSql('SELECT * FROM USER',[]).then(res=>{
-      //variable para almacenar el resultado de la consulta
-      let items: User[] = [];
-      //verificar si tenemos registros en la consulta
-      if(res.rows.length > 0){
-        //recorro el resultado
-        for(var i = 0; i < res.rows.length; i++){
-          //agregar el registro a mi variable
-          items.push({
-            userID: res.rows.item(i).userID,
-            nick: res.rows.item(i).nick,
-            clave: res.rows.item(i).clave,
-            correo: res.rows.item(i).correo,
-            perfil_media: res.rows.item(i).perfil_media
-          })
-        }
-      }
-      this.lUser.next(items as any);
-    })
-  }
+  
 
   // inserts
 
@@ -140,25 +133,61 @@ export class DatabaseService {
       })
     }
 
-  // Selects
-  getuserID(Vnick: string){
-    return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[Vnick])
+
+
+  getuserID(Vnick: string) {
+    return from(this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [Vnick]));
   }
   getCorreo(Vnick: string){
     return this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;',[Vnick])
   }
-  validaClave(Vnick: string, Vpassword: string){
-   this.database.executeSql('SELECT password FROM USER WHERE nick = ?;',[Vnick]) 
-    if(Vpassword == ){
-      return true
-    } else{
-      return false
+
+   public async validaClave(nick: string): Promise<string | null> {
+    const result = await this.database.executeSql('SELECT clave FROM USER WHERE nick = ?;', [nick]);
+
+    if (result.rows.length > 0) {
+      const password = result.rows.item(0).clave;
+      await this.savePass(password);
+      return password;
+    } else {
+      return null; // No user found
     }
   }
 
-   //funciones de retorno de observables
-   fetchClave(): Observable<User[]>{
-    return this.listadoNoticias.asObservable();
+  private async savePass(password: string) {
+    try {
+      await this.nativeStorage.setItem('IClave', { Vclave: password });
+      console.log('Clave guardada');
+    } catch (error) {
+      console.error('Error guardando clave', error);
+    }
   }
+  
+  public async getPass(): Promise<string | null> {
+    try {
+      const data = await this.nativeStorage.getItem('IClave');
+      return data.Vclave;
+    } catch (error){
+      console.error('Error recuperando pass', error);
+      return null;
+    }
+  }
+  
+  fetchUser(x: any){
+      return this.database.executeSql('SELECT userID, nick, email, perfil_media FROM USER WHERE nick = ?',[x]).then(res=>{
+        let fetchedUser: any[] = [];
+
+        if (res.rows.length > 0) {
+          fetchedUser.push({
+            userID: res.rows.item(0).userID,
+            nick: res.rows.item(0).nick,
+            correo: res.rows.item(0).email,
+            perfil_media: res.rows.item(0).perfil_media,
+          });
+        }
+        this.lUser.next(fetchedUser as any);
+      })
+  }
+
 
 }

@@ -7,8 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./menu.page.scss'],
 })
 export class MenuPage implements OnInit {
-  IDuser: string = "";
-  Acceso: number = 1;
+  
+  Vnick!: string;
 
   constructor(private router: Router, private activatedroute: ActivatedRoute) {
  
