@@ -9,7 +9,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class ConfiguracionPage implements OnInit {
   
-  
+  Vnick: string = "";
 
   arregloUser: any = [{
     userID: '', 
@@ -23,9 +23,10 @@ export class ConfiguracionPage implements OnInit {
   }
 
   ngOnInit() {
-
-
-
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras.state) {
+      this.Vnick = navigation.extras.state['Vnick'];
+   }
   }
 
 }

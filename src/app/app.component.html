@@ -30,8 +30,8 @@
           <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/rolldice'" detail="false">
             <ion-label class="negro"> DADOS </ion-label>
           </ion-item>
-          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/configuracion'" detail="false">
-            <ion-label class="negro"> USUARIO </ion-label>
+          <ion-item class="menuitem" detail="false">
+            <ion-label (click)="irConfig()"> USUARIO </ion-label>
           </ion-item>
           <ion-item class="menuitem salir" [routerDirection]="'root'" [routerLink]="'/login'" detail="false">
             <ion-label> SALIR </ion-label>
