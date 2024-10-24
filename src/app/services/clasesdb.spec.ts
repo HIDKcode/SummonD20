@@ -1,4 +1,4 @@
-import { User } from './clasesdb.ts';
+import { User } from './clasesdb';
 
 //expect() evalúa el resultado de una operación. toBeTruthy es una validación-matcher que verficia que no sea Null,Undef o False.
 

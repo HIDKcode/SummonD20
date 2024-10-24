@@ -21,5 +21,13 @@
         ]
       }
     ]
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not firefox <= 126",
+    "not safari <= 17.5",
+    "not and_ff <= 125",
+    "not ios_saf <= 15.8"
+  ]
 }
