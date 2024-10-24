@@ -32,10 +32,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/biblioteca/biblioteca.module').then( m => m.BibliotecaPageModule)
   },
   {
-    path: 'salaconfig',
-    loadChildren: () => import('./pages/salaconfig/salaconfig.module').then( m => m.SalaconfigPageModule)
-  },
-  {
     path: 'salachat',
     loadChildren: () => import('./pages/salachat/salachat.module').then( m => m.SalachatPageModule)
   },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { AlertService } from 'src/app/services/alert.service';
 
@@ -13,9 +13,16 @@ export class SalacreatePage implements OnInit {
   Gdescr: string = "";
   Gclave!: number;
 
-  constructor(private alerta: AlertService, private router: Router) { }
+  VW = '@ViewChild';
+  @ViewChild('Listar', {static: true}) div1!: ElementRef
+  @ViewChild('Crear', {static: true}) div2!: ElementRef
+  
+  constructor(private router: Router,private alerta: AlertService ,private renderer2: Renderer2) { 
+
+  }
 
   ngOnInit() {
+    this.Ocultar();
   }
 
   Valida(){
@@ -43,6 +50,15 @@ export class SalacreatePage implements OnInit {
         this.router.navigate(['/biblioteca-archivo'],navigationextras);
       } 
     return true;
+  }
+
+  Ocultar(){
+    this.renderer2.setStyle(this.div2.nativeElement, 'display', 'none');
+    this.renderer2.setStyle(this.div1.nativeElement, 'display', 'contents');
+  }
+  Mostrar(){
+    this.renderer2.setStyle(this.div1.nativeElement, 'display', 'none');
+    this.renderer2.setStyle(this.div2.nativeElement, 'display', 'contents');
   }
 
 }

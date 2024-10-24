@@ -63,6 +63,7 @@ export class LoginPage implements OnInit {
             Vnick: this.Vnick
           }
         }
+        this.datab.fetchUser(this.Vnick)
         this.router.navigate(['/menu'],navigationExtras)
       }
         else{

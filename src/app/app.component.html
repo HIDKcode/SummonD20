@@ -18,17 +18,17 @@
       <ion-content>
         <ion-list class="itemfiller" lines="none"> 
           
-          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/menu'" detail="false" >
-            <ion-label class="negro"> PRINCIPAL </ion-label>
+          <ion-item class="menuitem" detail="false" >
+            <ion-label class="negro" (click)="irPrincipal()"> PRINCIPAL </ion-label>
           </ion-item>
-          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/sala'" detail="false">
-            <ion-label class="negro"> SALAS </ion-label>
+          <ion-item class="menuitem" detail="false">
+            <ion-label class="negro" (click)="irSala()"> SALAS </ion-label>
           </ion-item>
-          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/biblioteca'" detail="false">
-            <ion-label class="negro">  BIBLIOTECA</ion-label>
+          <ion-item class="menuitem" detail="false">
+            <ion-label class="negro" (click)="irBiblioteca()">  BIBLIOTECA</ion-label>
           </ion-item>
-          <ion-item class="menuitem" [routerDirection]="'root'" [routerLink]="'/rolldice'" detail="false">
-            <ion-label class="negro"> DADOS </ion-label>
+          <ion-item class="menuitem"  detail="false">
+            <ion-label class="negro" (click)="irDados()"> DADOS </ion-label>
           </ion-item>
           <ion-item class="menuitem" detail="false">
             <ion-label (click)="irConfig()"> USUARIO </ion-label>
