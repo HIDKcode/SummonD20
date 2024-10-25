@@ -10,7 +10,7 @@ import { dicepiService } from 'src/app/services/diceapi.service';
 })
 export class RolldicePage implements OnInit {
 
-  Number!: string;
+  Vstring: string = "";
 
   constructor(private menuCtrl: MenuController, private dice: dicepiService, private alerta: AlertService) {
     this.menuCtrl.enable(true); }
@@ -44,15 +44,31 @@ export class RolldicePage implements OnInit {
           d = Giros; // Almacenar la cantidad en d
         } else {
           const titulo = "Fallo al lanzar dado.";
-        const mensaje = "Formatos esperados: '2D6', 'D100', 'nDn+nDn' o '1D100-2D6'";
+        const mensaje = "Fallo inesperado, reintente'";
         this.alerta.presentAlert(titulo, mensaje);
         return;
         }
       }
     }
-  
+    console.log(a);
+    console.log(b);
+    console.log(c);
+    console.log(d);
     return { a, b, c, d }; // Retornar los resultados en formato de objeto
   }
 
-  
+  roll(){
+    // solo permitir caracteres especificos
+    const regex = /^[0-9dD+-]+$/
+
+    if(!regex.test(this.Vstring)){
+      const titulo = "Fallo al lanzar dado.";
+      const mensaje = "Formato esperado: 'D100', '2d6' o '1d100+1D6''";
+      this.alerta.presentAlert(titulo, mensaje);
+      return;
+    } else {
+      this.rollCustomDice(this.Vstring);
+    }
+  }
+
 }

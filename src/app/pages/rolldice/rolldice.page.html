@@ -28,11 +28,11 @@
     </div>
           
   <div class="center">
-    <ion-input class="custom-input inputsummon blanco" label="Dado" type="text" label-placement="floating" fill="outline" maxlength="11" [(ngModel)]="Number">
+    <ion-input class="custom-input inputsummon blanco" label="Dado" type="text" label-placement="floating" fill="outline" maxlength="11" [(ngModel)]="Vstring">
     </ion-input> 
   </div>
   <div class="center">
-    <ion-button> LANZAR DADO </ion-button>
+    <ion-button (click)="roll()"> LANZAR DADO </ion-button>
   </div>
   <div class="center">
     <H3 CLASS="blanco"> RESULTADO: <H3 CLASS="blanco sombraV"> 00 </H3> </H3> 
