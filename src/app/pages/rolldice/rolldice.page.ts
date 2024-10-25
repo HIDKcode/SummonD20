@@ -11,6 +11,7 @@ import { dicepiService } from 'src/app/services/diceapi.service';
 export class RolldicePage implements OnInit {
 
   Vstring: string = "";
+  Vresultado!: number;
 
   constructor(private menuCtrl: MenuController, private dice: dicepiService, private alerta: AlertService) {
     this.menuCtrl.enable(true); }
@@ -50,11 +51,8 @@ export class RolldicePage implements OnInit {
         }
       }
     }
-    console.log(a);
-    console.log(b);
-    console.log(c);
-    console.log(d);
-    return { a, b, c, d }; // Retornar los resultados en formato de objeto
+    console.log(a, b, c, d)
+    this.dice.rollMultipleDice(a, b, c, d)
   }
 
   roll(){

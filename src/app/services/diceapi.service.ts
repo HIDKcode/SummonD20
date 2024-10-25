@@ -9,22 +9,22 @@ import { Injectable } from '@angular/core';
 export class dicepiService {
 
   apiUrl = 'https://dice-roll3.p.rapidapi.com/api/roll/multiple'; 
-  apiKey = 'ba60d72ddemsh4111432460f8422p10e931jsncaff103bddc8';
-  apiHost = 'dice-roll3.p.rapidapi.com';
   
-
   constructor(private http: HttpClient) {
 
    }
 
-   rollMultipleDice(diceConfig: { sides: number; rolls: number }[]): Observable<any> {
+   rollMultipleDice(a: any,b: any,c: any,d: any): Observable<any> {
     const data = {
-      dice: diceConfig
+      dice: [
+        { sides: a, rolls: b },
+        { sides: c, rolls: d }
+      ]
     };
 
     const headers = new HttpHeaders({
-      'x-rapidapi-key': this.apiKey,
-      'x-rapidapi-host': this.apiHost,
+      'x-rapidapi-key': 'ba60d72ddemsh4111432460f8422p10e931jsncaff103bddc8',
+      'x-rapidapi-host': 'dice-roll3.p.rapidapi.com',
       'Content-Type': 'application/json'
     });
 
