@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-biblioteca-archivo',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BibliotecaArchivoPage implements OnInit {
 
-  constructor() { }
+  constructor(private menuCtrl: MenuController) {
+    this.menuCtrl.enable(true); }
 
   ngOnInit() {
   }

@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -40,8 +41,10 @@ export class ConfiguracionPage implements OnInit {
 
   constructor(private router: Router, private activatedroute: ActivatedRoute, 
     private alerta: AlertService ,private renderer2: Renderer2, 
-    private datab: DatabaseService, private nativeStorage: NativeStorage) {
-    this.getUserData()
+    private datab: DatabaseService, private nativeStorage: NativeStorage,
+    private menuCtrl: MenuController) {
+      this.menuCtrl.enable(true);
+      this.getUserData()
   }
 
   ngOnInit() {

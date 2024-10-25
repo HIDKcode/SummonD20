@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 
 
@@ -26,8 +27,14 @@ export class RegistroPage implements OnInit {
   Vpass2: string = "";
   ACCESSuser: number = 1;
 
-  constructor(private router: Router,private activatedroute: ActivatedRoute,private alerta: AlertService ,private renderer2: Renderer2
-  ) {
+  constructor(private router: Router,
+    private activatedroute: ActivatedRoute,
+    private alerta: AlertService,
+    private renderer2: Renderer2,
+    private menuCtrl: MenuController) {
+
+      this.menuCtrl.enable(false);
+      
       this.activatedroute.queryParams.subscribe(params => {
         //Validamos si viene o no información desde la pagina
         if(this.router.getCurrentNavigation()?.extras.state){

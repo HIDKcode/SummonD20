@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -22,8 +23,11 @@ export class LoginPage implements OnInit {
     private alerta: AlertService,
     private renderer2: Renderer2,
     private datab: DatabaseService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private menuCtrl: MenuController
+  ) {
+    this.menuCtrl.enable(false);
+  }
   
   ngOnInit() {
   }

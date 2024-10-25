@@ -7,10 +7,8 @@ import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['app.component.scss'],
 })
 
-
-
 export class AppComponent {
-
+  
   Vnick: string = "";
 
   constructor(private router: Router, private activatedroute: ActivatedRoute) {

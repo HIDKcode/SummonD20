@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
@@ -12,13 +13,20 @@ export class SalacreatePage implements OnInit {
   Gnombre: string = "";
   Gdescr: string = "";
   Gclave!: number;
+  Variable: any;
+  VgrupoID: number = 0;
+
 
   VW = '@ViewChild';
   @ViewChild('Listar', {static: true}) div1!: ElementRef
   @ViewChild('Crear', {static: true}) div2!: ElementRef
   
-  constructor(private router: Router,private alerta: AlertService ,private renderer2: Renderer2) { 
-
+  constructor(private router: Router,
+    private alerta: AlertService,
+    private renderer2: Renderer2, 
+    private menuCtrl: MenuController){
+    this.menuCtrl.enable(true); 
+      
   }
 
   ngOnInit() {
@@ -47,7 +55,7 @@ export class SalacreatePage implements OnInit {
 
           }
         }
-        this.router.navigate(['/biblioteca-archivo'],navigationextras);
+        this.irSala(this.VgrupoID);
       } 
     return true;
   }
@@ -61,4 +69,7 @@ export class SalacreatePage implements OnInit {
     this.renderer2.setStyle(this.div2.nativeElement, 'display', 'contents');
   }
 
+  irSala(x: any) {
+    this.router.navigate(['/sala', x]);
+  }
 }

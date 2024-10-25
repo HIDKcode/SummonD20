@@ -24,7 +24,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/configuracion/configuracion.module').then( m => m.ConfiguracionPageModule)
   },
   {
-    path: 'sala',
+    path: 'sala/:grupoID',
     loadChildren: () => import('./pages/sala/sala.module').then( m => m.SalaPageModule)
   },
   {
