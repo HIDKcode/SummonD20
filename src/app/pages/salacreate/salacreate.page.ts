@@ -10,14 +10,13 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class SalacreatePage implements OnInit {
 
+
+  grupos: any[] = []; 
   Gnombre: string = "";
   Gdescr: string = "";
   Gclave!: number;
   Variable: any;
   VgrupoID: number = 0;
-
-
-  VW = '@ViewChild';
   @ViewChild('Listar', {static: true}) div1!: ElementRef
   @ViewChild('Crear', {static: true}) div2!: ElementRef
   
