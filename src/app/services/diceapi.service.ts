@@ -14,11 +14,10 @@ export class dicepiService {
 
    }
 
-   rollMultipleDice(a: any,b: any,c: any,d: any): Observable<any> {
+   rollMultipleDice(a: any,b: any): Observable<any> {
     const data = {
       dice: [
-        { sides: a, rolls: b },
-        { sides: c, rolls: d }
+        { sides: a, rolls: b }
       ]
     };
 
@@ -27,7 +26,7 @@ export class dicepiService {
       'x-rapidapi-host': 'dice-roll3.p.rapidapi.com',
       'Content-Type': 'application/json'
     });
-
+    
     return this.http.post(this.apiUrl, data, { headers });
   }
   
