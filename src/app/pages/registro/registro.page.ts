@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/cor
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
+import { DatabaseService } from 'src/app/services/database.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class RegistroPage implements OnInit {
     private activatedroute: ActivatedRoute,
     private alerta: AlertService,
     private renderer2: Renderer2,
-    private menuCtrl: MenuController) {
+    private menuCtrl: MenuController,
+    private datab: DatabaseService) {
 
       this.menuCtrl.enable(false);
       
@@ -51,7 +53,7 @@ export class RegistroPage implements OnInit {
   }
 
  
-  Registro(){
+  async Registro(){
     
   // While loop con variable boolean
   while(this.variable == false){
@@ -96,14 +98,13 @@ export class RegistroPage implements OnInit {
   }
   
     this.variable = true;
-  }
-
-    let navigationextras: NavigationExtras = {
-      state:{
-        user: this.Vnick,
+  } 
+      const exito = await this.datab.registraruser(this.Vnick, this.Vpass, this.Vcorreo);
+      if (exito) {
+        this.alerta.presentAlert("Proceso de registro", "Exitoso");
+      } else {
+        this.alerta.presentAlert("Proceso de registro", "Correo o Usuario ya existentes");
       }
-    }
-    this.router.navigate(['/login'],navigationextras);
     return true;
   }
 

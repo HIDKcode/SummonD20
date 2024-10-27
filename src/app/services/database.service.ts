@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, firstValueFrom, Observable } from 'rxjs';
 import { User } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,9 @@ export class DatabaseService {
       private sqlite: SQLite, 
       private platform: Platform,
       private alerta: AlertService, 
-      private nativeStorage: NativeStorage) {
+      private nativeStorage: NativeStorage,
+      private http: HttpClient)
+       {
 
       //verificar la plataforma
       this.platform.ready().then(()=>{
@@ -157,6 +160,28 @@ async crearTablas(){
 
 
   // inserts
+  async registraruser(rnick: string, rcorreo: string, rclave: string): Promise<boolean> {
+    const gprofile = this.blobimg();
+
+    try{
+    this.database.executeSql('INSERT INTO USER(nick, clave, correo, perfil_media) VALUES (?,?,?,?)',[rnick, rcorreo, rclave, gprofile])
+    this.alerta.presentAlert("Registro de user", "Proceso exitoso");
+    return true;
+    } catch(e) {
+      this.alerta.presentAlert("Registro de user", "Error: " + JSON.stringify(e));
+      return false;
+    }
+  }
+
+  // Genero con http de la imagen para convertirlo en Uint8array (comaptible de blob sqlite)
+  async blobimg(): Promise<Uint8Array> {
+    const response = await firstValueFrom(this.http.get('assets/images/def_profile.png', { responseType: 'blob' }));
+    const arrayBuffer = await response.arrayBuffer();
+    return new Uint8Array(arrayBuffer);  
+  }
+
+
+  // Verificar inserts
     insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
       
       return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{
