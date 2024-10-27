@@ -7,33 +7,61 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
+    
+    <div #Listar> 
+      <div class="center padding">
+        <div class="grid">
+          <ion-grid>
+            <!-- NgFor SALAS -->
+            <ion-row >
+              <ion-col size="8"> Información de sala </ion-col>
+              <ion-col id="join" size="4"> Únete  </ion-col>
+            </ion-row>
 
+          </ion-grid>
+          <ion-grid *ngFor="let grupo of grupos">
+            <!-- NgFor SALAS -->
+            <ion-row >
+              <ion-col size="8"> grupo.nombre ; <br> grupo.dueño ; count(partcipantes) (0) </ion-col>
+              <ion-col id="join" size="4"> <ion-item  [routerLink]="['/sala', grupo.grupoID]"> Unirse </ion-item>  </ion-col>
+            </ion-row>
 
+          </ion-grid>
+        </div>
+      </div>
+    <div>
+      <div class="center padding"> <ion-button (click)="Mostrar()"> crear sala </ion-button> </div>
+    </div>
+  </div>
+
+  <div #Crear>
     <div class="center"> <h2 class="sombraV"> !Convierte en el Dungeon Master! </h2> </div>
 
 
     <div class="center"> <h3 class="sombraV"> Nombre de sala </h3> </div>
-    <div id="container" class="center">
+    <div class="center">
       <ion-input id="custom-input" class="divitemSALA" type="text" maxlength="20" [(ngModel)]="Gnombre">
       </ion-input>  
     </div>
 
     <div class="center"> <h3 class="sombraV"> Descripcion de sala (Max. 45 char) </h3> </div>
-    <div id="container" class="center">
+    <div class="center">
       <ion-input id="custom-input" class="divitemSALA" type="text" maxlength="45" [(ngModel)]="Gdescr">
       </ion-input>  
     </div>
 
 
     <div class="center"> <h3 class="sombraV"> Privada con contraseña (6 dig) <ion-checkbox justify="start"></ion-checkbox> </h3> </div>
-    <div id="container" class="center">
+    <div class="center">
       <ion-input id="custom-input" class="divitemSALA" type="number" maxlength="6" [(ngModel)]="Gclave">
       </ion-input>  
     </div>
-
-    <div id="container" class="center">
+    
+    <div class="center">
       <ion-button (click)="Valida()"> CREAR SALA </ion-button>
-    </div>
+      <ion-button (click)="Ocultar()"> VOLVER </ion-button>
+    </div>  
+  </div>
 
   </div>
 </ion-content>

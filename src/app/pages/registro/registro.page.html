@@ -7,7 +7,7 @@
 <ion-content [fullscreen]="true">
 <div id="container" class="divfondo1 body">
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-card class="center">
       <ion-card-header>
         <ion-img src="assets/images/logo.png"> </ion-img>
@@ -17,53 +17,53 @@
   
   <h2 class="center blanco sombraV"> ¡LA AVENTURA TE LLAMA! ÚNETE </h2>
   
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating"  
-    fill="outline" [(ngModel)]="IDuser" maxlength="20"></ion-input>
+    fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 5 char.)</h5> </div>
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating"
-     fill="outline" [(ngModel)]="email" maxlength="70"></ion-input>
+     fill="outline" [(ngModel)]="Vcorreo" maxlength="70"></ion-input>
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <div #error2 class="error-form"><h5 class="error-text"> Correo inválido </h5> </div>
   </div>
 
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input class="inputsummon  blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating"
-     fill="outline" [(ngModel)]="pass1" maxlength="20" >
+     fill="outline" [(ngModel)]="Vpass" maxlength="20" >
     </ion-input>
   </div>
 
-  <div id="container" class="error-div center">
+  <div  class="error-div center">
     <div #error3 class="error-form"><h5 class="error-text"> Contraseña inválida <br> (Formato con 7 digitos, 1 Máyus y 1 Signo.) </h5> </div>
   </div>
 
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input class="inputsummon  blanco" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"
-     fill="outline" [(ngModel)]="pass2" maxlength="20">
+     fill="outline" [(ngModel)]="Vpass2" maxlength="20">
     </ion-input>    
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <div #error4 class="error-form"><h5 class="error-text"> Claves no coinciden </h5> </div>
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-button class="blanco" (click)="Registro()"> UNIRSE </ion-button>
   </div>
     
   <h3 class="verdeC center sombraB"> Ya tienes una cuenta?</h3>
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-button class="blanco" [routerDirection]="'root'" [routerLink]="'/login'"> INICIA SESIÓN </ion-button>
   </div>
   

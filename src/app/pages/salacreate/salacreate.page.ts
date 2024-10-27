@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
@@ -9,13 +10,26 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class SalacreatePage implements OnInit {
 
+
+  grupos: any[] = []; 
   Gnombre: string = "";
   Gdescr: string = "";
   Gclave!: number;
-
-  constructor(private alerta: AlertService, private router: Router) { }
+  Variable: any;
+  VgrupoID: number = 0;
+  @ViewChild('Listar', {static: true}) div1!: ElementRef
+  @ViewChild('Crear', {static: true}) div2!: ElementRef
+  
+  constructor(private router: Router,
+    private alerta: AlertService,
+    private renderer2: Renderer2, 
+    private menuCtrl: MenuController){
+    this.menuCtrl.enable(true); 
+      
+  }
 
   ngOnInit() {
+    this.Ocultar();
   }
 
   Valida(){
@@ -40,9 +54,21 @@ export class SalacreatePage implements OnInit {
 
           }
         }
-        this.router.navigate(['/biblioteca-archivo'],navigationextras);
+        this.irSala(this.VgrupoID);
       } 
     return true;
   }
 
+  Ocultar(){
+    this.renderer2.setStyle(this.div2.nativeElement, 'display', 'none');
+    this.renderer2.setStyle(this.div1.nativeElement, 'display', 'contents');
+  }
+  Mostrar(){
+    this.renderer2.setStyle(this.div1.nativeElement, 'display', 'none');
+    this.renderer2.setStyle(this.div2.nativeElement, 'display', 'contents');
+  }
+
+  irSala(x: any) {
+    this.router.navigate(['/sala', x]);
+  }
 }

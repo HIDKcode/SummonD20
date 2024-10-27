@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
@@ -19,7 +20,8 @@ export class BibliotecaCrearhojaPage implements OnInit {
   Booleanpdf: boolean = false;
   ArchivoID!: number;
 
-  constructor(private alerta: AlertService, private router: Router) { }
+  constructor(private alerta: AlertService, private router: Router, private menuCtrl: MenuController) {
+    this.menuCtrl.enable(true); }
 
   ngOnInit() {
   }

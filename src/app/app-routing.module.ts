@@ -24,16 +24,12 @@ const routes: Routes = [
     loadChildren: () => import('./pages/configuracion/configuracion.module').then( m => m.ConfiguracionPageModule)
   },
   {
-    path: 'sala',
+    path: 'sala/:grupoID',
     loadChildren: () => import('./pages/sala/sala.module').then( m => m.SalaPageModule)
   },
   {
     path: 'biblioteca',
     loadChildren: () => import('./pages/biblioteca/biblioteca.module').then( m => m.BibliotecaPageModule)
-  },
-  {
-    path: 'salaconfig',
-    loadChildren: () => import('./pages/salaconfig/salaconfig.module').then( m => m.SalaconfigPageModule)
   },
   {
     path: 'salachat',

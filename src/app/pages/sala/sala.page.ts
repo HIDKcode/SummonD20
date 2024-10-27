@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sala',
@@ -7,9 +9,34 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SalaPage implements OnInit {
 
-  constructor() { }
+  //VARIABLES
+  VgrupoID!: number;
+  VpartId!: number;
+  variable: boolean = false;
+
+  constructor(private menuCtrl: MenuController, private activatedroute: ActivatedRoute) {
+    this.menuCtrl.enable(true); }
 
   ngOnInit() {
+        // Obtener el idgrupo de los parámetros de la URL
+        this.VgrupoID = Number(this.activatedroute.snapshot.paramMap.get('grupoID'));
+
+        // Aquí puedes llamar a un servicio para obtener los detalles de la sala
+        console.log('El id del grupo es: ', this.VgrupoID);
+  }
+
+  VerifParticipa(){
+    //Select para obtener Participate ID
+
+    // Si participante ID = NULL -> Retornar Salacreate
+
+    // Si participante ID = NULL -> Finalizar funcion
+    if(this.variable = false){
+    
+      
+    }
+
   }
 
 }
+

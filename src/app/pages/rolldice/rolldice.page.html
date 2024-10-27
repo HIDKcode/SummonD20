@@ -6,27 +6,36 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-    <div class="center">
-      <ion-card>
-        <img alt="dado-d20" src="https://c.tenor.com/1KlVOl9NxMkAAAAC/tenor.gif"/>
-        <ion-card-header>
-          <h3>Elige que dado tirar</h3>
-        </ion-card-header>
-        <ion-card-content>
-        </ion-card-content>
-        <ion-grid>
-          <ion-col>
-        <ion-button fill="clear">D20</ion-button>
-        <ion-button fill="clear">D12</ion-button>
-        <ion-button fill="clear">D10</ion-button>
-          </ion-col>
-          <ion-col>
-        <ion-button fill="clear">D8</ion-button>
-        <ion-button fill="clear">D6</ion-button>
-        <ion-button fill="clear">D4</ion-button>
-          </ion-col>
-      </ion-grid>
-      </ion-card>
+
+  <div  class="center">
+    <ion-card class="center">
+        <ion-img src="assets/images/Dice.gif"> </ion-img>
+    </ion-card>
+  </div>
+
+  <div class="center">  <h3 class="blanco sombraV"> ¡Lanza dados rápidos o personalizálos!</h3> </div>
+    
+  <div class="center"> 
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button> d20 </ion-button>
+          <ion-button> 2d6 </ion-button>
+          <ion-button> 2d10 </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
     </div>
+          
+  <div class="center">
+    <ion-input class="custom-input inputsummon blanco" label="Dado" type="text" label-placement="floating" fill="outline" maxlength="11" [(ngModel)]="Vstring">
+    </ion-input> 
+  </div>
+  <div class="center">
+    <ion-button (click)="roll()"> LANZAR DADO </ion-button>
+  </div>
+  <div class="center">
+    <H3 CLASS="blanco"> RESULTADO: <H3 CLASS="blanco sombraV"> 00 </H3> </H3> 
+  </div>
  </div>
 </ion-content>

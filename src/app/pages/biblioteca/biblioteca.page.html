@@ -7,17 +7,7 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
     
-    <div id="container"> 
-      <!---->
-      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-        <ion-refresher-content
-          pullingIcon="chevron-down-circle-outline"
-          pullingText="Arrastra para refrescar"
-          refreshingSpinner="circles"
-          refreshingText="Refrescando..."
-        >
-        </ion-refresher-content>
-      </ion-refresher>
+    <div> 
       
       <ion-segment class="padding">
         <ion-segment-button value="GALERIA">
@@ -44,11 +34,11 @@
         </ion-grid>  
       </div>
       
-      <div id="container" class="center">
+      <div class="center">
         <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-archivo'"> EDITAR ARCHIVO </ion-button>
       </div>
 
-      <div id="container" class="center">
+      <div class="center">
         <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> CREAR HOJA </ion-button>
       </div>
 

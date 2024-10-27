@@ -41,6 +41,20 @@ min-height: 50px;
 font-size: 18px;
 }
 
+.summon-foto1x1{
+width: 25vw;
+height: 25vw;
+background: linear-gradient(135deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
+margin-left: 15px;
+margin-right: 15px;
+max-width: 815px;
+margin-top: 10px;
+margin-bottom: 10px;
+border: 5px solid #0d271e;
+border-radius: 10px;
+--padding-start: 5px;
+}
+
 // Color y forma fondo
 .divfondo1{
 position: absolute;
@@ -102,6 +116,13 @@ border-radius: 10px;
 
 
 // Utilidades
+
+.padding{
+    padding-left: 5vw;
+    padding-right: 5vw;
+    padding-top: 20px;
+  }
+  
 .center {
     display: flex;
     justify-content: center;

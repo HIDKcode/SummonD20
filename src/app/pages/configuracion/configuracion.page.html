@@ -6,14 +6,54 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-    
-    <h3 class="center"> USER: IDuser </h3>
-  
-    <div>
-      <h3 class="center"> Nickname: {{Vnick}} </h3>
-    <h3 class="center"> CORREO: </h3>
-    <h3 class="center"> Cambiar contraseña </h3>
+    <h3 class="center"> NickUser # userID </h3>
+
+
+    <div  class="center">
+      <div  class="center summon-foto1x1"></div> 
+      <ion-button> CAMBIAR IMAGEN </ion-button>
     </div>
     
+
+  <div  class="center">
+    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
+  </div>
+
+  <div  class="center">
+    <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 5 char.)</h5> </div>
+  </div>
+    
+  <div  class="center">
+    <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating"fill="outline" [(ngModel)]="Vcorreo" maxlength="70"></ion-input>
+  </div>
+
+  <div  class="center">
+    <div #error2 class="error-form"><h5 class="error-text"> Correo inválido </h5> </div>
+  </div>
+    
+    <div  class="center">
+      <ion-button (click)="Actualiza()"> ACTUALIZAR DATOS </ion-button>
+    </div>
+    
+    <div  class="center">
+      <ion-input class="inputsummon  blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass" maxlength="20" ></ion-input>
+    </div>
+
+    <div  class="error-div center">
+      <div #error3 class="error-form"><h5 class="error-text"> Contraseña inválida <br> (Formato con 7 digitos, 1 Máyus y 1 Signo.) </h5> </div>
+    </div>
+
+    <div  class="center">
+      <ion-input class="inputsummon  blanco" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"fill="outline" [(ngModel)]="Vpass2" maxlength="20"></ion-input>    
+    </div>
+  
+    <div  class="center">
+      <div #error4 class="error-form"><h5 class="error-text"> Claves no coinciden </h5> </div>
+    </div>
+    
+    <div  class="center">
+      <ion-button (click)="CambiarPass()"> CAMBIAR CONTRASEÑA  </ion-button>
+    </div>
+
   </div>
 </ion-content>

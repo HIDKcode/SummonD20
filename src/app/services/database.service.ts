@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, firstValueFrom, Observable } from 'rxjs';
 import { User } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -54,17 +55,23 @@ export class DatabaseService {
       private sqlite: SQLite, 
       private platform: Platform,
       private alerta: AlertService, 
-      private nativeStorage: NativeStorage) {
-    this.crearDB();
+      private nativeStorage: NativeStorage,
+      private http: HttpClient)
+       {
+
+      //verificar la plataforma
+      this.platform.ready().then(()=>{
+        this.crearDB();
+      })
    }
   
-   dbState(){
+  dbState(){
     return this.isDBReady.asObservable();
   }
 
    crearDB(){
     //verificar la plataforma
-    this.platform.ready().then(()=>{
+
       //procedemos a crear la Base de Datos
       this.sqlite.create({
         name: 'summon.db',
@@ -79,22 +86,11 @@ export class DatabaseService {
       }).catch(e=>{
         this.alerta.presentAlert("Creación de BD", "Error creando la BD: " + JSON.stringify(e));
       })
-    })
+    
    }
 
 
-   async crearTablas() {
-    try {
-        console.log('Paso1');
-        await this.database.executeSql(this.t_USER, []);
-        console.log("Tabla t_USER Valid");
-        // ... (rest of the table creation calls)
-    } catch (e) {
-        this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
-        console.error('Tabla creacion error:', e);
-    }
-}
-   /*async crearTablas(){
+async crearTablas(){
     try{
       //mandar a ejecutar las tablas en el orden especifico
       await this.database.executeSql(this.t_USER,[]);
@@ -118,12 +114,74 @@ export class DatabaseService {
       this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
     }
   }
-  */
+
+  //ListarUser
 
   
+  ListaUser(){
+    return this.database.executeSql('SELECT * from USER',[]).then(res=>{
+      //variable para almacenar el resultado de la consulta
+      let usuarios: User[] = [];
+      //verificar si tenemos registros en la consulta
+      if(res.rows.length > 0){
+        //recorro el resultado
+        for(var i = 0; i < res.rows.length; i++){
+          //agregar el registro a mi variable
+          usuarios.push({
+          userID: res.rows.item(i).userID,
+          nick: res.rows.item(i).nick,
+          clave: "PRIVADO",
+          correo: res.rows.item(i).email,
+          perfil_media: res.rows.item(i).perfil_media,
+        });
+        }
+      }
+      this.lUser.next(usuarios as any);
+    })
+  }
+
+  fetchUser(x: any){
+    
+    return this.database.executeSql('SELECT userID, nick, email, perfil_media FROM USER WHERE nick = ?',[x]).then(res=>{
+      let fetchedUser: User[] = [];
+
+      if (res.rows.length > 0) {
+        fetchedUser.push({
+          userID: res.rows.item(0).userID,
+          nick: res.rows.item(0).nick,
+          clave: "PRIVADO",
+          correo: res.rows.item(0).email,
+          perfil_media: res.rows.item(0).perfil_media,
+        });
+      }
+      this.nativeStorage.setItem("NowUser",fetchedUser)
+    })
+  }
+
 
   // inserts
+  async registraruser(rnick: string, rcorreo: string, rclave: string): Promise<boolean> {
+    const gprofile = this.blobimg();
 
+    try{
+    this.database.executeSql('INSERT INTO USER(nick, clave, correo, perfil_media) VALUES (?,?,?,?)',[rnick, rcorreo, rclave, gprofile])
+    this.alerta.presentAlert("Registro de user", "Proceso exitoso");
+    return true;
+    } catch(e) {
+      this.alerta.presentAlert("Registro de user", "Error: " + JSON.stringify(e));
+      return false;
+    }
+  }
+
+  // Genero con http de la imagen para convertirlo en Uint8array (comaptible de blob sqlite)
+  async blobimg(): Promise<Uint8Array> {
+    const response = await firstValueFrom(this.http.get('assets/images/def_profile.png', { responseType: 'blob' }));
+    const arrayBuffer = await response.arrayBuffer();
+    return new Uint8Array(arrayBuffer);  
+  }
+
+
+  // Verificar inserts
     insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
       
       return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{
@@ -132,8 +190,6 @@ export class DatabaseService {
         this.alerta.presentAlert("Creación de sala", "Error: " + JSON.stringify(e));
       })
     }
-
-
 
   getuserID(Vnick: string) {
     return from(this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [Vnick]));
@@ -173,21 +229,5 @@ export class DatabaseService {
     }
   }
   
-  fetchUser(x: any){
-      return this.database.executeSql('SELECT userID, nick, email, perfil_media FROM USER WHERE nick = ?',[x]).then(res=>{
-        let fetchedUser: any[] = [];
-
-        if (res.rows.length > 0) {
-          fetchedUser.push({
-            userID: res.rows.item(0).userID,
-            nick: res.rows.item(0).nick,
-            correo: res.rows.item(0).email,
-            perfil_media: res.rows.item(0).perfil_media,
-          });
-        }
-        this.lUser.next(fetchedUser as any);
-      })
-  }
-
 
 }

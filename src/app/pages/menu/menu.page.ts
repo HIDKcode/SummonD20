@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-menu',
@@ -10,8 +11,8 @@ export class MenuPage implements OnInit {
   
   Vnick: string = "Nick";
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute) {
-    
+  constructor(private router: Router, private activatedroute: ActivatedRoute,private menuCtrl: MenuController) {
+    this.menuCtrl.enable(true);
   }
 
   ngOnInit() {

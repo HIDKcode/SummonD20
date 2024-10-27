@@ -8,7 +8,7 @@
 
 <div id="container" class="divfondo1 body">
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-card class="center">
       <ion-card-header>
        <ion-img src="assets/images/logo.png"> </ion-img>
@@ -18,30 +18,30 @@
 
   <h1 class="center blanco sombraV"> Invocando a ... </h1>
   
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick">
     </ion-input>
   </div>
-  <div id="container" class="center">
+  <div  class="center">
     <div #error1 class="error-form"><h5 class="error-text"> Ingrese usuario </h5> </div>
   </div>
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-input  class="inputsummon blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpassword">
     </ion-input>
   </div>
-  <div id="container" class="center">
+  <div  class="center">
     <div #error2 class="error-form"><h5 class="error-text"> Ingrese contraseña </h5> </div>
   </div>
 
   <a href="#" class="verdeC center">He olvidado mi contraseña </a>
   <br>
-  <div id="container" class="center">
+  <div  class="center">
     <ion-button (click)="Ingreso()"> INGRESO </ion-button>
   </div>
   <br>
 
-  <div id="container" class="center">
+  <div  class="center">
     <ion-button [routerDirection]="'root'" [routerLink]="'/registro'"> REGISTRO</ion-button>
   </div>
 </div>
