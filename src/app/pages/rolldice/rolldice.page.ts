@@ -13,7 +13,7 @@ export class RolldicePage implements OnInit {
 
   rolls: number[] = [];
   Vstring: string = "";
-  Vresultado!: number;
+  Vresultado!: any;
 
   constructor(private menuCtrl: MenuController, private dice: dicepiService, private alerta: AlertService, private nativestorage: NativeStorage) {
     this.menuCtrl.enable(true); }
@@ -58,7 +58,7 @@ export class RolldicePage implements OnInit {
     
     this.dice.rollMultipleDice(a, b).subscribe({
       next: (result: any) => {
-        this.nativestorage.setItem('lastRoll',result);// Process the result
+        this.nativestorage.setItem('lastRoll', JSON.stringify(result));// Process the result
       },
       error: (error: any) => {
         console.error('Error occurred:', error); // Handle errors
@@ -88,7 +88,7 @@ export class RolldicePage implements OnInit {
   getResultado() {
     this.nativestorage.getItem('lastRoll').then(data => {
         this.Vresultado = data.result;
-        console.log('Last roll retrieved:', this.Vresultado);
+        this.alerta.presentAlert('Last roll:', this.Vresultado);
       })
       .catch(error => console.error('Error retrieving last roll:', error));
   }

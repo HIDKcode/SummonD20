@@ -6,11 +6,13 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-    <h3 class="center"> NickUser # userID </h3>
+    <h3 class="center"> NickUser # {{VuserID}} </h3>
 
 
     <div  class="center">
-      <div  class="center summon-foto1x1"></div> 
+      <div  class="center summon-foto1x1">
+        <img [src]="userProfileImage" alt="User Profile"/>
+      </div> 
       <ion-button> CAMBIAR IMAGEN </ion-button>
     </div>
     
@@ -20,7 +22,7 @@
   </div>
 
   <div  class="center">
-    <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 5 char.)</h5> </div>
+    <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 6 char.)</h5> </div>
   </div>
     
   <div  class="center">

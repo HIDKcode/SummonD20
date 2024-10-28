@@ -4,6 +4,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
+import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-configuracion',
@@ -30,6 +31,8 @@ export class ConfiguracionPage implements OnInit {
   Vpass2: string = "";
   Vprofile!: Blob;
   variable: boolean = false;
+  Vprivado: string = "";
+  userProfileImage: SafeUrl | string = '';
 
   arregloUser: any = [{
     userID: '', 
@@ -44,14 +47,10 @@ export class ConfiguracionPage implements OnInit {
     private datab: DatabaseService, private nativeStorage: NativeStorage,
     private menuCtrl: MenuController) {
       this.menuCtrl.enable(true);
-      this.getUserData()
+      this.getUserData();
   }
 
-  ngOnInit() {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras.state) {
-      this.Vnick = navigation.extras.state['Vnick'];
-   }
+  ngOnInit(){
   }
 
   Actualiza(){
@@ -100,7 +99,6 @@ export class ConfiguracionPage implements OnInit {
     } else {
       this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
     }
-
     // Revisa si Pass1 = Pass2
     if (this.Vpass != this.Vpass2) {
       this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
@@ -108,7 +106,6 @@ export class ConfiguracionPage implements OnInit {
     } else {
       this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
     }
-
     // Si hay algún error, parará aquí.
     if (hasE) {
       return false;
@@ -123,18 +120,8 @@ export class ConfiguracionPage implements OnInit {
 
   }
 
-  async getUserData() {
-    try {
-      const user = await this.nativeStorage.getItem("NowUser");
-      this.VuserID = user[0].userID;
-      this.Vnick = user[0].nick;
-      this.Vcorreo = user[0].correo
-      this.Vprofile = user[0].perfil_media;
-    } catch (error) {
-      const titulo = "GetUserData";
-      const mensaje = "Error al obtener data de usuario";
-      this.alerta.presentAlert(titulo, mensaje);
-    }
+  getUserData() {
+    // Funcion con data base aquí 
   }
 
 }

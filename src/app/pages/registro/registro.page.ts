@@ -29,7 +29,6 @@ export class RegistroPage implements OnInit {
   ACCESSuser: number = 1;
 
   constructor(private router: Router,
-    private activatedroute: ActivatedRoute,
     private alerta: AlertService,
     private renderer2: Renderer2,
     private menuCtrl: MenuController,
@@ -37,16 +36,6 @@ export class RegistroPage implements OnInit {
 
       this.menuCtrl.enable(false);
       
-      this.activatedroute.queryParams.subscribe(params => {
-        //Validamos si viene o no información desde la pagina
-        if(this.router.getCurrentNavigation()?.extras.state){
-          //Capturamos la información
-          this.Vnick= this.router.getCurrentNavigation()?.extras?.state?.['Snick']
-          this.Vcorreo = this.router.getCurrentNavigation()?.extras?.state?.['Scorreo']
-          this.Vpass = this.router.getCurrentNavigation()?.extras?.state?.['Spass']
-          this.Vpass2 = this.router.getCurrentNavigation()?.extras?.state?.['Spass2']
-        }
-      });
       }
       
   ngOnInit() {
@@ -54,57 +43,48 @@ export class RegistroPage implements OnInit {
 
  
   async Registro(){
-    
-  // While loop con variable boolean
-  while(this.variable == false){
+     // While loop con variable boolean
+    while(this.variable == false){
     // inicia If para errores
     let hasE = false;
 
   // Valida usuario
-  if (this.Vnick == "" || this.Vnick.length <= 5) {
-    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
+  if (this.Vnick == "" || this.Vnick.length <= 5) {this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
     hasE = true;
-  } else {
-    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
+  } else {this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
   }
 
   // Valida email
-  if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
-    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+  if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
     hasE = true;
-  } else {
-    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+  } else {this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
   }
 
   // Valida pass 1
-  if (this.Vpass == "" || !this.exprPass.test(this.Vpass)) {
-    this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
+  if (this.Vpass == "" || !this.exprPass.test(this.Vpass)) {this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
     hasE = true;
-  } else {
-    this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
+  } else {this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
   }
 
   // Revisa si Pass1 = Pass2
-  if (this.Vpass != this.Vpass2) {
-    this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
+  if (this.Vpass != this.Vpass2) {this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
     hasE = true;
-  } else {
-    this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
+  } else {this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
   }
 
   // Si hay algún error, parará aquí.
-  if (hasE) {
-    return false;
-  }
-  
+  if (hasE) {return false;}
     this.variable = true;
   } 
-      const exito = await this.datab.registraruser(this.Vnick, this.Vpass, this.Vcorreo);
-      if (exito) {
-        this.alerta.presentAlert("Proceso de registro", "Exitoso");
-      } else {
+    const exito = await this.datab.Unico(this.Vnick, this.Vcorreo)
+      if (!exito){
         this.alerta.presentAlert("Proceso de registro", "Correo o Usuario ya existentes");
-      }
+        return false;
+      } 
+    const result = await this.datab.registerUser(this.Vnick, this.Vcorreo, this.Vpass);
+    if(result){
+      this.router.navigate(['/login'])
+    }
     return true;
   }
 

@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -24,7 +25,8 @@ export class LoginPage implements OnInit {
     private renderer2: Renderer2,
     private datab: DatabaseService,
     private router: Router,
-    private menuCtrl: MenuController
+    private menuCtrl: MenuController,
+    private nativestorage: NativeStorage
   ) {
     this.menuCtrl.enable(false);
   }
@@ -57,17 +59,15 @@ export class LoginPage implements OnInit {
     } 
     else{
       // Validador de Usuario
-      
       this.datab.validaClave(this.Vnick);
       const ClaveBD = await this.datab.getPass();
       if(ClaveBD == this.Vpassword){       
-
+        this.datab.fetchUser(this.Vnick)
         let navigationExtras: NavigationExtras = {
           state: {
             Vnick: this.Vnick
           }
         }
-        this.datab.fetchUser(this.Vnick)
         this.router.navigate(['/menu'],navigationExtras)
       }
         else{
