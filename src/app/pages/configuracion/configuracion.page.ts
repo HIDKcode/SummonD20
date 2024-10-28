@@ -5,6 +5,8 @@ import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { User } from 'src/app/services/clasesdb';
+import { Camera, CameraResultType } from '@capacitor/camera';
+
 @Component({
   selector: 'app-configuracion',
   templateUrl: './configuracion.page.html',
@@ -23,12 +25,13 @@ export class ConfiguracionPage implements OnInit {
   @ViewChild('error3', {static: true}) er3!: ElementRef
   @ViewChild('error4', {static: true}) er4!: ElementRef
   
+ 
   VuserID!: number;
   Vnick!: string;
   Vcorreo!: string;
   Vpass: string = "";
   Vpass2: string = "";
-  Vprofile!: Blob;
+  Vprofile!: any;
   variable: boolean = false;
   Vprivado: string = "";
 
@@ -43,6 +46,15 @@ export class ConfiguracionPage implements OnInit {
 
   ngOnInit(){
   }
+
+  takePicture = async () => {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: true,
+      resultType: CameraResultType.Uri
+    });
+    this.Vprofile = image.webPath;
+  };
 
   Actualiza(){
       
@@ -114,12 +126,21 @@ export class ConfiguracionPage implements OnInit {
   }
 
   getUserData(){ 
-
-
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
           if (userData.length > 0) {
-              console.log("User fetched:", userData[0]); // Access the first user object
+              console.log("User fetched:", userData[0]); 
+              try {
+                const user = this.nativeStorage.getItem("NowUser");
+                this.VuserID = userData[0].userID;
+                this.Vnick = userData[0].nick;
+                this.Vcorreo = userData[0].correo
+                this.Vprofile = userData[0].perfil_media;
+              } catch (error) {
+                const titulo = "GetUserData";
+                const mensaje = "Error al obtener data de usuario";
+                this.alerta.presentAlert(titulo, mensaje);
+              }
           } else {
               console.log("No user found.");
           }

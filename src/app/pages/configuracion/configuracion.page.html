@@ -13,10 +13,10 @@
       <div  class="center summon-foto1x1">
         <img [src]="Vprofile" alt="User Profile" />
             <ng-template #placeholder>
-                <img src="assets/img/default_profile.png" alt="Default Profile" />
+                <img src="assets/img/def_profile.png" alt="Default Profile" />
             </ng-template>  
       </div> 
-      <ion-button> CAMBIAR IMAGEN </ion-button>
+      <ion-button (click)="Vprofile"> CAMBIAR IMAGEN </ion-button>
     </div>
     
 
@@ -25,6 +25,7 @@
   </div>
 
   <div  class="center">
+
     <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 5 char.)</h5> </div>
   </div>
     

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ export class AppComponent {
   
   Vnick: string = "";
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute) {
+  constructor(private router: Router, private activatedroute: ActivatedRoute, private nativestorage: NativeStorage) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras.state) {
       this.Vnick = navigation.extras.state['Vnick'];
@@ -66,5 +67,12 @@ export class AppComponent {
     }
     this.router.navigate(['/configuracion'],navigationExtras)
   }
-
+  async Logout(){
+    try {
+      await this.nativestorage.remove('userData');
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
 }

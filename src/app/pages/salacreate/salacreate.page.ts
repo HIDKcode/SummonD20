@@ -19,11 +19,11 @@ export class SalacreatePage implements OnInit {
   }]
 
   grupos: any[] = []; 
-
+  pass!: number;
   VuserID!: number;
   Vnick!: string;
   Vcorreo!: string;
-  pass: string = "";
+  Vprofile!: Blob;
 
   Gnombre: string = "";
   Gdescr: string = "";
@@ -54,13 +54,19 @@ export class SalacreatePage implements OnInit {
 
   
   async participar(grupoID: number) {
-    try {
-      // Llama a la función del servicio para unirse al grupo
-      await this.datab.insertParticipante(this.VuserID, grupoID);
-      // Redirige al usuario a la sala
-      this.router.navigate(['/sala', grupoID]);
-    } catch (e) {
-      this.alerta.presentAlert("Error unirse a grupo:", "Error: "+JSON.stringify(e));
+    if (this.pass > 99999 ){
+      this.datab.validaGrupoPass(grupoID);
+      const ClaveBD = await this.datab.getPass();
+      if(Number(ClaveBD) == this.pass){
+      try {
+        // Llama a la función del servicio para unirse al grupo
+        await this.datab.insertParticipante(this.VuserID, grupoID);
+        // Redirige al usuario a la sala
+        this.router.navigate(['/sala', grupoID]);
+      } catch (e) {
+        this.alerta.presentAlert("Error unirse a grupo:", "Error: "+JSON.stringify(e));
+      }
+      }
     }
   }
 
@@ -117,7 +123,18 @@ export class SalacreatePage implements OnInit {
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
           if (userData.length > 0) {
-              console.log("User fetched:", userData[0]); // Access the first user object
+              console.log("User fetched:", userData[0]);
+              try {
+                const user = this.nativestorage.getItem("NowUser");
+                this.VuserID = userData[0].userID;
+                this.Vnick = userData[0].nick;
+                this.Vcorreo = userData[0].correo
+                this.Vprofile = userData[0].perfil_media;
+              } catch (error) {
+                const titulo = "GetUserData";
+                const mensaje = "Error al obtener data de usuario";
+                this.alerta.presentAlert(titulo, mensaje);
+              }
           } else {
               console.log("No user found.");
           }

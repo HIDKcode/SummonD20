@@ -293,7 +293,7 @@ async crearTablas(){
   
   async  insertParticipante(userID: number, grupoID: number){
     try {
-      await this.database.executeSql('INSERT INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]
+      await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]
       );
       this.alerta.presentAlert("Ingreso a sala ID#" + grupoID, "Con exito");
     } catch (e) {
@@ -304,7 +304,7 @@ async crearTablas(){
 
   async insertGrupo(nombre: string, descr: string, clave: number, userID: number){
   try {
-  const result = await this.database.executeSql('INSERT INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner_id) VALUES (?, ?, ?,date(now), ?)',[nombre, clave, descr, userID]
+  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner_id) VALUES (?, ?, ?,date(now), ?)',[nombre, clave, descr, userID]
   );
   this.router.navigate(['/sala', result.insertId]);
     } catch (e) {
@@ -314,10 +314,15 @@ async crearTablas(){
   }
 
   //getters
-  getPassGrupo(id: number){
-    return this.database.executeSql('SELECT clave FROM GRUPO WHERE grupoID= ?',[id]).then(res=>{
-    }).catch(e=>{
-      this.alerta.presentAlert("Valida Get Clave", "Error: " + JSON.stringify(e));
-    })
+  async validaGrupoPass(id: number): Promise<string | null>{
+    const result = await this.database.executeSql('SELECT clave FROM GRUPO WHERE grupoID= ?;',[id]);
+    if (result.rows.length > 0) {
+      const password = result.rows.item(0).clave;
+      await this.savePass(password);
+      return password;
+    } else {
+      return null;
+    }
   }
+
 }
