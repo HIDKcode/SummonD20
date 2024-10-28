@@ -52,6 +52,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/rolldice/rolldice.module').then( m => m.RolldicePageModule)
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./pages/admin/admin.module').then( m => m.AdminPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/notfound/notfound.module').then( m => m.NotfoundPageModule)
   },

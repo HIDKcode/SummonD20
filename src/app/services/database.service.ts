@@ -68,7 +68,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summondb3',
+        name: 'summondb4',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -164,21 +164,16 @@ async crearTablas(){
     await this.nativeStorage.setItem('userData', { nick });
   }
 
-  async getNick(): Promise<string | null> {
-    try {
-        const userData = await this.nativeStorage.getItem('userData');
-        return userData?.nick || null;
-    } catch (error) {
-        console.error("Error retrieving nickname from Native Storage:", error);
-        return null;
-    }
-  }
+
 
   fetchUser(nick: string): Observable<User[]> {
     this.setNick(nick);
+    const CONSULTA = `SELECT U.userID, U.nick, U.clave, U.correo, U.perfil_media, E.activo 
+        FROM USER U
+        JOIN ESTADO E ON U.userID = E.USER_userID 
+        WHERE U.nick = ?`
     return new Observable(observer => {
-      this.database.executeSql('SELECT userID, nick, clave, correo, perfil_media FROM USER WHERE nick = ?', [nick])
-        .then(res => {
+      this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
           
           if (res.rows.length > 0) {
@@ -188,17 +183,19 @@ async crearTablas(){
               clave: res.rows.item(0).clave,
               correo: res.rows.item(0).correo,
               perfil_media: res.rows.item(0).perfil_media,
-              
+              activo: res.rows.item(0).activo
             });
-          }
+          } else { this.alerta.presentAlert("Usuario no encontrado", "Fallo");}
           observer.next(fetchedUser);
           observer.complete();
         })
         .catch(e => {
+          const em = e.message
+          this.alerta.presentAlert("Fallo en proceso fetch", "E: "+em);
           observer.error(e);
         });
     });
-  }
+}
 
 
   // FUNLOGIN

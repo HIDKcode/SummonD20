@@ -24,6 +24,7 @@ export class SalacreatePage implements OnInit {
   Vnick!: string;
   Vcorreo!: string;
   Vprofile!: Blob;
+  activo: any;
 
   Gnombre: string = "";
   Gdescr: string = "";
@@ -66,7 +67,7 @@ export class SalacreatePage implements OnInit {
       } catch (e) {
         this.alerta.presentAlert("Error unirse a grupo:", "Error: "+JSON.stringify(e));
       }
-      }
+      }else{this.alerta.presentAlert("Clave erronea" ,"Contacte a dueño de sala")}
     }
   }
 
@@ -125,11 +126,12 @@ export class SalacreatePage implements OnInit {
           if (userData.length > 0) {
               console.log("User fetched:", userData[0]);
               try {
-                const user = this.nativestorage.getItem("NowUser");
+                const user = this.nativestorage.getItem("userData");
                 this.VuserID = userData[0].userID;
                 this.Vnick = userData[0].nick;
-                this.Vcorreo = userData[0].correo
+                this.Vcorreo = userData[0].correo;
                 this.Vprofile = userData[0].perfil_media;
+                this.activo = userData[0].activo;
               } catch (error) {
                 const titulo = "GetUserData";
                 const mensaje = "Error al obtener data de usuario";
@@ -145,12 +147,14 @@ export class SalacreatePage implements OnInit {
     });
   }
   
-  async cargaNick() {
-    const exito = await this.datab.getNick();
-    if (exito) {
-        console.log(" ", exito);
-    } else {
-        console.log("NULL");
+  async cargaNick(){
+    try {
+        const userData = await this.nativestorage.getItem('userData');
+        this.Vnick = userData.nick;
+        return true;
+    } catch (error) {
+        console.error("Error retrieving nickname from Native Storage:", error);
+        return null;
     }
   }
 

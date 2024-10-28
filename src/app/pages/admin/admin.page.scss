@@ -1,0 +1,34 @@
+ion-grid{
+    margin: 5px;
+    background-color: #135d54;
+    border: solid 5px #d3ae4e;
+    color: #fffdee;
+    text-align: center;
+
+  }
+
+ion-col{
+    margin: 5px;
+    background-color: #0d271e;
+    color: #fffdee;
+    text-align: center;
+  }
+
+.image-container{
+    background-size: cover;
+    min-height: 200px;
+}
+
+ion-segment-button{
+  background-color: #0d271e;
+  border-radius: 5px;
+  border: 3px solid #d3ae4e;
+}
+
+.segment-button-checked.md::part(native) {
+  color: #d3ae4e;
+}
+
+ion-segment-button::part(indicator-background) {
+  background: #1fea00;
+}

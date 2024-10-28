@@ -3,7 +3,8 @@ export class User {
     nick!: string;               
     clave!: string;              
     correo!: string;            
-    perfil_media!: Blob;       
+    perfil_media!: Blob;  
+    activo?: number;     
 }
 
 export class ULT_CONEX {

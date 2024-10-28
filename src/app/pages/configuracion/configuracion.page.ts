@@ -32,6 +32,9 @@ export class ConfiguracionPage implements OnInit {
   Vpass: string = "";
   Vpass2: string = "";
   Vprofile!: any;
+  activo: any;
+  Vclave: any;
+
   variable: boolean = false;
   Vprivado: string = "";
 
@@ -125,38 +128,39 @@ export class ConfiguracionPage implements OnInit {
 
   }
 
-  getUserData(){ 
+  getUserData() { 
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
           if (userData.length > 0) {
-              console.log("User fetched:", userData[0]); 
-              try {
-                const user = this.nativeStorage.getItem("NowUser");
-                this.VuserID = userData[0].userID;
-                this.Vnick = userData[0].nick;
-                this.Vcorreo = userData[0].correo
-                this.Vprofile = userData[0].perfil_media;
-              } catch (error) {
-                const titulo = "GetUserData";
-                const mensaje = "Error al obtener data de usuario";
-                this.alerta.presentAlert(titulo, mensaje);
-              }
+              console.log("User fetched:", userData[0]);
+
+              // Popular
+              this.VuserID = userData[0].userID;
+              this.Vnick = userData[0].nick;
+              this.Vclave = userData[0].clave,
+              this.Vcorreo = userData[0].correo;
+              this.Vprofile = userData[0].perfil_media;
+              this.activo = userData[0].activo;
+
           } else {
-              console.log("No user found.");
+            this.alerta.presentAlert("Usuario no encontrado","-");
           }
       },
-      error: (error) => {
-          console.error("Error fetching user:", error);
+      error: (e) => {
+          const em = e.message
+          this.alerta.presentAlert("Fallo en carga de datos","Error: "+em);
       }
     });
-  }
+}
   
-  async cargaNick() {
-    const exito = await this.datab.getNick();
-    if (exito) {
-        console.log(" ", exito);
-    } else {
-        console.log("NULL");
+  async cargaNick(){
+    try {
+        const userData = await this.nativeStorage.getItem('userData');
+        this.Vnick = userData.nick;
+        return true;
+    } catch (error) {
+        console.error("Error retrieving nickname from Native Storage:", error);
+        return null;
     }
   }
   
