@@ -160,7 +160,22 @@ async crearTablas(){
     });
   }
 
+  async setNick(nick: string){
+    await this.nativeStorage.setItem('userData', { nick });
+  }
+
+  async getNick(): Promise<string | null> {
+    try {
+        const userData = await this.nativeStorage.getItem('userData');
+        return userData?.nick || null;
+    } catch (error) {
+        console.error("Error retrieving nickname from Native Storage:", error);
+        return null;
+    }
+  }
+
   fetchUser(nick: string): Observable<User[]> {
+    this.setNick(nick);
     return new Observable(observer => {
       this.database.executeSql('SELECT userID, nick, clave, correo, perfil_media FROM USER WHERE nick = ?', [nick])
         .then(res => {
@@ -176,7 +191,6 @@ async crearTablas(){
               
             });
           }
-          this.nativeStorage.setItem('userData', { fetchedUser });
           observer.next(fetchedUser);
           observer.complete();
         })

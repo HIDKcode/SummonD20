@@ -4,8 +4,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
-import { SafeUrl } from '@angular/platform-browser';
-
+import { User } from 'src/app/services/clasesdb';
 @Component({
   selector: 'app-configuracion',
   templateUrl: './configuracion.page.html',
@@ -32,22 +31,14 @@ export class ConfiguracionPage implements OnInit {
   Vprofile!: Blob;
   variable: boolean = false;
   Vprivado: string = "";
-  userProfileImage: SafeUrl | string = '';
-
-  arregloUser: any = [{
-    userID: '', 
-    nick: '',                    
-    correo: '',         
-    perfil_media: '', 
-    }
-  ]
 
   constructor(private router: Router, private activatedroute: ActivatedRoute, 
     private alerta: AlertService ,private renderer2: Renderer2, 
     private datab: DatabaseService, private nativeStorage: NativeStorage,
     private menuCtrl: MenuController) {
       this.menuCtrl.enable(true);
-      this.getUserData();
+      this.cargaNick();
+      this.getUserData()
   }
 
   ngOnInit(){
@@ -99,6 +90,7 @@ export class ConfiguracionPage implements OnInit {
     } else {
       this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
     }
+
     // Revisa si Pass1 = Pass2
     if (this.Vpass != this.Vpass2) {
       this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
@@ -106,6 +98,7 @@ export class ConfiguracionPage implements OnInit {
     } else {
       this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
     }
+
     // Si hay algún error, parará aquí.
     if (hasE) {
       return false;
@@ -120,8 +113,30 @@ export class ConfiguracionPage implements OnInit {
 
   }
 
-  getUserData() {
-    // Funcion con data base aquí 
-  }
+  getUserData(){ 
 
+
+    this.datab.fetchUser(this.Vnick).subscribe({
+      next: (userData: User[]) => {
+          if (userData.length > 0) {
+              console.log("User fetched:", userData[0]); // Access the first user object
+          } else {
+              console.log("No user found.");
+          }
+      },
+      error: (error) => {
+          console.error("Error fetching user:", error);
+      }
+    });
+  }
+  
+  async cargaNick() {
+    const exito = await this.datab.getNick();
+    if (exito) {
+        console.log(" ", exito);
+    } else {
+        console.log("NULL");
+    }
+  }
+  
 }
