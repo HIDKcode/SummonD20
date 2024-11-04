@@ -18,19 +18,17 @@ export class ConfiguracionPage implements OnInit {
   exprMail = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
   exprPass = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{7,}$/;
   //errores
-  errores = '@ViewChild';
-
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
   @ViewChild('error3', {static: true}) er3!: ElementRef
   @ViewChild('error4', {static: true}) er4!: ElementRef
   
- 
-  VuserID!: number;
-  Vnick!: string;
-  Vcorreo!: string;
-  Vpass: string = "";
-  Vpass2: string = "";
+
+  VuserID: any;
+  Vnick: any;
+  Vcorreo: any;
+  Vpass: any;
+  Vpass2: any;
   Vprofile!: any;
   activo: any;
   Vclave: any;
@@ -43,8 +41,9 @@ export class ConfiguracionPage implements OnInit {
     private datab: DatabaseService, private nativeStorage: NativeStorage,
     private menuCtrl: MenuController) {
       this.menuCtrl.enable(true);
-      this.cargaNick();
-      this.getUserData()
+      this.cargaNick().then(() => {
+        this.getUserData();
+      });
   }
 
   ngOnInit(){
@@ -127,31 +126,27 @@ export class ConfiguracionPage implements OnInit {
     
 
   }
-
-  getUserData() { 
+  getUserData() {
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
-          if (userData.length > 0) {
-              console.log("User fetched:", userData[0]);
-
-              // Popular
-              this.VuserID = userData[0].userID;
-              this.Vnick = userData[0].nick;
-              this.Vclave = userData[0].clave,
-              this.Vcorreo = userData[0].correo;
-              this.Vprofile = userData[0].perfil_media;
-              this.activo = userData[0].activo;
-
-          } else {
-            this.alerta.presentAlert("Usuario no encontrado","-");
-          }
+        if (userData.length > 0) {
+          // Procesar datos del usuario
+          this.VuserID = userData[0].userID;
+          this.Vnick = userData[0].nick;
+          this.Vclave = userData[0].clave;
+          this.Vcorreo = userData[0].correo;
+          this.Vprofile = userData[0].perfil_media;
+          this.activo = userData[0].activo;
+        } else {
+          this.alerta.presentAlert("Usuario no encontrado", "");
+        }
       },
       error: (e) => {
-          const em = e.message
-          this.alerta.presentAlert("Fallo en carga de datos","Error: "+em);
+        const em = e.message;
+        this.alerta.presentAlert("Fallo en carga de datos", "Error: " + em);
       }
     });
-}
+  }
   
   async cargaNick(){
     try {

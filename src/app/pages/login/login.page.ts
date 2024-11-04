@@ -16,7 +16,6 @@ export class LoginPage implements OnInit {
   VuserID!: number;
   Vpassword: string = "";
   Vnick: string = "";
-  errores = '@ViewChild';
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
 
@@ -59,7 +58,7 @@ export class LoginPage implements OnInit {
     } 
     else{
       // Validador de Usuario
-      this.datab.validaClave(this.Vnick);
+      await this.datab.validaClave(this.Vnick);
       const ClaveBD = await this.datab.getPass();
       if(ClaveBD == this.Vpassword){       
         this.datab.fetchUser(this.Vnick)

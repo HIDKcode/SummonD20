@@ -240,19 +240,19 @@ async crearTablas(){
       // Paso 2: Iniciar transacción para inserciones
       await this.database.transaction(async (reg) => {
         // Insertar el usuario
-        const result = await reg.executeSql('INSERT INTO USER(nick, clave, correo) VALUES (?, ?, ?);', [nick, Vpassword, Vcorreo]);
-        const userid = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+        await reg.executeSql('INSERT INTO USER(nick, clave, correo) VALUES (?, ?, ?);', [nick, Vpassword, Vcorreo]);
+        // Obtener el ID del usuario insertado
+        const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+        const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
         // Insertar en BIBLIOTECA
         await reg.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?);', [userid]);
         // Insertar la carpeta por defecto "summon_nube"
         await reg.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
         // Insertar estado (activo = 1)
         await reg.executeSql('INSERT INTO ESTADO(activo, USER_userID) VALUES (?, ?)', [1, userid]);
-  
-        
       });
-      this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
-      return true; // Registro exitoso
+        this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
+        return true; // Registro exitoso
     } catch (e: any) {
       // Manejar errores y registrar en la tabla ERRORES
       const eMessage = e.message || "Error desconocido durante el registro.";
@@ -266,7 +266,7 @@ async crearTablas(){
 
   // Registrar Errores
   logError(x: any, z: any){
-    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?),;', [x, z])
+    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?);', [x, z])
   }
 
   // INSERTS
