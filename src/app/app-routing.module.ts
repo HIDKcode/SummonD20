@@ -56,6 +56,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/admin/admin.module').then( m => m.AdminPageModule)
   },
   {
+    path: 'configclave',
+    loadChildren: () => import('./pages/configclave/configclave.module').then( m => m.ConfigclavePageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/notfound/notfound.module').then( m => m.NotfoundPageModule)
   },

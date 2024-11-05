@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
@@ -16,7 +16,6 @@ export class ConfiguracionPage implements OnInit {
   
   //variables
   exprMail = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
-  exprPass = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{7,}$/;
   //errores
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
@@ -49,14 +48,20 @@ export class ConfiguracionPage implements OnInit {
   ngOnInit(){
   }
 
-  takePicture = async () => {
-    const image = await Camera.getPhoto({
-      quality: 100,
-      allowEditing: true,
-      resultType: CameraResultType.Uri
-    });
-    this.Vprofile = image.webPath;
-  };
+  async takePicture() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 100,
+        allowEditing: true,
+        resultType: CameraResultType.Uri
+      });
+      if (image && image.webPath) {
+        this.Vprofile = image.webPath;
+      }
+    } catch (error) {
+      this.alerta.presentAlert("Error", "No se pudo capturar la imagen," + error);
+    }
+  }
 
   Actualiza(){
       
@@ -91,41 +96,8 @@ export class ConfiguracionPage implements OnInit {
         return true;
     }
 
-  CambiarPass(){
-    // While loop con variable boolean
-    while(this.variable == false){
-      // inicia If para errores
-      let hasE = false;
+  
 
-    // Valida pass 1
-    if (this.Vpass == "" || !this.exprPass.test(this.Vpass)) {
-      this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
-      hasE = true;
-    } else {
-      this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
-    }
-
-    // Revisa si Pass1 = Pass2
-    if (this.Vpass != this.Vpass2) {
-      this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
-      hasE = true;
-    } else {
-      this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
-    }
-
-    // Si hay algún error, parará aquí.
-    if (hasE) {
-      return false;
-    }
-      this.variable = true;
-    }
-
-    // Funcion con data base aquí 
-
-      return true;
-    
-
-  }
   getUserData() {
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
@@ -154,7 +126,7 @@ export class ConfiguracionPage implements OnInit {
         this.Vnick = userData.nick;
         return true;
     } catch (error) {
-        console.error("Error retrieving nickname from Native Storage:", error);
+        console.error("Error Native Storage:", error);
         return null;
     }
   }

@@ -1,64 +1,47 @@
 <ion-header [translucent]="true">
-  <ion-toolbar >
-   <img class="center-img" src="assets/images/lettering.png" width="110px"  alt="logo"> 
+  <ion-toolbar>
+    <img class="center-img" src="assets/images/lettering.png" width="110px" alt="logo">
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-
+    
     <h3 class="center"> {{Vnick}}#{{VuserID}} </h3>
 
-
-    <div  class="center">
-      <div  class="center summon-foto1x1">
+    <div class="center">
+      <div class="center summon-foto1x1">
         <img [src]="Vprofile" alt="User Profile" />
-            <ng-template #placeholder>
-                <img src="assets/img/def_profile.png" alt="Default Profile" />
-            </ng-template>  
-      </div> 
-      <ion-button (click)="takePicture()"> CAMBIAR IMAGEN </ion-button>
-    </div>
-    
-
-  <div  class="center">
-    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
-  </div>
-
-  <div  class="center">
-
-    <div #error1 class="error-form"><h5 class="error-text"> Usuario inválido (Min 5 char.)</h5> </div>
-  </div>
-    
-  <div  class="center">
-    <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating"fill="outline" [(ngModel)]="Vcorreo" maxlength="70"></ion-input>
-  </div>
-
-  <div  class="center">
-    <div #error2 class="error-form"><h5 class="error-text"> Correo inválido </h5> </div>
-  </div>
-    
-    <div  class="center">
-      <ion-button (click)="Actualiza()"> ACTUALIZAR DATOS </ion-button>
-    </div>
-    
-    <div  class="center">
-      <ion-input class="inputsummon  blanco" label="Contraseña" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass" maxlength="20" ></ion-input>
+        <ng-template #placeholder>
+          <img src="assets/img/def_profile.png" alt="Default Profile" />
+        </ng-template>
+      </div>
+      <ion-button (click)="takePicture()">CAMBIAR IMAGEN</ion-button>
     </div>
 
-    <div  class="error-div center">
-      <div #error3 class="error-form"><h5 class="error-text"> Contraseña inválida <br> (Formato con 7 digitos, 1 Máyus y 1 Signo.) </h5> </div>
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
     </div>
 
-    <div  class="center">
-      <ion-input class="inputsummon  blanco" label="Repetir contraseña" placeholder="******" type="password" label-placement="floating"fill="outline" [(ngModel)]="Vpass2" maxlength="20"></ion-input>    
+    <div class="center">
+      <div #error1 class="error-form"><h5 class="error-text">Usuario inválido (Min 5 char.)</h5></div>
     </div>
-  
-    <div  class="center">
-      <div #error4 class="error-form"><h5 class="error-text"> Claves no coinciden </h5> </div>
+
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating" fill="outline" [(ngModel)]="Vcorreo" maxlength="70"></ion-input>
     </div>
-    
-    <div  class="center">
-      <ion-button (click)="CambiarPass()"> CAMBIAR CONTRASEÑA  </ion-button>
+
+    <div class="center">
+      <div #error2 class="error-form"><h5 class="error-text">Correo inválido</h5></div>
+    </div>
+
+    <div class="center">
+      <ion-button (click)="Actualiza()">ACTUALIZAR DATOS</ion-button>
+    </div>
+
+    <!-- Redirige a la página de cambio de contraseña -->
+    <div class="center">
+      <ion-button routerLink="/configclave">CAMBIAR CONTRASEÑA</ion-button>
     </div>
 
   </div>

@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Cambiar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="container" class="divfondo1 body">
+    <h3 class="center">Cambiar Contraseña</h3>
+
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass" maxlength="20"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error3 class="error-form"><h5 class="error-text">Contraseña inválida <br> (Formato: 7 dígitos, 1 Mayúscula, 1 Signo)</h5></div>
+    </div>
+
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Repetir Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass2" maxlength="20"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error4 class="error-form"><h5 class="error-text">Las contraseñas no coinciden</h5></div>
+    </div>
+
+    <div class="center">
+      <ion-button (click)="CambiarPass()">CONFIRMAR CAMBIO DE CONTRASEÑA</ion-button>
+    </div>
+  </div>
+</ion-content>
