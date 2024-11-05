@@ -68,7 +68,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summondb4',
+        name: 'summon2',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -237,20 +237,18 @@ async crearTablas(){
 
   async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
     try {
-      // Paso 2: Iniciar transacción para inserciones
-      await this.database.transaction(async (reg) => {
-        // Insertar el usuario
-        await reg.executeSql('INSERT INTO USER(nick, clave, correo) VALUES (?, ?, ?);', [nick, Vpassword, Vcorreo]);
-        // Obtener el ID del usuario insertado
+      // Las alertas funcionarán como console.log en android studio para testing
+        await this.database.executeSql('INSERT INTO USER(nick, clave, correo) VALUES (?, ?, ?);', [nick, Vpassword, Vcorreo]);
+        //this.alerta.presentAlert("1", "a");
         const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+        //this.alerta.presentAlert("1", "b");
         const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
-        // Insertar en BIBLIOTECA
-        await reg.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?);', [userid]);
-        // Insertar la carpeta por defecto "summon_nube"
-        await reg.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
-        // Insertar estado (activo = 1)
-        await reg.executeSql('INSERT INTO ESTADO(activo, USER_userID) VALUES (?, ?)', [1, userid]);
-      });
+        //this.alerta.presentAlert("1", "c");
+        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?);', [userid]);
+        //this.alerta.presentAlert("1", "d");
+        await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
+        //this.alerta.presentAlert("1", "f");
+        await this.database.executeSql('INSERT INTO ESTADO(activo, USER_userID) VALUES (?, ?)', [1, userid]);
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {

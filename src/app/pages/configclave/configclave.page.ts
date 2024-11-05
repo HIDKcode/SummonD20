@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import { MenuController, NavController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -10,7 +11,10 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ConfigclavePage implements OnInit {
 
   constructor(private alerta: AlertService ,private renderer2: Renderer2, 
-    private datab: DatabaseService) { }
+    private datab: DatabaseService, private menuCtrl: MenuController,
+    private navCtrl: NavController) {
+      this.menuCtrl.enable(false);
+     }
 
   ngOnInit() {
   }
@@ -57,6 +61,11 @@ export class ConfigclavePage implements OnInit {
 
       return true;
  
+  }
+
+  volver() {
+    this.navCtrl.back(); //página anterior del historial
+    
   }
 
 }
