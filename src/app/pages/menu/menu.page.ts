@@ -13,7 +13,7 @@ import { AlertService } from 'src/app/services/alert.service';
 export class MenuPage implements OnInit {
 
   Vnick: any;
-  estado: any;
+  estado: number = 0;
   Vid: any;
   any2: any;
   any3: any;
@@ -25,14 +25,12 @@ export class MenuPage implements OnInit {
     private datab: DatabaseService, private alerta: AlertService) {
     this.menuCtrl.enable(true);
     
-    this.cargaNick().then(() => {
-      this.getUserData2()
-    });
     
   }
 
-  ngOnInit() {
-   
+  async ngOnInit() {
+    await this.cargaNick();
+      await this.getUserData2();
   }
 
   async cargaNick(){
@@ -57,6 +55,8 @@ export class MenuPage implements OnInit {
           this.any2 = userData[0].correo;
           this.any3 = userData[0].perfil_media;
           this.estado = userData[0].estado;
+
+          this.authLogged();
         } else {
           this.alerta.presentAlert("Usuario no encontrado", "");
         }
@@ -69,11 +69,11 @@ export class MenuPage implements OnInit {
   }
 
   authLogged() {
-    if (this.estado === 5 || this.estado === 9) {
+    if (this.estado == 5 || this.estado == 9) {
       console.log("estado del usuario: " + this.estado)
     } else {
-      this.alerta.presentAlert("Re-enviado a login", "Su usuario es inexistente o se encuentra bloqueado, IDestado: " + this.estado);
-      /*this.router.navigate(['/login']);*/
+      this.alerta.presentAlert("Re-enviado a login", "Su usuario es inexistente o se encuentra bloqueado, IDestado: " + this.estado + "Contacte a soporte: Summonapp@soporte.cl");
+      this.router.navigate(['/login']);
     }
   }
 
