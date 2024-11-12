@@ -24,7 +24,7 @@ export class SalacreatePage implements OnInit {
   Vnick!: string;
   Vcorreo!: string;
   Vprofile!: Blob;
-  activo: any;
+  estado: any;
 
   Gnombre: string = "";
   Gdescr: string = "";
@@ -131,7 +131,7 @@ export class SalacreatePage implements OnInit {
                 this.Vnick = userData[0].nick;
                 this.Vcorreo = userData[0].correo;
                 this.Vprofile = userData[0].perfil_media;
-                this.activo = userData[0].activo;
+                this.estado = userData[0].estado;
               } catch (error) {
                 const titulo = "GetUserData";
                 const mensaje = "Error al obtener data de usuario";

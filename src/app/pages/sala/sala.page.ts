@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
   selector: 'app-sala',
@@ -14,7 +15,7 @@ export class SalaPage implements OnInit {
   VpartId!: number;
   variable: boolean = false;
 
-  constructor(private menuCtrl: MenuController, private activatedroute: ActivatedRoute) {
+  constructor(private menuCtrl: MenuController, private activatedroute: ActivatedRoute, private datab: DatabaseService) {
     this.menuCtrl.enable(true); }
 
   ngOnInit() {
@@ -29,7 +30,7 @@ export class SalaPage implements OnInit {
     //Select para obtener Participate ID
 
     // Si participante ID = NULL -> Retornar Salacreate
-
+    
     // Si participante ID = NULL -> Finalizar funcion
     if(this.variable = false){
     

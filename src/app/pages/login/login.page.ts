@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/cor
 import { NavigationExtras, Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -13,9 +14,11 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class LoginPage implements OnInit {
 
+  // variables nG
   VuserID!: number;
   Vpassword: string = "";
   Vnick: string = "";
+
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
 
@@ -25,7 +28,6 @@ export class LoginPage implements OnInit {
     private datab: DatabaseService,
     private router: Router,
     private menuCtrl: MenuController,
-    private nativestorage: NativeStorage
   ) {
     this.menuCtrl.enable(false);
   }
@@ -58,8 +60,9 @@ export class LoginPage implements OnInit {
     } 
     else{
       // Validador de Usuario
-      await this.datab.validaClave(this.Vnick);
       const ClaveBD = await this.datab.getPass();
+      await this.datab.validaClave(this.Vnick);
+
       if(ClaveBD == this.Vpassword){       
         this.datab.fetchUser(this.Vnick)
         let navigationExtras: NavigationExtras = {
@@ -68,11 +71,9 @@ export class LoginPage implements OnInit {
           }
         }
         this.router.navigate(['/menu'],navigationExtras)
-      }
-        else{
-          const titulo = "Usuario o contraseña incorrecto";
-          const mensaje = "Reintente por favor";
-          this.alerta.presentAlert(titulo, mensaje);
+
+      }else{
+          this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
           return;
       }
       return true;

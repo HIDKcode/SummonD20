@@ -29,7 +29,7 @@ export class ConfiguracionPage implements OnInit {
   Vpass: any;
   Vpass2: any;
   Vprofile!: any;
-  activo: any;
+  estado: any;
   Vclave: any;
 
   variable: boolean = false;
@@ -98,17 +98,16 @@ export class ConfiguracionPage implements OnInit {
 
   
 
-  getUserData() {
+  getUserData(){
     this.datab.fetchUser(this.Vnick).subscribe({
       next: (userData: User[]) => {
         if (userData.length > 0) {
           // Procesar datos del usuario
           this.VuserID = userData[0].userID;
           this.Vnick = userData[0].nick;
-          this.Vclave = userData[0].clave;
           this.Vcorreo = userData[0].correo;
           this.Vprofile = userData[0].perfil_media;
-          this.activo = userData[0].activo;
+          this.estado = userData[0].estado;
         } else {
           this.alerta.presentAlert("Usuario no encontrado", "");
         }

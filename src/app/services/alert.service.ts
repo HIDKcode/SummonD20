@@ -12,7 +12,7 @@ export class AlertService {
     const alert = await this.alertcontroller.create({
       header: titulo,
       message: msj,
-      buttons: ['OK'],
+      buttons: ['Aceptar'],
     });
 
     await alert.present();

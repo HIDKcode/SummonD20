@@ -10,69 +10,40 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 export class AppComponent {
   
-  Vnick: string = "";
-
   constructor(private router: Router, private activatedroute: ActivatedRoute, private nativestorage: NativeStorage) {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras.state) {
-      this.Vnick = navigation.extras.state['Vnick'];
-   }
+    
   }
 
   ngOnInit() {
+
   }
 
-
   irPrincipal(){
-    let navigationExtras: NavigationExtras = {
-      state: {
-        Vnick: this.Vnick
-      }
-    }
-    this.router.navigate(['/menu'],navigationExtras)
+    this.router.navigate(['/menu'])
   }
 
   irSala(){
-    let navigationExtras: NavigationExtras = {
-      state: {
-        Vnick: this.Vnick
-      }
-    }
-    this.router.navigate(['/salacreate'],navigationExtras)
+    this.router.navigate(['/salacreate'])
   }
 
   irBiblioteca(){
-    let navigationExtras: NavigationExtras = {
-      state: {
-        Vnick: this.Vnick
-      }
-    }
-    this.router.navigate(['/biblioteca'],navigationExtras)
+    this.router.navigate(['/biblioteca'])
   }
 
   irDados(){
-    let navigationExtras: NavigationExtras = {
-      state: {
-        Vnick: this.Vnick
-      }
-    }
-    this.router.navigate(['/rolldice'],navigationExtras)
+    this.router.navigate(['/rolldice'])
   }
 
   irConfig(){
-    let navigationExtras: NavigationExtras = {
-      state: {
-        Vnick: this.Vnick
-      }
-    }
-    this.router.navigate(['/configuracion'],navigationExtras)
+    this.router.navigate(['/configuracion'])
   }
+
   async Logout(){
     try {
       await this.nativestorage.remove('userData');
       this.router.navigate(['/login']);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error en Servidor: LogOut', error);
     }
   }
 }

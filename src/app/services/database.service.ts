@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 import { BehaviorSubject, from, firstValueFrom, Observable } from 'rxjs';
-import { GRUPO, User } from './clasesdb';
+import { User } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { HttpClient } from '@angular/common/http';
@@ -23,11 +23,9 @@ export class DatabaseService {
   correo!: string;
   perfil_media!: Blob;
 
-
-  t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB);";
+  // Estado 0 Bloqueado, 5 Usuario permitido, 9 Admin.
+  t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB, estado INTEGER NOT NULL);";
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  // Estado: 1 = Activo 3 = Bloqueado , 0 = Inactivo , 7 = Admin?
-  t_ESTADO: string = "CREATE TABLE IF NOT EXISTS ESTADO(activo INTEGER NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, page_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
@@ -38,8 +36,7 @@ export class DatabaseService {
   t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
 
-  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media) VALUES('Martin123', '123456', 'martin123@correo.cl', NULL);";
-  ins_ESTADO: string = "INSERT OR IGNORE INTO ESTADO(activo, USER_userID) VALUES(7, 1);"; 
+  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('Martin123', '123456', 'martin123@correo.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
   ins_CARPETA: string = "INSERT OR IGNORE INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES('summon_nube', date('now'), 1);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, tamaño, filepath_arc, tipo_archivo, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('prestock1', 1024, 'assets/images/editor.png', 'image', date('now'), 1, 1);";
@@ -68,7 +65,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summon2',
+        name: 'summonV3',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -88,9 +85,7 @@ async crearTablas(){
     try{
       //mandar a ejecutar las tablas en el orden especifico
       await this.database.executeSql(this.t_USER,[]);
-      console.log("Tabla t_USER created");
       await this.database.executeSql(this.t_ULT_CONEX,[]);
-      await this.database.executeSql(this.t_ESTADO,[]);
       await this.database.executeSql(this.t_BENEFICIO,[]);
       await this.database.executeSql(this.t_BIBLIOTECA,[]);
       await this.database.executeSql(this.t_CARPETA,[]);
@@ -102,7 +97,6 @@ async crearTablas(){
       await this.database.executeSql(this.t_ERRORES,[]);
       //generamos los insert en caso que existan
       await this.database.executeSql(this.ins_USER, []);
-      await this.database.executeSql(this.ins_ESTADO, []);
       await this.database.executeSql(this.ins_BIBLIOTECA, []);
       await this.database.executeSql(this.ins_CARPETA, []);
       await this.database.executeSql(this.ins_ARCHIVO, []);
@@ -127,9 +121,9 @@ async crearTablas(){
           usuarios.push({
           userID: res.rows.item(i).userID,
           nick: res.rows.item(i).nick,
-          clave: "PRIVADO",
           correo: res.rows.item(i).correo,
           perfil_media: res.rows.item(i).perfil_media,
+          estado: res.rows.item(i).estado
         });
         }
       }
@@ -164,14 +158,11 @@ async crearTablas(){
     await this.nativeStorage.setItem('userData', { nick });
   }
 
-
-
   fetchUser(nick: string): Observable<User[]> {
     this.setNick(nick);
-    const CONSULTA = `SELECT U.userID, U.nick, U.clave, U.correo, U.perfil_media, E.activo 
-        FROM USER U
-        JOIN ESTADO E ON U.userID = E.USER_userID 
-        WHERE U.nick = ?`
+    const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
+        FROM USER
+        WHERE nick = ?`
     return new Observable(observer => {
       this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
@@ -180,11 +171,11 @@ async crearTablas(){
             fetchedUser.push({
               userID: res.rows.item(0).userID,
               nick: res.rows.item(0).nick,
-              clave: res.rows.item(0).clave,
               correo: res.rows.item(0).correo,
               perfil_media: res.rows.item(0).perfil_media,
-              activo: res.rows.item(0).activo
+              estado: res.rows.item(0).estado
             });
+            
           } else { this.alerta.presentAlert("Usuario no encontrado", "Fallo");}
           observer.next(fetchedUser);
           observer.complete();
@@ -199,7 +190,7 @@ async crearTablas(){
 
 
   // FUNLOGIN
-   public async validaClave(nick: string): Promise<string | null> {
+  async validaClave(nick: string): Promise<string | null> {
     const result = await this.database.executeSql('SELECT clave FROM USER WHERE nick = ?;', [nick]);
 
     if (result.rows.length > 0) {
@@ -210,7 +201,7 @@ async crearTablas(){
       return null;
     }
   }
-  private async savePass(password: string) {
+  async savePass(password: string) {
     try {
       await this.nativeStorage.setItem('IClave', { Vclave: password });
       console.log('Clave guardada');
@@ -219,7 +210,7 @@ async crearTablas(){
     }
   }
 
-  public async getPass(): Promise<string | null> {
+  async getPass(): Promise<string | null> {
     try {
       const data = await this.nativeStorage.getItem('IClave');
       return data.Vclave;
@@ -237,8 +228,8 @@ async crearTablas(){
 
   async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
     try {
-      // Las alertas funcionarán como console.log en android studio para testing
-        await this.database.executeSql('INSERT INTO USER(nick, clave, correo) VALUES (?, ?, ?);', [nick, Vpassword, Vcorreo]);
+      // Las alertas funcionarán como console.log en android studio para testing. 5 es = a Usuario permitido
+        await this.database.executeSql('INSERT INTO USER(nick, clave, correo, estado) VALUES (?, ?, ?, ?);', [nick, Vpassword, Vcorreo, 5]);
         //this.alerta.presentAlert("1", "a");
         const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
         //this.alerta.presentAlert("1", "b");
@@ -248,23 +239,23 @@ async crearTablas(){
         //this.alerta.presentAlert("1", "d");
         await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
         //this.alerta.presentAlert("1", "f");
-        await this.database.executeSql('INSERT INTO ESTADO(activo, USER_userID) VALUES (?, ?)', [1, userid]);
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {
       // Manejar errores y registrar en la tabla ERRORES
-      const eMessage = e.message || "Error desconocido durante el registro.";
+      const eMessage = e.message;
       const eCode = e.code;
-      await this.logError(eMessage, eCode);
-      this.alerta.presentAlert("Registro de usuario", "Error en el registro");
+      await this.logError("fegisterUser", eCode||': '||eMessage);
+      this.alerta.presentAlert("Registro de registro", "Error:" + eMessage);
       return false; // Fallo en el registro
     }
   }
 
 
   // Registrar Errores
-  logError(x: any, z: any){
-    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?);', [x, z])
+  logError(title: any, msj: any){
+    // Se debe ingresar en title el nombre de la función y en mensaje eCode||': '||eMessage
+    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?);', [title, msj])
   }
 
   // INSERTS
@@ -295,7 +286,6 @@ async crearTablas(){
       this.alerta.presentAlert("Ingreso a sala ID#" + grupoID, "Error: " + JSON.stringify(e));
     }
   }
-  
 
   async insertGrupo(nombre: string, descr: string, clave: number, userID: number){
   try {

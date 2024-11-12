@@ -4,6 +4,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { DatabaseService } from 'src/app/services/database.service';
 import { User } from 'src/app/services/clasesdb';
 import { AlertService } from 'src/app/services/alert.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-admin',
@@ -18,10 +19,11 @@ export class AdminPage implements OnInit {
   Vpass: string = "";
   Vpass2: string = "";
   Vprofile!: any;
-  activo: any;
+  estado: any;
 
   
-  constructor(private router: Router, private nativeStorage: NativeStorage, private datab: DatabaseService, private alerta: AlertService) {
+  constructor(private router: Router, private nativeStorage: NativeStorage, private datab: DatabaseService, private alerta: AlertService, private menuCtrl: MenuController) {
+    this.menuCtrl.enable(true);
 
     this.cargaNick();
       this.getUserData();
@@ -46,7 +48,7 @@ export class AdminPage implements OnInit {
                 this.Vnick = userData[0].nick;
                 this.Vcorreo = userData[0].correo
                 this.Vprofile = userData[0].perfil_media;
-                this.activo = userData[0].activo;
+                this.estado = userData[0].estado;
               } catch (error) {
                 const titulo = "GetUserData";
                 const mensaje = "Error al obtener data de usuario";
@@ -75,7 +77,7 @@ export class AdminPage implements OnInit {
 
   async AdminPage(){
     try {
-      if (this.activo !== 7) {
+      if (this.estado !== 9) {
         this.router.navigate(['/menu']);
       }
     } catch (e) {

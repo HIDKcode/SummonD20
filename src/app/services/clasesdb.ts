@@ -1,21 +1,15 @@
 export class User {
     userID!: number;              
-    nick!: string;               
-    clave!: string;              
+    nick!: string;                          
     correo!: string;            
     perfil_media!: Blob;  
-    activo?: number;     
+    estado!: number;     
 }
 
 export class ULT_CONEX {
     conexID!: number;       
     conexDATE!: string;        
     USER_userID!: number;    
-}
-
-export class ESTADO {
-    activo!: boolean;          
-    USER_userID!: number;        
 }
 
 export class BENEFICIO {
