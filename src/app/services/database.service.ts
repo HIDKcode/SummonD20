@@ -65,7 +65,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonV3',
+        name: 'summonV4',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -238,7 +238,7 @@ async crearTablas(){
         await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?);', [userid]);
         //this.alerta.presentAlert("1", "d");
         await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
-        //this.alerta.presentAlert("1", "f");
+        this.alerta.presentAlert("1", "f");
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {
