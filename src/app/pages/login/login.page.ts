@@ -1,8 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 

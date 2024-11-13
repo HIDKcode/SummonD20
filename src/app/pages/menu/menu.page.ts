@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -20,7 +20,7 @@ export class MenuPage implements OnInit {
   any4: any;
   any5: any;
 
-  constructor(private router: Router, private activatedroute: ActivatedRoute,
+  constructor(private router: Router,
     private menuCtrl: MenuController, private nativestorage: NativeStorage,
     private datab: DatabaseService, private alerta: AlertService) {
     this.menuCtrl.enable(true);
@@ -31,6 +31,16 @@ export class MenuPage implements OnInit {
   async ngOnInit() {
     await this.cargaNick();
       await this.getUserData2();
+  }
+
+  irAdmin(){
+    let navigationExtras: NavigationExtras = {
+      state: {
+        Vid: this.Vid,
+        estado: this.estado,
+      }
+    }
+    this.router.navigate(['/admin'],navigationExtras)
   }
 
   async cargaNick(){

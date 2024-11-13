@@ -7,12 +7,15 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-    <P class="blanco center"> ¡Bienvenido devuelta! {{Vnick}} # {{Vid}}</P>
 
-    <div class="center" *ngIf="estado == 9">
-      <ion-button> ADMIN PAGE </ion-button>
-      <h3 class="center">  Estado: {{estado}} </h3>
+    <div class="center" *ngIf="estado == 9; else bienvenidos">
+      <p class="blanco center"> Administrador verificado: {{Vnick}} ID: #{{Vid}}</p>
+      <ion-button> IR A LISTADOS </ion-button>
     </div>
+    <div class="center" #bienvenidos>
+      <p class="blanco center"> ¡Bienvenido devuelta! {{Vnick}} # {{Vid}}</p>
+    </div>
+    
 
     <div class="center"> <h3 class="blanco sombraV"> Notas del parche </h3> </div>
     <div  class="center">

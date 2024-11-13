@@ -10,7 +10,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 export class AppComponent {
   
-  constructor(private router: Router, private activatedroute: ActivatedRoute, private nativestorage: NativeStorage) {
+  constructor(private router: Router, private nativestorage: NativeStorage) {
     
   }
 
