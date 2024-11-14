@@ -22,8 +22,7 @@
     --background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
 }
  
-// Ionic CSS
-ion-button{
+.summonbutton{
 min-width: 200px;
 min-height: 50px;
 --background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
@@ -40,10 +39,6 @@ min-height: 50px;
 --padding-bottom: 10px;
 font-size: 18px;
 }
-
-// Fin Ionic CSS
-
-
 
 .summon-foto1x1{
 width: 25vw;

@@ -12,7 +12,14 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class SalalistasPage implements OnInit {
 
-  grupos: any[] = []; 
+  grupos : any = [{
+    grupodID:  '',
+    grupo_nombre: '',
+    duenio_sala: '',
+    cant_user: '',
+    clavevacia: '',
+  }];
+
   pass!: number;
   Vnick!: string;
 

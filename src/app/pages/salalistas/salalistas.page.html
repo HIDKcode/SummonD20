@@ -12,32 +12,32 @@
         <div class="grid">
 
           <ion-grid>
-            <ion-row >
-              <ion-col size="6"> INFORMACIÓN </ion-col>
-              <ion-col size="3"> CLAVE </ion-col>
-              <ion-col size="3"> BOTON </ion-col>
+            <ion-row>
+              <ion-col size="5"> INFORMACIÓN </ion-col>
+              <ion-col size="4"> CLAVE </ion-col>
+              <ion-col size="3"> ENTRAR </ion-col>
             </ion-row>
-          </ion-grid>
 
-          <ion-grid >
-            <ion-row *ngFor="let grupo of grupos">
-              <ion-col size="6"> {{ grupo.nombre_sala }} # {{grupo.grupoID}} <br> {{ grupo.oNick }} , {{grupo.totalParticipantes}} </ion-col>
+            <ion-row *ngFor="let x of grupos">
+              <ion-col size="5" class="elipsis"> #{{x.grupoID}}:{{ x.nombre_sala }} <br>De: {{ x.oNick }}, {{x.totalParticipantes}} </ion-col>
               
-              <ion-col size="3"> 
-                <ion-input  class="blanco" type="number" min="0" max="999999" [(ngModel)]="pass"> </ion-input>
+              <ion-col size="4"> 
+                <ion-input  class="gridform blanco" type="number" min="0" max="999999" [(ngModel)]="x.clavevacia"> </ion-input>
               </ion-col>
 
               <ion-col size="3"> 
-                <ion-item  (click)="participar(grupo.grupoID)"> Entrar </ion-item>  
+                <ion-button class="summonbtnsmall" (click)="participar(x.grupoID)">
+                  <ion-icon name="arrow-forward-outline"></ion-icon>  
+                </ion-button>  
               </ion-col>
-              
+
             </ion-row>
           </ion-grid>
           
         </div>
       </div>
 
-      <div class="center awdmargin"> <ion-button (click)="irSalacreate()"> CREAR UNA SALA </ion-button> </div>
-
+      <div class="center awdmargin"> <ion-button class="summonbutton" (click)="irSalacreate()"> CREAR UNA SALA </ion-button> </div>
+ 
   </div>
 </ion-content>

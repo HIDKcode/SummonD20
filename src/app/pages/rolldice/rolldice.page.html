@@ -19,9 +19,9 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-button> d20 </ion-button>
-          <ion-button> 2d6 </ion-button>
-          <ion-button> 2d10 </ion-button>
+          <ion-button class="summonbutton"> d20 </ion-button>
+          <ion-button class="summonbutton"> 2d6 </ion-button>
+          <ion-button class="summonbutton"> 2d10 </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -32,7 +32,7 @@
     </ion-input> 
   </div>
   <div class="center">
-    <ion-button (click)="roll()"> LANZAR DADO </ion-button>
+    <ion-button class="summonbutton" (click)="roll()"> LANZAR DADO </ion-button>
   </div>
   <div class="center">
     <H3 CLASS="blanco"> RESULTADO: <H3 CLASS="blanco sombraV"> {{Vresultado}} </H3> </H3> 

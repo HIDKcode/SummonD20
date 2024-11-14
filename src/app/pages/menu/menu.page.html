@@ -10,7 +10,7 @@
 
     <div class="center" *ngIf="estado == 9; else bienvenidos">
       <p class="blanco center"> Administrador verificado: {{Vnick}} ID: #{{Vid}}</p>
-      <ion-button (click)="irAdmin()"> IR A LISTADOS </ion-button>
+      <ion-button class="summonbutton" (click)="irAdmin()"> IR A LISTADOS </ion-button>
     </div>
     <ng-template class="center" #bienvenidos>
       <p class="blanco center"> ¡Bienvenido devuelta! {{Vnick}} # {{Vid}}</p>
@@ -32,7 +32,7 @@
       <div  class="divitem">
         <div >
           <p class="L"> Funcionalidad nueva! Genera una hoja de creación de personaje para todos tus jugadores y descargala! Pruebalo aquí:</p>
-          <ion-button [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> CREAR HOJA </ion-button>
+          <ion-button class="summonbutton" [routerDirection]="'root'" [routerLink]="'/biblioteca-crearhoja'"> CREAR HOJA </ion-button>
         </div>
       </div>
     </div>
