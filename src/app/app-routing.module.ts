@@ -36,6 +36,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/salachat/salachat.module').then( m => m.SalachatPageModule)
   },
   {
+    path: 'salalistas',
+    loadChildren: () => import('./pages/salalistas/salalistas.module').then( m => m.SalalistasPageModule)
+  },
+  {
     path: 'salacreate',
     loadChildren: () => import('./pages/salacreate/salacreate.module').then( m => m.SalacreatePageModule)
   },
@@ -63,6 +67,7 @@ const routes: Routes = [
     path: '**',
     loadChildren: () => import('./pages/notfound/notfound.module').then( m => m.NotfoundPageModule)
   },
+  
   
 ];
 

@@ -1,38 +1,4 @@
-.divitemSALA{
-margin-left: 15px;
-margin-right: 15px;
-max-width: 500px;
-margin-top: 10px;
-margin-bottom: 10px;
-border: 5px solid #0d271e;
-border-radius: 10px;
-padding: 10px;
---background: linear-gradient(90deg, #d3ae4e,#171717, #171717, #d3ae4e);
-}
 
-p{
-    font-family: 'Chau';
-}
-
-.L{
-    font-size: larger;
-    color: #171717;
-}
-
-.final{
-    margin-bottom: 50px;
-}
-
-h3{
-    color: #fffdee;
-    font-family: 'Chau';
-}
-h2{
-    color: #fffdee;
-    font-family: 'Chau';
-    text-decoration: underline;
-}
-    
 ion-grid{
     border-radius: 10px;
     width: 90vw;
@@ -48,11 +14,3 @@ ion-col{
     background-color: #0d271e;
     color: #fffdee;
   }
-
-#join{
-    border: solid 3px #d3ae4e;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-

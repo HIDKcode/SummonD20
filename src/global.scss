@@ -22,7 +22,7 @@
     --background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
 }
  
-
+// Ionic CSS
 ion-button{
 min-width: 200px;
 min-height: 50px;
@@ -40,6 +40,10 @@ min-height: 50px;
 --padding-bottom: 10px;
 font-size: 18px;
 }
+
+// Fin Ionic CSS
+
+
 
 .summon-foto1x1{
 width: 25vw;
@@ -63,19 +67,6 @@ min-height: 100vh;
 background-color: transparent;
 }
 
-// Formularios SASS
-.inputsummon{
---background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
-margin-left: 15px;
-margin-right: 15px;
-max-width: 815px;
-margin-top: 10px;
-margin-bottom: 10px;
-border: 5px solid #0d271e;
-border-radius: 10px;
---padding-start: 5px;
-}
-
 // Textos SAAS 
 .verdeO{color: #0d271e !important;}
 .verdeC{color: #1fea00 !important;}
@@ -88,6 +79,18 @@ border-radius: 10px;
 
 
 // Formularios
+// Edit para ion input
+.inputsummon{
+    --background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
+    margin-left: 15px;
+    margin-right: 15px;
+    max-width: 815px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 5px solid #0d271e;
+    border-radius: 10px;
+    --padding-start: 5px;
+}
 
 .error-form{
     border-radius: 3px;
@@ -116,6 +119,15 @@ border-radius: 10px;
 
 
 // Utilidades
+
+.txtL{
+    font-size: larger;
+    color: #171717;
+}
+
+.uline{
+    text-decoration: underline;
+}
 .upmargin{
     margin-top: 15px;
 }

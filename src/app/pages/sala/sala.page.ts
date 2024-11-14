@@ -21,8 +21,6 @@ export class SalaPage implements OnInit {
   ngOnInit() {
         // Obtener el idgrupo de los parámetros de la URL
         this.VgrupoID = Number(this.activatedroute.snapshot.paramMap.get('grupoID'));
-
-        // Aquí puedes llamar a un servicio para obtener los detalles de la sala
         console.log('El id del grupo es: ', this.VgrupoID);
   }
 

@@ -45,10 +45,6 @@ export class DatabaseService {
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
 
-//
-  //variables para guardar los registros resultantes de un select. l = Listado
-  lUser = new BehaviorSubject<User[]>([]);
-
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -58,6 +54,7 @@ export class DatabaseService {
       })
    }
   
+  // devuelve estado de db
   dbState(){
     return this.isDBReady.asObservable();
   }
@@ -109,26 +106,23 @@ async crearTablas(){
     }
   }
 
-  ListaUser(){
-    return this.database.executeSql('SELECT * from USER',[]).then(res=>{
-      //variable para almacenar el resultado de la consulta
-      let usuarios: User[] = [];
-      //verificar si tenemos registros en la consulta
-      if(res.rows.length > 0){
-        //recorro el resultado
-        for(var i = 0; i < res.rows.length; i++){
-          //agregar el registro a mi variable
-          usuarios.push({
-          userID: res.rows.item(i).userID,
-          nick: res.rows.item(i).nick,
-          correo: res.rows.item(i).correo,
-          perfil_media: res.rows.item(i).perfil_media,
-          estado: res.rows.item(i).estado
-        });
-        }
-      }
-      this.lUser.next(usuarios as any);
-    })
+
+  ListaUsers(): Observable<User[]> {
+    const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
+    FROM USER;`;
+    
+    return new Observable(observer => {
+      this.database.executeSql(CONSULTA, [])
+        .then(res => {
+          const USUARIO = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            USUARIO.push(res.rows.item(i));
+          }
+          observer.next(USUARIO);
+          observer.complete();
+        })
+        .catch(error => observer.error(error));
+    });
   }
 
   ListaGrupos(): Observable<any[]> {
@@ -277,8 +271,9 @@ async crearTablas(){
       })
     }
   
-  async  insertParticipante(userID: number, grupoID: number){
+  async  insertParticipante(nick: string, grupoID: number){
     try {
+      const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
       await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]
       );
       this.alerta.presentAlert("Ingreso a sala ID#" + grupoID, "Con exito");
@@ -287,9 +282,10 @@ async crearTablas(){
     }
   }
 
-  async insertGrupo(nombre: string, descr: string, clave: number, userID: number){
+  async insertGrupo(nick: string, descr: string, clave: number){
   try {
-  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner_id) VALUES (?, ?, ?,date(now), ?)',[nombre, clave, descr, userID]
+  const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner_id) VALUES (?, ?, ?,date(now), ?)',[nick, clave, descr, userID]
   );
   this.router.navigate(['/sala', result.insertId]);
     } catch (e) {

@@ -23,7 +23,7 @@ export class AppComponent {
   }
 
   irSala(){
-    this.router.navigate(['/salacreate'])
+    this.router.navigate(['/salalistas'])
   }
 
   irBiblioteca(){

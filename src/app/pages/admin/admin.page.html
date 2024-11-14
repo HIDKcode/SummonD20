@@ -5,22 +5,29 @@
 </ion-header>
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
+  
+    <H3> Recordatorio, Ac: 0 = Baneado, 5 = Permitido, 9 = Administrador</H3>
 
-    <h3 class="center"> {{Vnick}}#{{VuserID}} </h3>
-
-    <div class="center padding"> 
+    <div class="center"> 
       <ion-grid fixed="true"> 
         <ion-row>
-          <!-- *ngFor=let X of clase""-->
-          <ion-col size="2"> dato1 </ion-col>
-          <ion-col size="2"> dato2</ion-col>
-          <ion-col size="2"> dato3 </ion-col>
-          <ion-col size="2"> dato4 </ion-col>
-          <ion-col size="2"> dato5 </ion-col>
-          <ion-col size="2"> dato6</ion-col>
+          <ion-col size="1"> ID </ion-col>
+          <ion-col size="3"> NICK </ion-col>
+          <ion-col size="4"> CORREO </ion-col>
+          <ion-col size="1"> AC </ion-col>
+          <ion-col size="3"> Boton </ion-col>
+
+        </ion-row>
+        <ion-row *ngFor="let x of arregloUsuario">
+          <ion-col size="1"> {{ x.userID }} </ion-col>
+          <ion-col size="3"> {{ x.nick }}</ion-col>
+          <ion-col size="4"> {{ x.correo }}</ion-col>
+          <ion-col size="1"> {{ x.estado}}</ion-col>
+          <ion-col size="3"> Modificar </ion-col>
         </ion-row>
       </ion-grid>  
     </div>
 
+    
   </div>
 </ion-content>

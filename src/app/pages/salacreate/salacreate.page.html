@@ -7,63 +7,43 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-    
-    <div #Listar> 
-      <div class="center awdmargin">
-        <div class="grid">
-          <ion-grid>
-            <!-- NgFor SALAS -->
-            <ion-row >
-              <ion-col size="6"> INFORMACIÓN </ion-col>
-              <ion-col id="join" size="6"> CLAVE </ion-col>
+    <div class="center">
 
-            </ion-row>
-
-          </ion-grid>
-          <ion-grid *ngFor="let grupo of grupos">
-            <!-- NgFor SALAS -->
-            <ion-row >
-              <ion-col size="6"> {{ grupo.nombre_sala }} # {{grupo.grupoID}} <br> {{ grupo.oNick }} , {{grupo.totalParticipantes}} </ion-col>
-              <ion-col id="join" size="3"> <ion-input  class="blanco" type="number" min="0" max="999999" [(ngModel)]="pass"> </ion-input> </ion-col>
-              <ion-col id="join" size="3"> <ion-item  (click)="participar(grupo.grupoID)"> Entrar </ion-item>  </ion-col>
-            </ion-row>
-
-          </ion-grid>
-        </div>
+      <div class="center"> 
+        <h2 class="blanco sombraV uline"> !Convierte en el Dungeon Master! </h2> 
       </div>
-    <div>
-      <div class="center awdmargin"> <ion-button (click)="Mostrar()"> crear sala </ion-button> </div>
+
+      <div class="center"> 
+        <h3 class="blanco sombraV"> Nombre de sala </h3> 
+      </div>
+
+      <div class="center">
+        <ion-input  class="inputsummon blanco" type="text" maxlength="20" [(ngModel)]="Gnombre">
+        </ion-input>  
+      </div>
+
+      <div class="center"> 
+        <h3 class="blanco sombraV"> Descripcion de sala (Max. 45 char) </h3> 
+      </div>
+
+      <div class="center">
+        <ion-input class="inputsummon blanco" type="text" maxlength="45" [(ngModel)]="Gdescr"></ion-input>  
+      </div>
+
+      <div class="center"> 
+        <h3 class="sombraV"> Contraseña númerica (6 dig) </h3> 
+      </div>
+      
+      <div class="center">
+        <ion-input  class="inputsummon blanco" type="number" maxlength="6" [(ngModel)]="Gclave">
+        </ion-input>  
+      </div>
+      
+      <div class="center">
+        <ion-button (click)="Valida()"> CREAR SALA </ion-button>
+        <ion-button (click)="irSalalistas()"> VOLVER </ion-button>
+      </div>  
+
     </div>
-  </div>
-
-  <div #Crear>
-    <div class="center"> <h2 class="sombraV"> !Convierte en el Dungeon Master! </h2> </div>
-
-
-    <div class="center"> <h3 class="sombraV"> Nombre de sala </h3> </div>
-    <div class="center">
-      <ion-input id="custom-input" class="divitemSALA blanco" type="text" maxlength="20" [(ngModel)]="Gnombre">
-      </ion-input>  
-    </div>
-
-    <div class="center"> <h3 class="sombraV"> Descripcion de sala (Max. 45 char) </h3> </div>
-    <div class="center">
-      <ion-input id="custom-input" class="divitemSALA blanco" type="text" maxlength="45" [(ngModel)]="Gdescr">
-      </ion-input>  
-    </div>
-
-
-    <div class="center"> <h3 class="sombraV"> Contraseña númerica (6 dig) </h3> </div>
-    <div class="center">
-      <ion-input id="custom-input" class="divitemSALA blanco" type="number" maxlength="6" [(ngModel)]="Gclave">
-      </ion-input>  
-    </div>
-    
-    <div class="center">
-      <ion-button (click)="Valida()"> CREAR SALA </ion-button>
-      <ion-button (click)="Ocultar()"> VOLVER </ion-button>
-    </div>  
-  </div>
-
   </div>
 </ion-content>
