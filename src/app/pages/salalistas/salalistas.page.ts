@@ -51,20 +51,29 @@ export class SalalistasPage implements OnInit {
   }
   
   async participar(grupoID: number) {
-    if (this.pass > 99999 ){
-      this.datab.validaGrupoPass(grupoID);
-      const ClaveBD = await this.datab.getPass();
-      if(Number(ClaveBD) == this.pass){
-      try {
-        // Llama a la función del servicio para unirse al grupo
-        await this.datab.insertParticipante(this.Vnick, grupoID);
-        // Redirige al usuario a la sala
-        this.router.navigate(['/sala', grupoID]);
-      } catch (e) {
-        this.alerta.presentAlert("Error unirse a grupo:", "Error: "+JSON.stringify(e));
-      }
-      }else{this.alerta.presentAlert("Clave erronea" ,"Contacte a dueño de sala")}
+    let hasE = false;
+
+    if (this.pass <= 99999 || this.pass > 99999){
+      hasE = true;
     }
+    // Si hay errores, detiene la ejecución
+    if (hasE) {
+      return false;
+    } 
+
+    const VALIDADOR = await this.datab.validaClaveGrupo(grupoID, this.pass);
+    if (VALIDADOR) {
+      try {
+        await this.datab.insertParticipante(this.Vnick, grupoID);
+        this.router.navigate(['/sala', grupoID]);
+        return true;
+      } catch (e) {
+        this.alerta.presentAlert("Error unirse a grupo:", "" + e);
+      }
+    } else {
+      this.alerta.presentAlert("Clave errónea", "Contacte al dueño de la sala");
+    }
+    return false;
   }
 
   lGrupos() {

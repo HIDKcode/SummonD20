@@ -42,50 +42,67 @@ export class RegistroPage implements OnInit {
   }
 
  
-  async Registro(){
-     // While loop con variable boolean
-    while(this.variable == false){
-    // inicia If para errores
+  async Registro() {
+
     let hasE = false;
-
-  // Valida usuario
-  if (this.Vnick == "" || this.Vnick.length <= 5) {this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
-    hasE = true;
-  } else {this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
-  }
-
-  // Valida email
-  if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
-    hasE = true;
-  } else {this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
-  }
-
-  // Valida pass 1
-  if (this.Vpass == "" || !this.exprPass.test(this.Vpass)) {this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
-    hasE = true;
-  } else {this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
-  }
-
-  // Revisa si Pass1 = Pass2
-  if (this.Vpass != this.Vpass2) {this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
-    hasE = true;
-  } else {this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
-  }
-
-  // Si hay algún error, parará aquí.
-  if (hasE) {return false;}
-    this.variable = true;
-  } 
-    const exito = await this.datab.Unico(this.Vnick, this.Vcorreo)
-      if (!exito){
-        this.alerta.presentAlert("Proceso de registro", "Correo o Usuario ya existentes");
-        return false;
-      } 
-    const result = await this.datab.registerUser(this.Vnick, this.Vcorreo, this.Vpass);
-    if(result){
-      this.router.navigate(['/login'])
+    const regexprohibido = /[';()--]/;
+  
+    // Validador de caracteres prohibidos
+    if (regexprohibido.test(this.Vnick) || regexprohibido.test(this.Vcorreo)) {
+      hasE = true;
     }
-    return true;
+    if (regexprohibido.test(this.Vpass)){
+      hasE = true;
+    }
+    //Validadores de formulario
+    if (this.Vnick == "" || this.Vnick.length <= 5) {
+      this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
+      hasE = true;
+    } else {
+      this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
+    }
+
+    if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
+      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+      hasE = true;
+    } else {
+      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+    }
+
+    if (this.Vpass == "" || !this.exprPass.test(this.Vpass)) {
+      this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
+      hasE = true;
+    } else {
+      this.renderer2.setStyle(this.er3.nativeElement, 'display', 'none');
+    }
+  
+    if (this.Vpass != this.Vpass2) {
+      this.renderer2.setStyle(this.er4.nativeElement, 'display', 'flex');
+      hasE = true;
+    } else {
+      this.renderer2.setStyle(this.er4.nativeElement, 'display', 'none');
+    }
+  
+    // Si hay errores, para aqui
+    if (hasE) {
+      return false;
+    }
+
+    this.Vnick = this.Vnick.toLowerCase();
+    this.Vcorreo = this.Vcorreo.toLowerCase();
+
+    const unico = await this.datab.Unico(this.Vnick, this.Vcorreo);
+    if (!unico) {
+      this.alerta.presentAlert("Proceso de registro", "Correo o Usuario ya existentes");
+      return false;
+    }
+
+    const result = await this.datab.registerUser(this.Vnick, this.Vcorreo, this.Vpass);
+    if (result) {
+      this.router.navigate(['/login']);
+      return true;
+    }
+    return false;
   }
 
 }

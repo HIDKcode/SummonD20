@@ -33,49 +33,52 @@ export class LoginPage implements OnInit {
   ngOnInit() {
   }
 
-  async Ingreso(){
-    // inicia If para errores
-    let hasE = false;
+  async Ingreso() {
 
-    // Valida usuario
-    if (this.Vnick == "") {
+    let hasE = false;
+    const regexprohibido = /[';()--]/;
+    
+    // Validaciones
+    if (this.Vnick === "" || regexprohibido.test(this.Vnick)) {
       this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
       hasE = true;
     } else {
       this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
     }
-
-    // Valida Pass
-    if (this.Vpassword == "") {
+    
+    if (this.Vpassword === "" || regexprohibido.test(this.Vpassword)) {
       this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
       hasE = true;
     } else {
       this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
     }
-    // Si hay algún error, parará aquí.
+  
+    // Si hay errores, detiene la ejecución
     if (hasE) {
       return false;
-    } 
-    else{
-      // Validador de Usuario
-      const ClaveBD = await this.datab.getPass();
-      await this.datab.validaClave(this.Vnick);
+    }
 
-      if(ClaveBD == this.Vpassword){       
-        this.datab.fetchUser(this.Vnick)
+    this.Vnick = this.Vnick.toLowerCase();
+
+    try {
+      const VALIDADOR = await this.datab.validaClave(this.Vnick, this.Vpassword);
+      if (VALIDADOR) {
+        await this.datab.fetchUser(this.Vnick); 
         let navigationExtras: NavigationExtras = {
           state: {
             Vnick: this.Vnick
           }
-        }
-        this.router.navigate(['/menu'],navigationExtras)
-
-      }else{
-          this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
-          return;
+        };
+        await this.router.navigate(['/menu'], navigationExtras);
+        return true;
+      } else {
+        this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
+        return false;
       }
-      return true;
-    }//fin else
+    } catch (e) {
+      this.alerta.presentAlert("Error de sistema", "Reintente o contacte soporte por error:" + e);
+    }
+    return false;
   }
 
   

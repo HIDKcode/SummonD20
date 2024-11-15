@@ -31,12 +31,12 @@ export class DatabaseService {
   t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,tamaño INTEGER NOT NULL,filepath_arc TEXT NOT NULL,tipo_archivo TEXT NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,fechacreado TEXT NOT NULL,owner INTEGER NOT NULL);";
-  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID));";
+  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
 
-  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('Martin123', '123456', 'martin123@correo.cl', NULL, 9);";
+  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'martin123@correo.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
   ins_CARPETA: string = "INSERT OR IGNORE INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES('summon_nube', date('now'), 1);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, tamaño, filepath_arc, tipo_archivo, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('prestock1', 1024, 'assets/images/editor.png', 'image', date('now'), 1, 1);";
@@ -62,7 +62,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonV5',
+        name: 'summonV8',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -183,43 +183,40 @@ async crearTablas(){
 }
 
 
-  // FUNLOGIN
-  async validaClave(nick: string): Promise<string | null> {
-    const result = await this.database.executeSql('SELECT clave FROM USER WHERE nick = ?;', [nick]);
+  //Validadores boolean
+  async validaClave(nick: string, clave: string): Promise<boolean | null> {
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
 
-    if (result.rows.length > 0) {
-      const password = result.rows.item(0).clave;
-      await this.savePass(password);
-      return password;
+    if (CONSULTA.rows.item(0).count > 0) {
+      return true;
     } else {
       return null;
     }
   }
-  async savePass(password: string) {
-    try {
-      await this.nativeStorage.setItem('IClave', { Vclave: password });
-      console.log('Clave guardada');
-    } catch (error) {
-      console.error('Error guardando clave', error);
-    }
+
+  async validaClaveGrupo(id: number, pass: number): Promise<boolean | null>{
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?;',[id, pass]);
+
+      if (CONSULTA.rows.item(0).count > 0) {
+        return true;
+      } else {
+        return null;
+      }
   }
 
-  async getPass(): Promise<string | null> {
-    try {
-      const data = await this.nativeStorage.getItem('IClave');
-      return data.Vclave;
-    } catch (error){
-      console.error('Error recuperando pass', error);
+  async Unico(Vnick: string, Vcorreo: string): Promise<boolean | null > {
+    const CONSULTA = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?;', [Vnick, Vcorreo]);
+    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
+    if (CONSULTA.rows.length === 0) {
+      return true;
+    } else {
       return null;
     }
   }
-  
-  // FUNREGISTRO
-  async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
-    const userCheck = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?;', [Vnick, Vcorreo]);
-    return userCheck.rows.length === 0; // Si no hay filas, el usuario es único.
-  }
 
+  // FIN VALIDADORES BOOLEAN
+
+  // Funciones de registro
   async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
     try {
       // Las alertas funcionarán como console.log en android studio para testing. 5 es = a Usuario permitido
@@ -295,15 +292,6 @@ async crearTablas(){
   }
 
   //getters
-  async validaGrupoPass(id: number): Promise<string | null>{
-    const result = await this.database.executeSql('SELECT clave FROM GRUPO WHERE grupoID= ?;',[id]);
-    if (result.rows.length > 0) {
-      const password = result.rows.item(0).clave;
-      await this.savePass(password);
-      return password;
-    } else {
-      return null;
-    }
-  }
+  
 
 }

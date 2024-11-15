@@ -24,8 +24,6 @@ export class MenuPage implements OnInit {
     private menuCtrl: MenuController, private nativestorage: NativeStorage,
     private datab: DatabaseService, private alerta: AlertService) {
     this.menuCtrl.enable(true);
-    
-    
   }
 
   async ngOnInit() {
