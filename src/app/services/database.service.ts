@@ -62,7 +62,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonV8',
+        name: 'summonV9',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -160,7 +160,6 @@ async crearTablas(){
     return new Observable(observer => {
       this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
-          
           if (res.rows.length > 0) {
             fetchedUser.push({
               userID: res.rows.item(0).userID,
@@ -169,8 +168,10 @@ async crearTablas(){
               perfil_media: res.rows.item(0).perfil_media,
               estado: res.rows.item(0).estado
             });
-            
-          } else { this.alerta.presentAlert("Usuario no encontrado", "Fallo");}
+          } else { 
+            this.alerta.presentAlert("Usuario no encontrado", "Fallo");
+            this.router.navigate(['/login']);
+          }
           observer.next(fetchedUser);
           observer.complete();
         })
@@ -180,37 +181,37 @@ async crearTablas(){
           observer.error(e);
         });
     });
-}
+  }
 
 
   //Validadores boolean
-  async validaClave(nick: string, clave: string): Promise<boolean | null> {
+  async validaClave(nick: string, clave: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
 
-    if (CONSULTA.rows.item(0).count > 0) {
+    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
       return true;
     } else {
-      return null;
+      return false;
     }
   }
 
-  async validaClaveGrupo(id: number, pass: number): Promise<boolean | null>{
+  async validaClaveGrupo(id: number, pass: number): Promise<boolean>{
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?;',[id, pass]);
 
-      if (CONSULTA.rows.item(0).count > 0) {
+      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
         return true;
       } else {
-        return null;
+        return false;
       }
   }
 
-  async Unico(Vnick: string, Vcorreo: string): Promise<boolean | null > {
+  async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?;', [Vnick, Vcorreo]);
     // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
     if (CONSULTA.rows.length === 0) {
       return true;
     } else {
-      return null;
+      return false;
     }
   }
 
@@ -236,7 +237,7 @@ async crearTablas(){
       // Manejar errores y registrar en la tabla ERRORES
       const eMessage = e.message;
       const eCode = e.code;
-      await this.logError("fegisterUser", eCode||': '||eMessage);
+      await this.logError("registerUser", eCode||': '||eMessage);
       this.alerta.presentAlert("Registro de registro", "Error:" + eMessage);
       return false; // Fallo en el registro
     }
@@ -257,8 +258,7 @@ async crearTablas(){
     const arrayBuffer = await response.arrayBuffer();
     return new Uint8Array(arrayBuffer);  
   }
-
-
+  
   // Verificar inserts
   insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
       return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{

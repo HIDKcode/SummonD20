@@ -3,8 +3,6 @@ import { NavigationExtras, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
-
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -34,53 +32,50 @@ export class LoginPage implements OnInit {
   }
 
   async Ingreso() {
+  let hasE = false;
+  const regexprohibido = /[';()--]/;
 
-    let hasE = false;
-    const regexprohibido = /[';()--]/;
-    
-    // Validaciones
-    if (this.Vnick === "" || regexprohibido.test(this.Vnick)) {
-      this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
-      hasE = true;
-    } else {
-      this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
-    }
-    
-    if (this.Vpassword === "" || regexprohibido.test(this.Vpassword)) {
-      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
-      hasE = true;
-    } else {
-      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
-    }
-  
-    // Si hay errores, detiene la ejecución
-    if (hasE) {
-      return false;
-    }
+  if (this.Vnick === "" || regexprohibido.test(this.Vnick)) {
+    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
+  }
 
-    this.Vnick = this.Vnick.toLowerCase();
-
-    try {
-      const VALIDADOR = await this.datab.validaClave(this.Vnick, this.Vpassword);
-      if (VALIDADOR) {
-        await this.datab.fetchUser(this.Vnick); 
-        let navigationExtras: NavigationExtras = {
-          state: {
-            Vnick: this.Vnick
-          }
-        };
-        await this.router.navigate(['/menu'], navigationExtras);
-        return true;
-      } else {
-        this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
-        return false;
-      }
-    } catch (e) {
-      this.alerta.presentAlert("Error de sistema", "Reintente o contacte soporte por error:" + e);
-    }
+  if (this.Vpassword === "" || regexprohibido.test(this.Vpassword)) {
+    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+    hasE = true;
+  } else {
+    this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+  }
+  if (hasE) {
     return false;
   }
 
-  
+  this.Vnick = this.Vnick.toLowerCase();
+
+  try {
+    const VALIDADOR = await this.datab.validaClave(this.Vnick, this.Vpassword);
+    if (VALIDADOR) {
+      await this.datab.fetchUser(this.Vnick);
+
+      let navigationExtras: NavigationExtras = {
+        state: {
+          Vnick: this.Vnick
+        }
+      };
+      await this.router.navigate(['/menu'], navigationExtras);
+      return true;
+    } else {
+      this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
+      return false;
+    }
+
+  } catch (e) {
+    this.alerta.presentAlert("Error de sistema", "Reintente o contacte soporte por error: " + e);
+    return false; 
+  }
+}
+
 }
 
