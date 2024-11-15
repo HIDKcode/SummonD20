@@ -29,7 +29,7 @@ export class DatabaseService {
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, page_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
-  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,tamaño INTEGER NOT NULL,filepath_arc TEXT NOT NULL,tipo_archivo TEXT NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
+  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,fechacreado TEXT NOT NULL,owner INTEGER NOT NULL);";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
@@ -39,7 +39,7 @@ export class DatabaseService {
   ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'martin123@correo.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
   ins_CARPETA: string = "INSERT OR IGNORE INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES('summon_nube', date('now'), 1);";
-  ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, tamaño, filepath_arc, tipo_archivo, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('prestock1', 1024, 'assets/images/editor.png', 'image', date('now'), 1, 1);";
+  ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('editor', 'png', 1024, date('now'), 1, 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', date('now'), 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', date('now'), 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
@@ -214,8 +214,22 @@ async crearTablas(){
       return false;
     }
   }
-
   // FIN VALIDADORES BOOLEAN
+
+  async getArchivoIdMas1(): Promise<number | null>{
+    try{
+      const CONSULTA = await this.database.executeSql('SELECT MAX(mediaID) as maxID from ARCHIVO;');
+      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).maxID !== null){
+        return CONSULTA.rows.item(0).maxID + 1;
+      } else {
+        return 1;
+      } 
+    } catch (e: any) {
+      await this.logError("getArchivo", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Fallo en getArchivo", "Contacte soporte por errorr:" + e.message);
+      return null;
+    }
+  }
 
   // Funciones de registro
   async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
@@ -234,11 +248,8 @@ async crearTablas(){
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {
-      // Manejar errores y registrar en la tabla ERRORES
-      const eMessage = e.message;
-      const eCode = e.code;
-      await this.logError("registerUser", eCode||': '||eMessage);
-      this.alerta.presentAlert("Registro de registro", "Error:" + eMessage);
+      await this.logError("registerUser", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
       return false; // Fallo en el registro
     }
   }
@@ -251,6 +262,20 @@ async crearTablas(){
   }
 
   // INSERTS
+
+  async updateUserProfile(userID: string, base64Image: string){
+    try {
+      const MODIFICA = await this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE idnoticia = ?',[base64Image, userID]);
+      if (MODIFICA.rowsAffected > 0){
+        this.alerta.presentAlert("Modificar", "Imagen Modificada");
+      } else {
+        this.alerta.presentAlert("Modificar", "No se encontró el usuario y/o la imagen no se pudo modificar.");
+      }
+    }catch(e: any){
+      await this.logError("registerUser", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
+    }
+  }
 
   // Genero con http de la imagen para convertirlo en Uint8array (comaptible de blob sqlite)
   async blobimg(): Promise<Uint8Array> {

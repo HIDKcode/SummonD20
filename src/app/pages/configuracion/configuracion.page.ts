@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { User } from 'src/app/services/clasesdb';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-configuracion',
@@ -53,10 +54,22 @@ export class ConfiguracionPage implements OnInit {
       const image = await Camera.getPhoto({
         quality: 100,
         allowEditing: true,
-        resultType: CameraResultType.Uri
+        resultType: CameraResultType.Base64 // Debe ser Base64, diferente de URI como en la pagina web, para usar las blob
       });
-      if (image && image.webPath) {
-        this.Vprofile = image.webPath;
+      const nextID = await this.datab.getArchivoIdMas1();
+
+      if (image && image.base64String) {
+        const tiempo = new Date().toISOString();
+        const fileName = `img_${nextID}.jpeg`;
+        //Usamos Filesystem de capacitor, no FileSystem de JS
+        const savedFile = await Filesystem.writeFile({
+          path: fileName,
+          data: image.base64String,
+          directory: Directory.Data
+        });
+        this.Vprofile = savedFile.uri;
+        await this.datab.updateUserProfile(this.VuserID, image.base64String);
+        this.alerta.presentAlert("Éxito", "Imagen guardada correctamente.");
       }
     } catch (error) {
       this.alerta.presentAlert("Error", "No se pudo capturar la imagen," + error);
