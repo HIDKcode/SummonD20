@@ -43,7 +43,7 @@ export class SalacreatePage implements OnInit {
     // Validador de limite valor
     if(this.Gnombre == "" ){hasE = true;}
     if(this.Gdescr == "" ){hasE = true;}
-    if(this.Gclave < 0){hasE = true;}
+    if(this.Gclave < 100000 || this.Gclave > 999999){hasE = true;}
 
     // Si hay algún error, parará aquí.
     if (hasE) {

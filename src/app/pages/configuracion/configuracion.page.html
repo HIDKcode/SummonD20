@@ -10,12 +10,17 @@
     <h3 class="center">{{Vnick}}#{{VuserID}} </h3>
 
     <div class="center">
-      <div class="center summon-foto1x1">
-        <img [src]="Vprofile" alt="User Profile" />
-        <ng-template #placeholder>
-          <img src="assets/img/def_profile.png" alt="Default Profile" />
-        </ng-template>
+
+      <div class="center summon-foto1x1" *ngIf="Vprofile != null; else placeholder;">
+        <img [src]="Vprofile " alt="User Profile" />
       </div>
+
+      <ng-template  class="center summon-foto1x1" #placeholder>
+        <img src="assets/img/def_profile.png" alt="Default Profile" />
+      </ng-template>
+        
+      
+
       <ion-button class="summonbutton" (click)="takePicture()">CAMBIAR IMAGEN</ion-button>
     </div>
 

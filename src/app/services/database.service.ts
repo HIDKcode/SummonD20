@@ -62,7 +62,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonV9',
+        name: 'summonV10',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -285,8 +285,8 @@ async crearTablas(){
   }
   
   // Verificar inserts
-  insertSala(gnombre: string, gclave: number, gdescripcion: string, gowner: number){
-      return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date(now))',[gnombre,gclave,gdescripcion,gowner]).then(res=>{
+  insertSala(gnombre: string, gclave: number, gdescripcion: string, userid: number){
+      return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date("now"))',[gnombre,gclave,gdescripcion,userid]).then(res=>{
         this.alerta.presentAlert("Creación de sala", "Proceso exitoso");
       }).catch(e=>{
         this.alerta.presentAlert("Creación de sala", "Error: " + JSON.stringify(e));
@@ -307,7 +307,7 @@ async crearTablas(){
   async insertGrupo(nick: string, descr: string, clave: number){
   try {
   const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
-  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner_id) VALUES (?, ?, ?,date(now), ?)',[nick, clave, descr, userID]
+  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?, ?, ?, date("now"), ?)',[nick, clave, descr, userID]
   );
   this.router.navigate(['/sala', result.insertId]);
     } catch (e) {
