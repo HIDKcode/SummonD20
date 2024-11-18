@@ -14,9 +14,9 @@ export class SalacreatePage implements OnInit {
 
   Vnick!: string;
 
-  Gnombre: string = "";
-  Gdescr: string = "";
-  Gclave!: number;
+  nombre: string = "";
+  descr: string = "";
+  clave!: number;
   Variable: any;
   VgrupoID!: number;
 
@@ -41,24 +41,22 @@ export class SalacreatePage implements OnInit {
   async Valida(){
     let hasE = false;
     // Validador de limite valor
-    if(this.Gnombre == "" ){hasE = true;}
-    if(this.Gdescr == "" ){hasE = true;}
-    if(this.Gclave < 100000 || this.Gclave > 999999){hasE = true;}
+    if(this.nombre == ""){hasE = true;}
+    if(this.descr == ""){hasE = true;}
+    if(this.clave < 100000 || this.clave > 999999){hasE = true;}
 
     // Si hay algún error, parará aquí.
     if (hasE) {
         this.alerta.presentAlert("Datos invalidos", "Reintente por favor");
       return false;
-      // Si no hay errores, continúa creando
-      } else {
-        try { 
-          const grupoID = await this.datab.insertGrupo(this.Gnombre, this.Gdescr, this.Gclave, this.Vnick);
+    }   
 
-        } catch (e: any) {
-          this.alerta.presentAlert("Error", "No se pudo crear la sala: " + e.message); 
-        }
-      }
-      return true;
+    try { 
+      const grupoID = await this.datab.insertGrupo(this.nombre, this.descr, this.clave, this.Vnick);
+    } catch (e: any) {
+      this.alerta.presentAlert("Error", "No se pudo crear la sala: " + e.message); 
+    }
+    return true;
   }
   
   async cargaNick(){

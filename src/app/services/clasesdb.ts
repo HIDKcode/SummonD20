@@ -2,10 +2,17 @@ export class User {
     userID!: number;              
     nick!: string;                          
     correo!: string;            
-    perfil_media!: Blob;  
+    perfil_media!: string; 
     estado!: number;     
 }
+export class Grupo {
+    grupoID!: number;
+    nombre_sala!: string; 
+    descripcion!: string; 
+    owner!: number;
+}
 
+/*
 export class ULT_CONEX {
     conexID!: number;       
     conexDATE!: string;        
@@ -33,7 +40,7 @@ export class CARPETA {
     parent_BIBLIOTECA_bibliotecaID!: number;
 }
 
-export class ARCHIVO {
+export class Archivo {
     archivoID!: number;        
     nombre!: string;         
     tamaño!: number;  
@@ -43,16 +50,6 @@ export class ARCHIVO {
     CARPETA_carpetaID!: number;
     CARPETA_BIBLIOTECA_bibliotecaID!: number;
 }
-
-export class GRUPO {
-    grupoID!: number;
-    nombre_sala!: string; 
-    clave!: string;
-    descripcion!: string; 
-    fechacreado!: string;
-    owner!: number;
-}
-
 export class PARTICIPANTE {
     participanteID!: number;
     USER_userID!: number;
@@ -75,3 +72,4 @@ export class ADJUNTO {
     media_tipo!: string;        
     MENSAJE_msjID!: number;       
 }
+*/

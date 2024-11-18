@@ -5,8 +5,7 @@ import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { User } from 'src/app/services/clasesdb';
-import { Camera, CameraResultType } from '@capacitor/camera';
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { CamaraService } from 'src/app/services/camara.service';
 
 @Component({
   selector: 'app-configuracion',
@@ -39,7 +38,7 @@ export class ConfiguracionPage implements OnInit {
   constructor(private router: Router, private activatedroute: ActivatedRoute, 
     private alerta: AlertService ,private renderer2: Renderer2, 
     private datab: DatabaseService, private nativeStorage: NativeStorage,
-    private menuCtrl: MenuController) {
+    private menuCtrl: MenuController, private camaraservicio: CamaraService) {
       this.menuCtrl.enable(true);
       this.cargaNick().then(() => {
         this.getUserData();
@@ -49,41 +48,18 @@ export class ConfiguracionPage implements OnInit {
   ngOnInit(){
   }
 
-  async takePicture() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 100,
-        allowEditing: true,
-        resultType: CameraResultType.Base64 // Debe ser Base64, diferente de URI como en la pagina web, para usar las blob
-      });
-      const nextID = await this.datab.getArchivoIdMas1();
+  foto(){
+    this.camaraservicio.takePicture()
+    .then((img) => {
+      this.Vprofile = img;
+      
+    }) 
 
-      if (image && image.base64String) {
-        const tiempo = new Date().toISOString();
-        const fileName = `img_${nextID}.jpeg`;
-        //Usamos Filesystem de capacitor, no FileSystem de JS
-        const savedFile = await Filesystem.writeFile({
-          path: fileName,
-          data: image.base64String,
-          directory: Directory.Data
-        });
-        this.Vprofile = savedFile.uri;
-        await this.datab.updateUserProfile(this.VuserID, image.base64String);
-        this.alerta.presentAlert("Éxito", "Imagen guardada correctamente.");
-      }
-    } catch (error) {
-      this.alerta.presentAlert("Error", "No se pudo capturar la imagen," + error);
-    }
   }
 
   Actualiza(){
-      
-      // While loop con variable boolean
-      while(this.variable == false){
-        // inicia If para errores
-        let hasE = false;
+      let hasE = false;
 
-      // Valida usuario
       if (this.Vnick == "" || this.Vnick.length <= 5) {
         this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
         hasE = true;
@@ -91,21 +67,18 @@ export class ConfiguracionPage implements OnInit {
         this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
       }
 
-      // Valida email
       if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
         hasE = true;
       } else {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
       }
-
-      // Si hay algún error, parará aquí.
       if (hasE) {
         return false;
       }
+
         this.variable = true;
-      }
-      // Funcion con data base aquí 
+      
         return true;
     }
 
@@ -122,7 +95,7 @@ export class ConfiguracionPage implements OnInit {
           this.Vprofile = userData[0].perfil_media;
           this.estado = userData[0].estado;
         } else {
-          this.alerta.presentAlert("Usuario no encontrado", "");
+          this.alerta.presentAlert("Alerta", "Usuario no encontrado");
         }
       },
       error: (e) => {

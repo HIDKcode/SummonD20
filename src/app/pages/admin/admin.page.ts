@@ -40,7 +40,7 @@ export class AdminPage implements OnInit {
 
   async ngOnInit() {
     await this.AdminPage();
-    this.listarUser()
+    this.listarUser();
   }
 
   listarUser() {

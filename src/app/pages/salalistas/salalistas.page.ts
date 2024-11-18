@@ -13,19 +13,18 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class SalalistasPage implements OnInit {
 
   grupos : any = [{
-    grupodID:  '',
-    grupo_nombre: '',
-    descripcion: '',
-    duenio_sala: '',
-    cant_user: '',
+    grupoID:  '',
+    nombre_sala:  '',
+    descripcion:  '',
+    owner:  '',
     clavevacia: '',
   }];
 
   misgrupos : any = [{
-    grupodID:  '',
-    grupo_nombre: '',
-    duenio_sala: '',
-    cant_user: '',
+    grupoID:  '',
+    nombre_sala:  '',
+    descripcion:  '',
+    owner:  '',
     clavevacia: '',
   }];
 
@@ -46,13 +45,32 @@ export class SalalistasPage implements OnInit {
     private menuCtrl: MenuController,
     private datab: DatabaseService,
     private nativestorage: NativeStorage){
+
     this.menuCtrl.enable(true); 
-    this.cargaNick();
+
   }
 
-  ngOnInit() {
-    this.lGrupos();
-    this.lmisGrupos();
+  async ngOnInit() {
+    await this.cargaNick();
+    this.datab.consultamisgrupos(this.Vnick);
+    this.datab.consultagrupos();
+    this.datab.dbState().subscribe(data=>{
+      if(data){
+      
+        this.datab.fetchmisgrupos().subscribe(res=>{
+          this.misgrupos = res;
+          //this.alerta.presentAlert("Aviso", "" + res);
+        });
+
+        
+
+        this.datab.fetchgrupos().subscribe(res=>{
+          this.grupos = res;
+          //this.alerta.presentAlert("Aviso2", "" + res);
+        });
+
+      }
+    })
   }
 
   irSalacreate(){
@@ -83,38 +101,6 @@ export class SalalistasPage implements OnInit {
       this.alerta.presentAlert("Clave errónea", "Contacte al dueño de la sala");
     }
     return false;
-  }
-
-  lGrupos() {
-    this.datab.ListaGrupos().subscribe({
-      next: (grupos) => {
-        this.grupos = grupos;
-      },
-      error: (e) => {
-        const em = e.message
-        this.alerta.presentAlert("Error al cargar los grupos:", "" + em);
-      },
-      complete: () => {
-        console.log('Carga de grupos completada.');
-      }
-      
-    });
-  }
-
-  lmisGrupos(){
-    this.datab.ListaMisGrupos(this.Vnick).subscribe({
-      next: (misgrupos) => {
-        this.misgrupos = misgrupos;
-      },
-      error: (e) => {
-        const em = e.message
-        this.alerta.presentAlert("Error al cargar los grupos:", "" + em);
-      },
-      complete: () => {
-        console.log('Carga de grupos completada.');
-      }
-      
-    });
   }
 
   irmigrupo(grupoID: number) {

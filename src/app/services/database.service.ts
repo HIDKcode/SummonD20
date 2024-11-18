@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
-import { BehaviorSubject, from, firstValueFrom, Observable } from 'rxjs';
-import { User } from './clasesdb';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { User, Grupo } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { HttpClient } from '@angular/common/http';
@@ -30,7 +30,7 @@ export class DatabaseService {
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
-  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,fechacreado TEXT NOT NULL,owner INTEGER NOT NULL);";
+  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
@@ -40,13 +40,17 @@ export class DatabaseService {
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
   ins_CARPETA: string = "INSERT OR IGNORE INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES('summon_nube', date('now'), 1);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('editor', 'png', 1024, date('now'), 1, 1);";
-  ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', date('now'), 1);";
-  ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', date('now'), 1);";
+  ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
+  ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
 
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  
+  //Variable para guardar rtegistros resultantes de select
+  listadomisgrupos = new BehaviorSubject([]);
+  listadogrupos = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService, private nativeStorage: NativeStorage,private http: HttpClient, private router: Router){
         this.platform.ready().then(()=>{
@@ -62,13 +66,14 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonV10',
+        name: 'summonBetaV3',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
         this.database = db;
         //llamar a la función de creación de tablas
         this.crearTablas();
+        this.consultagrupos();
         //modificar el observable del status de la base de datos
         this.isDBReady.next(true);
       }).catch(e=>{
@@ -107,6 +112,12 @@ async crearTablas(){
   }
 
 
+  async setNick(nick: string){
+    await this.nativeStorage.setItem('userData', { nick });
+  }
+
+  // Lista de usuarios
+
   ListaUsers(): Observable<User[]> {
     const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
     FROM USER;`;
@@ -124,54 +135,73 @@ async crearTablas(){
     });
   }
   
-  ListaMisGrupos(nick: string): Observable<any[]> {
+  async consultamisgrupos(nick: string) {
+    try {
+      // Obtener el userID de forma asíncrona
+      const userID = await this.getID(nick); 
+      
+      const CONSULTA = `
+      SELECT g.grupoID, g.nombre_sala, g.descripcion, u.nick
+      FROM GRUPO g
+      LEFT JOIN USER u ON g.owner = u.userID
+      WHERE g.grupoID IN (
+        SELECT p.GRUPO_grupoID
+        FROM PARTICIPANTE p
+        WHERE p.USER_userID = ?
+        )
+      OR g.owner = ?
+      `;
+      
+      // Ejecutar la consulta de grupos con el userID
+      return this.database.executeSql(CONSULTA, [userID, userID]).then(res => {
+        let items: Grupo[] = [];
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              grupoID: res.rows.item(i).grupoID,
+              nombre_sala: res.rows.item(i).nombre_sala,
+              descripcion: res.rows.item(i).descripcion,
+              owner: res.rows.item(i).nick,
+            });
+          }
+        }
+        this.listadomisgrupos.next(items as any);
+      });
+    } catch (error) {
+      this.alerta.presentAlert("Fallo en proceso fetch", "" + error);
+    }
+  }
+
+  consultagrupos(){
     const CONSULTA = `
-    SELECT G.grupoID, G.nombre_sala, G.descripcion, U.nick AS oNick, COUNT(P.PARTICIPA) AS totalParticipantes
+    SELECT grupoID, nombre_sala, descripcion, nick
     FROM GRUPO G
     JOIN USER U ON G.owner = U.userID
-    LEFT JOIN PARTICIPANTE P ON G.grupoID = P.GRUPO_grupoID
-    WHERE U.nick = ?
-    GROUP BY G.grupoID, G.nombre_sala, G.descripcion, U.nick;
     `;
     
-    return new Observable(MIRAMIGRUPO => {
-      this.database.executeSql(CONSULTA, [nick]).then(res => {
-          const GRUPO = [];
-          for (let i = 0; i < res.rows.length; i++) {
-            GRUPO.push(res.rows.item(i));
-          }
-          MIRAMIGRUPO.next(GRUPO);
-          MIRAMIGRUPO.complete();
-        })
-        .catch(error => MIRAMIGRUPO.error(error));
-    });
+    return this.database.executeSql(CONSULTA,[]).then(res =>{
+      let items: Grupo[] = [];
+      if(res.rows.length > 0){
+        for(let i = 0; i < res.rows.length; i++){
+          items.push({
+            grupoID: res.rows.item(i).grupoID,
+            nombre_sala: res.rows.item(i).nombre_sala,
+            descripcion: res.rows.item(i).descripcion,
+            owner: res.rows.item(i).nick,
+          })
+        }
+      }
+      this.listadogrupos.next(items as any);
+    })
   }
 
 
-  ListaGrupos(): Observable<any[]> {
-    const CONSULTA = `
-    SELECT G.grupoID, G.nombre_sala, U.nick AS oNick, COUNT(P.PARTICIPA) AS totalParticipantes
-    FROM GRUPO G
-    JOIN USER U ON G.owner = U.userID
-    LEFT JOIN PARTICIPANTE P ON G.grupoID = P.GRUPO_grupoID
-    GROUP BY G.grupoID, G.nombre_sala, U.nick;
-    `;
-    
-    return new Observable(MIRAGRUPOS => {
-      this.database.executeSql(CONSULTA, []).then(res => {
-          const GRUPO = [];
-          for (let i = 0; i < res.rows.length; i++) {
-            GRUPO.push(res.rows.item(i));
-          }
-          MIRAGRUPOS.next(GRUPO);
-          MIRAGRUPOS.complete();
-        })
-        .catch(error => MIRAGRUPOS.error(error));
-    });
+ // Retorno como observables
+  fetchmisgrupos(): Observable<any[]>{
+    return this.listadomisgrupos.asObservable();
   }
-
-  async setNick(nick: string){
-    await this.nativeStorage.setItem('userData', { nick });
+  fetchgrupos(): Observable<any[]>{
+    return this.listadogrupos.asObservable();
   }
 
   fetchUser(nick: string): Observable<User[]> {
@@ -198,72 +228,23 @@ async crearTablas(){
           MIRAUSER.complete();
         })
         .catch(e => {
-          const em = e.message
-          this.alerta.presentAlert("Fallo en proceso fetch", "E: "+em);
+          this.alerta.presentAlert("Fallo en proceso fetch", "E: "+ e.message);
           MIRAUSER.error(e);
         });
     });
   }
-
-
-  //Validadores boolean
-  async validaClave(nick: string, clave: string): Promise<boolean> {
-    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
-
-    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  async validaClaveGrupo(id: number, pass: number): Promise<boolean>{
-    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?;',[id, pass]);
-
-      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
-        return true;
-      } else {
-        return false;
-      }
-  }
-
-  async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
-    const CONSULTA = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?;', [Vnick, Vcorreo]);
-    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
-    if (CONSULTA.rows.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  // FIN VALIDADORES BOOLEAN
-
-  async getArchivoIdMas1(): Promise<number | null>{
-    try{
-      const CONSULTA = await this.database.executeSql('SELECT MAX(mediaID) as maxID from ARCHIVO;');
-      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).maxID !== null){
-        return CONSULTA.rows.item(0).maxID + 1;
-      } else {
-        return 1;
-      } 
-    } catch (e: any) {
-      await this.logError("getArchivo", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Fallo en getArchivo", "Contacte soporte por errorr:" + e.message);
-      return null;
-    }
-  }
-
-  // Funciones de registro
+  
+// MODULOS
   async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
     try {
       // Las alertas funcionarán como console.log en android studio para testing. 5 es = a Usuario permitido
-        await this.database.executeSql('INSERT INTO USER(nick, clave, correo, estado) VALUES (?, ?, ?, ?);', [nick, Vpassword, Vcorreo, 5]);
+        await this.database.executeSql('INSERT INTO USER(nick, clave, correo, estado) VALUES (?, ?, ?, ?)', [nick, Vpassword, Vcorreo, 5]);
         //this.alerta.presentAlert("1", "a");
-        const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+        const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
         //this.alerta.presentAlert("1", "b");
         const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
         //this.alerta.presentAlert("1", "c");
-        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?);', [userid]);
+        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?)', [userid]);
         //this.alerta.presentAlert("1", "d");
         await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
         //this.alerta.presentAlert("1", "f");
@@ -277,56 +258,30 @@ async crearTablas(){
   }
 
 
-  // Registrar Errores
-  logError(title: any, msj: any){
-    // Se debe ingresar en title el nombre de la función y en mensaje eCode||': '||eMessage
-    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?);', [title, msj])
+
+// VALIDADORES
+  async validaClave(nick: string, clave: string): Promise<boolean> {
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
+
+    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  // INSERTS
+  async validaClaveGrupo(id: number, pass: number): Promise<boolean>{
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?',[id, pass]);
 
-  async updateUserProfile(userID: string, base64Image: string){
-    try {
-      const MODIFICA = await this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE idnoticia = ?',[base64Image, userID]);
-      if (MODIFICA.rowsAffected > 0){
-        this.alerta.presentAlert("Modificar", "Imagen Modificada");
+      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
+        return true;
       } else {
-        this.alerta.presentAlert("Modificar", "No se encontró el usuario y/o la imagen no se pudo modificar.");
+        return false;
       }
-    }catch(e: any){
-      await this.logError("registerUser", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
-    }
   }
 
-  // Genero con http de la imagen para convertirlo en Uint8array (comaptible de blob sqlite)
-  async blobimg(): Promise<Uint8Array> {
-    const response = await firstValueFrom(this.http.get('assets/images/def_profile.png', { responseType: 'blob' }));
-    const arrayBuffer = await response.arrayBuffer();
-    return new Uint8Array(arrayBuffer);  
-  }
-  
-  // Verificar inserts
-  insertSala(gnombre: string, gclave: number, gdescripcion: string, userid: number){
-      return this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?,?,?,date("now"))',[gnombre,gclave,gdescripcion,userid]).then(res=>{
-        this.alerta.presentAlert("Creación de sala", "Proceso exitoso");
-      }).catch(e=>{
-        this.alerta.presentAlert("Creación de sala", "Error: " + JSON.stringify(e));
-      })
-    }
-  
-  async  insertParticipante(nick: string, grupoID: number){
-    try {
-      const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
-      await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?);',[userID, grupoID]);
-      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Con exito");
-    } catch (e) {
-      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error: " + JSON.stringify(e));
-    }
-  }
-
-  async UnicoGrupo(x: string): Promise<boolean> {
-    const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?;', [x]);
+  async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
+    const CONSULTA = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?', [Vnick, Vcorreo]);
     // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
     if (CONSULTA.rows.length === 0) {
       return true;
@@ -335,18 +290,82 @@ async crearTablas(){
     }
   }
 
+  async UnicoGrupo(x: string): Promise<boolean> {
+    const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?', [x]);
+    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
+    if (CONSULTA.rows.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async getID(nick: string) {
+  const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
+  if (SELECT.rows.length > 0) {
+    return SELECT.rows.item(0).userID;
+   } 
+  }
+
+  async getArchivoIdMas1(): Promise<number | null>{
+    try{
+      const CONSULTA = await this.database.executeSql('SELECT MAX(mediaID) as maxID from ARCHIVO');
+      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).maxID !== null){
+        return CONSULTA.rows.item(0).maxID + 1;
+      } else {
+        return 1;
+      } 
+    } catch (e: any) {
+      await this.logError("getArchivo", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Fallo en getArchivo", "Contacte soporte por errorr:" + e.message);
+      return null;
+    }
+  }
+
+
+
+// INSERTS
+
+  logError(title: any, msj: any){
+    // Se debe ingresar en title el nombre de la función y en mensaje eCode||': '||eMessage
+    this.database.executeSql('INSERT INTO ERRORES VALUES(?,?)', [title, msj])
+  }
+  async  insertParticipante(nick: string, grupoID: number){
+    try {
+      const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
+      if (SELECT.rows.length > 0) {
+        const userID = SELECT.rows.item(0).userID;
+      await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]);
+      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Con exito");
+      this.consultamisgrupos(nick);
+      } else {
+        this.alerta.presentAlert("Error en registro de participante", "Contacte soporte");
+        return;
+      }
+    } catch (e) {
+      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error: " + JSON.stringify(e));
+    }
+  }
+
+
   async insertGrupo(nombre: string, descr: string, clave: number, nick: string){
     const VERIFICA = await this.UnicoGrupo(nombre);
-    
     if(VERIFICA){
       try {
-        const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
-        const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?, ?, ?, date("now"), ?);',[nombre, clave, descr, userID]);
-        await this.insertParticipante(nick, CONSULTA.insertId);
-        this.ListaGrupos();
-        this.ListaMisGrupos(nick);
-        this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+CONSULTA.insertId);
-        this.router.navigate(['/sala', CONSULTA.insertId]);
+        const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
+        if (SELECT.rows.length > 0) {
+        const userID = SELECT.rows.item(0).userID;
+        const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES (?, ?, ?, ?)',[nombre, clave, descr, userID]);
+        const IDgrupo = CONSULTA.insertId;
+        await this.insertParticipante(nick, IDgrupo);
+        this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ IDgrupo);
+        this.consultagrupos();
+        this.consultamisgrupos(nick);
+        this.router.navigate(['/sala', IDgrupo]);
+        } else {
+          this.alerta.presentAlert("Error en creación de grupo", "Contacte soporte");
+          return;
+        }
           } catch (e) {
         console.error('Error al crear el grupo:', e);
         throw e; // Enviamos el error a funcion valida
@@ -356,5 +375,6 @@ async crearTablas(){
     }
   }
 
+  
 
 }
