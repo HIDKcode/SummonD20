@@ -13,6 +13,24 @@
 
           <ion-grid>
             <ion-row>
+              <ion-col size="9"> YA PARTICIPANDO </ion-col>
+              <ion-col size="3"> ENTRAR </ion-col>
+            </ion-row>
+
+            <ion-row *ngFor="let x of misgrupos">
+              <ion-col size="9" class="elipsis"> #{{x.grupoID}}: {{x.nombre_sala}}, {{x.descripcion}}  <br> Dueño: {{ x.oNick }}, n° partcipantes: {{x.totalParticipantes}} </ion-col>
+              
+              <ion-col size="3"> 
+                <ion-button class="summonbtnsmall" (click)="irmigrupo(x.grupoID)">
+                  <ion-icon name="arrow-forward-outline"></ion-icon>  
+                </ion-button>  
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
+          <br>
+          <ion-grid>
+            <ion-row>
               <ion-col size="5"> INFORMACIÓN </ion-col>
               <ion-col size="4"> CLAVE </ion-col>
               <ion-col size="3"> ENTRAR </ion-col>
@@ -26,7 +44,7 @@
               </ion-col>
 
               <ion-col size="3"> 
-                <ion-button class="summonbtnsmall" (click)="participar(x.grupoID)">
+                <ion-button class="summonbtnsmall" (click)="participar(x.grupoID, x.clavevacia)">
                   <ion-icon name="arrow-forward-outline"></ion-icon>  
                 </ion-button>  
               </ion-col>

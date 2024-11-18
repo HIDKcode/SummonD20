@@ -15,6 +15,15 @@ export class SalalistasPage implements OnInit {
   grupos : any = [{
     grupodID:  '',
     grupo_nombre: '',
+    descripcion: '',
+    duenio_sala: '',
+    cant_user: '',
+    clavevacia: '',
+  }];
+
+  misgrupos : any = [{
+    grupodID:  '',
+    grupo_nombre: '',
     duenio_sala: '',
     cant_user: '',
     clavevacia: '',
@@ -43,14 +52,14 @@ export class SalalistasPage implements OnInit {
 
   ngOnInit() {
     this.lGrupos();
-    
+    this.lmisGrupos();
   }
 
   irSalacreate(){
     this.router.navigate(['/salacreate'])
   }
   
-  async participar(grupoID: number) {
+  async participar(grupoID: number, clavevacia: number) {
     let hasE = false;
 
     if (this.pass <= 99999 || this.pass > 99999){
@@ -61,7 +70,7 @@ export class SalalistasPage implements OnInit {
       return false;
     } 
 
-    const VALIDADOR = await this.datab.validaClaveGrupo(grupoID, this.pass);
+    const VALIDADOR = await this.datab.validaClaveGrupo(grupoID, clavevacia);
     if (VALIDADOR) {
       try {
         await this.datab.insertParticipante(this.Vnick, grupoID);
@@ -90,6 +99,26 @@ export class SalalistasPage implements OnInit {
       }
       
     });
+  }
+
+  lmisGrupos(){
+    this.datab.ListaMisGrupos(this.Vnick).subscribe({
+      next: (misgrupos) => {
+        this.misgrupos = misgrupos;
+      },
+      error: (e) => {
+        const em = e.message
+        this.alerta.presentAlert("Error al cargar los grupos:", "" + em);
+      },
+      complete: () => {
+        console.log('Carga de grupos completada.');
+      }
+      
+    });
+  }
+
+  irmigrupo(grupoID: number) {
+        this.router.navigate(['/sala', grupoID]);
   }
 
   async cargaNick(){

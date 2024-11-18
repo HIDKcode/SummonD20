@@ -52,11 +52,10 @@ export class SalacreatePage implements OnInit {
       // Si no hay errores, continúa creando
       } else {
         try { 
-          const grupoID = await this.datab.insertGrupo(this.Gnombre, this.Gdescr, this.Gclave);
+          const grupoID = await this.datab.insertGrupo(this.Gnombre, this.Gdescr, this.Gclave, this.Vnick);
 
         } catch (e: any) {
-          const em = e.message
-          this.alerta.presentAlert("Error", "No se pudo crear la sala: " + em); 
+          this.alerta.presentAlert("Error", "No se pudo crear la sala: " + e.message); 
         }
       }
       return true;

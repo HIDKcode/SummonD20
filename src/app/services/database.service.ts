@@ -111,19 +111,42 @@ async crearTablas(){
     const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
     FROM USER;`;
     
-    return new Observable(observer => {
-      this.database.executeSql(CONSULTA, [])
-        .then(res => {
+    return new Observable(MIRAUSER => {
+      this.database.executeSql(CONSULTA, []).then(res => {
           const USUARIO = [];
           for (let i = 0; i < res.rows.length; i++) {
             USUARIO.push(res.rows.item(i));
           }
-          observer.next(USUARIO);
-          observer.complete();
+          MIRAUSER.next(USUARIO);
+          MIRAUSER.complete();
         })
-        .catch(error => observer.error(error));
+        .catch(error => MIRAUSER.error(error));
     });
   }
+  
+  ListaMisGrupos(nick: string): Observable<any[]> {
+    const CONSULTA = `
+    SELECT G.grupoID, G.nombre_sala, G.descripcion, U.nick AS oNick, COUNT(P.PARTICIPA) AS totalParticipantes
+    FROM GRUPO G
+    JOIN USER U ON G.owner = U.userID
+    LEFT JOIN PARTICIPANTE P ON G.grupoID = P.GRUPO_grupoID
+    WHERE U.nick = ?
+    GROUP BY G.grupoID, G.nombre_sala, G.descripcion, U.nick;
+    `;
+    
+    return new Observable(MIRAMIGRUPO => {
+      this.database.executeSql(CONSULTA, [nick]).then(res => {
+          const GRUPO = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            GRUPO.push(res.rows.item(i));
+          }
+          MIRAMIGRUPO.next(GRUPO);
+          MIRAMIGRUPO.complete();
+        })
+        .catch(error => MIRAMIGRUPO.error(error));
+    });
+  }
+
 
   ListaGrupos(): Observable<any[]> {
     const CONSULTA = `
@@ -134,17 +157,16 @@ async crearTablas(){
     GROUP BY G.grupoID, G.nombre_sala, U.nick;
     `;
     
-    return new Observable(observer => {
-      this.database.executeSql(CONSULTA, [])
-        .then(res => {
+    return new Observable(MIRAGRUPOS => {
+      this.database.executeSql(CONSULTA, []).then(res => {
           const GRUPO = [];
           for (let i = 0; i < res.rows.length; i++) {
             GRUPO.push(res.rows.item(i));
           }
-          observer.next(GRUPO);
-          observer.complete();
+          MIRAGRUPOS.next(GRUPO);
+          MIRAGRUPOS.complete();
         })
-        .catch(error => observer.error(error));
+        .catch(error => MIRAGRUPOS.error(error));
     });
   }
 
@@ -157,7 +179,7 @@ async crearTablas(){
     const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
         FROM USER
         WHERE nick = ?`
-    return new Observable(observer => {
+    return new Observable(MIRAUSER => {
       this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
           if (res.rows.length > 0) {
@@ -172,13 +194,13 @@ async crearTablas(){
             this.alerta.presentAlert("Usuario no encontrado", "Fallo");
             this.router.navigate(['/login']);
           }
-          observer.next(fetchedUser);
-          observer.complete();
+          MIRAUSER.next(fetchedUser);
+          MIRAUSER.complete();
         })
         .catch(e => {
           const em = e.message
           this.alerta.presentAlert("Fallo en proceso fetch", "E: "+em);
-          observer.error(e);
+          MIRAUSER.error(e);
         });
     });
   }
@@ -296,27 +318,43 @@ async crearTablas(){
   async  insertParticipante(nick: string, grupoID: number){
     try {
       const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
-      await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]
-      );
-      this.alerta.presentAlert("Ingreso a sala ID#" + grupoID, "Con exito");
+      await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?);',[userID, grupoID]);
+      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Con exito");
     } catch (e) {
-      this.alerta.presentAlert("Ingreso a sala ID#" + grupoID, "Error: " + JSON.stringify(e));
+      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error: " + JSON.stringify(e));
     }
   }
 
-  async insertGrupo(nick: string, descr: string, clave: number){
-  try {
-  const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
-  const result = await this.database.executeSql('INSERT OR IGNORE INTO GRUPO (nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?, ?, ?, date("now"), ?)',[nick, clave, descr, userID]
-  );
-  this.router.navigate(['/sala', result.insertId]);
-    } catch (e) {
-  console.error('Error al crear el grupo:', e);
-  throw e; // Enviamos el error a funcion valida
-}
+  async UnicoGrupo(x: string): Promise<boolean> {
+    const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?;', [x]);
+    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
+    if (CONSULTA.rows.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  //getters
-  
+  async insertGrupo(nombre: string, descr: string, clave: number, nick: string){
+    const VERIFICA = await this.UnicoGrupo(nombre);
+    
+    if(VERIFICA){
+      try {
+        const userID = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?;', [nick]);
+        const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, fechacreado, owner) VALUES (?, ?, ?, date("now"), ?);',[nombre, clave, descr, userID]);
+        await this.insertParticipante(nick, CONSULTA.insertId);
+        this.ListaGrupos();
+        this.ListaMisGrupos(nick);
+        this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+CONSULTA.insertId);
+        this.router.navigate(['/sala', CONSULTA.insertId]);
+          } catch (e) {
+        console.error('Error al crear el grupo:', e);
+        throw e; // Enviamos el error a funcion valida
+          }
+    } else {
+      this.alerta.presentAlert("Fallo en creacion de grupo", "Nombre de grupo ya existe");
+    }
+  }
+
 
 }
