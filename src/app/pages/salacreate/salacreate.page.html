@@ -4,21 +4,20 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-      <div class="center"> 
-        <h2 class="blanco sombraV uline"> !Convierte en el Dungeon Master! </h2> 
-      </div>
+    <div class="center"> 
+      <h2 class="blanco sombraV uline"> !Convierte en el Dungeon Master! </h2> 
+    </div>
 
-      <div class="center"> 
-        <h3 class="blanco sombraV"> Nombre de sala </h3> 
-      </div>
+    <div class="center"> 
+      <h3 class="blanco sombraV"> Nombre de sala </h3> 
+    </div>
 
       <div class="center">
-        <ion-input  class="inputsummon blanco" type="text" maxlength="20" [(ngModel)]="nombre">
-        </ion-input>  
+        <ion-input class="inputsummon blanco" label="Nombre de sala" label-placement="floating" type="text" maxlength="20" fill="outline"  [(ngModel)]="nombre">
+        </ion-input> 
       </div>
 
       <div class="center"> 
@@ -26,7 +25,7 @@
       </div>
 
       <div class="center">
-        <ion-input class="inputsummon blanco" type="text" maxlength="45" [(ngModel)]="descr"></ion-input>  
+        <ion-input class="inputsummon blanco" label="Descripcion" label-placement="floating" type="text" maxlength="45" fill="outline"  [(ngModel)]="descr"></ion-input>  
       </div>
 
       <div class="center"> 
@@ -34,14 +33,16 @@
       </div>
       
       <div class="center">
-        <ion-input  class="inputsummon blanco" type="number" maxlength="6" [(ngModel)]="clave">
+        <ion-input  class="inputsummon blanco" label="Clave númerica" label-placement="floating" type="number" maxlength="6" fill="outline"  [(ngModel)]="clave">
         </ion-input>  
       </div>
       
       <div class="center">
         <ion-button class="summonbutton" (click)="Valida()"> CREAR SALA </ion-button>
-        <ion-button class="summonbutton" (click)="irSalalistas()"> VOLVER </ion-button>
       </div>  
+      <div class="center">
+        <ion-button class="summonbutton" (click)="irSalalistas()"> VOLVER </ion-button>
+      </div> 
       
   </div>
 </ion-content>
