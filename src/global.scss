@@ -40,18 +40,14 @@ min-height: 50px;
 font-size: 18px;
 }
 
-.summon-foto1x1{
-width: 25vw;
-height: 25vw;
+.imgcard{
 background: linear-gradient(135deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
 margin-left: 15px;
 margin-right: 15px;
-max-width: 815px;
 margin-top: 10px;
 margin-bottom: 10px;
 border: 5px solid #0d271e;
 border-radius: 10px;
---padding-start: 5px;
 }
 
 // Color y forma fondo
@@ -162,8 +158,14 @@ background-color: transparent;
         --ion-color-primary: #1fea00;
         }    
     .body{
-        
         background-image: url(assets/images/background.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    .body2{
+        background-image: url(assets/images/bcknotfound.jpg);
         background-repeat: no-repeat;
         background-position: center;
         background-attachment: fixed;
@@ -183,6 +185,13 @@ background-color: transparent;
         background-attachment: fixed;
         background-size: cover;
     }    
+    .body2{
+        background-image: url(assets/images/bcknotfound.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        background-size: cover;
+    }
 }
 
 

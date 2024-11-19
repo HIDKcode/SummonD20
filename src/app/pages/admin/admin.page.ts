@@ -24,7 +24,7 @@ export class AdminPage implements OnInit {
   Vid!: any;
   estado!: any;
   
-  constructor(private router: Router, private nativeStorage: NativeStorage,
+  constructor(private router: Router,
      private datab: DatabaseService, private alerta: AlertService,
       private menuCtrl: MenuController, private activatedroute: ActivatedRoute) {
     this.menuCtrl.enable(true);

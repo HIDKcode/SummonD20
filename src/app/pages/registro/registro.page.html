@@ -7,17 +7,13 @@
 <ion-content [fullscreen]="true">
 <div id="container" class="divfondo1 body">
 
-  <div  class="center">
-    <ion-card class="center">
-      <ion-card-header>
+  <div class="imgcard center-img">
         <ion-img src="assets/images/logo.png"> </ion-img>
-      </ion-card-header>
-    </ion-card>
   </div>
   
   <h2 class="center blanco sombraV"> ¡LA AVENTURA TE LLAMA! ÚNETE </h2>
   
-  <div  class="center">
+  <div  class="center ">
     <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating"  
     fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
   </div>
@@ -61,7 +57,7 @@
     <ion-button class="summonbutton blanco" (click)="Registro()"> UNIRSE </ion-button>
   </div>
     
-  <h3 class="verdeC center sombraB"> Ya tienes una cuenta?</h3>
+  <h3 class="verdeC center sombraB"> Ya tienes una cuenta? </h3>
 
   <div  class="center">
     <ion-button class="summonbutton blanco" [routerDirection]="'root'" [routerLink]="'/login'"> INICIA SESIÓN </ion-button>

@@ -45,7 +45,7 @@ export class RegistroPage implements OnInit {
   async Registro() {
 
     let hasE = false;
-    const regexprohibido = /[';()--]/;
+    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
   
     // Validador de caracteres prohibidos
     if (regexprohibido.test(this.Vnick) || regexprohibido.test(this.Vcorreo)) {
@@ -103,6 +103,6 @@ export class RegistroPage implements OnInit {
       return true;
     }
     return false;
-  }
+  } 
 
 }

@@ -7,27 +7,26 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
     
-    <h3 class="center">{{Vnick}}#{{VuserID}} </h3>
+    <h3 class="center blanco sombraV">{{Vnick}}#{{VuserID}} </h3>
 
     <div class="center">
 
-      <div class="center summon-foto1x1" *ngIf="Vprofile; else placeholder">
-        <ion-card class="center">
-          <ion-card-header>
+      <div class="imgcard center-img" *ngIf="Vprofile; else placeholder">
             <img [src]="Vprofile" alt="{{Vprofile}}" />
-          </ion-card-header>
-        </ion-card>
       </div>
 
-      <ng-template #placeholder>
-        <img src="assets/images/def_profile.png" alt="Default Profile"/>
+      <ng-template  #placeholder>
+        <div class="imgcard center-img">
+          <img src="assets/images/def_profile.png" alt="Default Profile"/>
+        </div >
       </ng-template>
       
       <ion-button class="summonbutton" (click)="foto()">CAMBIAR IMAGEN</ion-button>
     </div>
 
     <div class="center">
-      <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick" maxlength="20"></ion-input>
+      <ion-item class="inputsummon blanco"> {{Vnick}} </ion-item>
+      <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick"  disabled="true"></ion-input>
     </div>
 
     <div class="center">
@@ -43,7 +42,7 @@
     </div>
 
     <div class="center">
-      <ion-button class="summonbutton" (click)="Actualiza()">ACTUALIZAR DATOS</ion-button>
+      <ion-button class="summonbutton" (click)="Actualiza()"> ACTUALIZAR CORREO </ion-button>
     </div>
 
     <!-- Redirige a la página de cambio de contraseña -->

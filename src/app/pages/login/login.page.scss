@@ -1,5 +1,17 @@
-
-ion-card{
+.imgcard{
     width: 200px;
     height: 200px;
+    background-color: transparent;
+}
+
+ion-modal{
+--background: #0d271e !important;
+--background-color: #0011ff !important;
+--border: 5px solid #d3ae4e!important;
+--border-radius: 30px !important;
+--border-style: solid !important;
+--max-height: 45vh !important;
+--max-width: 90vw !important;
+--ion-toolbar-background: #0d271e !important;
+--ion-toolbar-color:  #fffdee; 
 }

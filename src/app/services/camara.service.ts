@@ -21,7 +21,7 @@ export class CamaraService {
         resolve(photo.webPath);
       })
       .catch(error => {
-        this.alerta.presentAlert('Error al tomar foto: ', JSON.stringify(error));
+        this.alerta.presentAlert('Error al tomar foto: ', JSON.stringify(error.message));
       })
     })
     

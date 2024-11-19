@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Cambiar Contraseña</ion-title>
+  <ion-toolbar >
+   <img class="center-img" src="assets/images/lettering.png" width="110px"  alt="logo"> 
   </ion-toolbar>
 </ion-header>
 
@@ -9,11 +9,19 @@
     <h3 class="center">Cambiar Contraseña</h3>
 
     <div class="center">
+      <ion-input class="inputsummon blanco" label="Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Claveoriginal" maxlength="20"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error1 class="error-form"><h5 class="error-text"> Ingrese contraseña </h5></div>
+    </div>
+
+    <div class="center">
       <ion-input class="inputsummon blanco" label="Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass" maxlength="20"></ion-input>
     </div>
 
     <div class="center">
-      <div #error3 class="error-form"><h5 class="error-text">Contraseña inválida <br> (Formato: 7 dígitos, 1 Mayúscula, 1 Signo)</h5></div>
+      <div #error2 class="error-form"><h5 class="error-text"> Contraseña inválida <br> (Formato: 7 dígitos, 1 Mayúscula, 1 Signo)</h5></div>
     </div>
 
     <div class="center">
@@ -21,14 +29,14 @@
     </div>
 
     <div class="center">
-      <div #error4 class="error-form"><h5 class="error-text">Las contraseñas no coinciden</h5></div>
+      <div #error3 class="error-form"><h5 class="error-text"> Las contraseñas no coinciden</h5></div>
     </div>
 
     <div class="center">
-      <ion-button class="summonbutton" (click)="CambiarPass()"> CONFIRMAR CAMBIO DE CONTRASEÑA </ion-button>
+      <ion-button class="summonbutton" (click)="CambiarPass()"> CAMBIAR CLAVE</ion-button>
     </div>
     <div class="center upmargin">
-      <ion-button class="summonbutton" (click)="volver()"> volver atrás </ion-button>
+      <ion-button class="summonbutton" (click)="volver()"> VOLVER ATRAS </ion-button>
     </div>
   </div>
 </ion-content>

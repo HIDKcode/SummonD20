@@ -8,12 +8,8 @@
 
 <div id="container" class="divfondo1 body">
 
-  <div  class="center">
-    <ion-card class="center">
-      <ion-card-header>
+  <div class="imgcard center-img">
        <ion-img src="assets/images/logo.png"> </ion-img>
-      </ion-card-header>
-    </ion-card>
   </div>
 
   <h1 class="center blanco sombraV"> Invocando a ... </h1>
@@ -22,8 +18,10 @@
     <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick">
     </ion-input>
   </div>
+
   <div  class="center">
-    <div #error1 class="error-form"><h5 class="error-text"> Ingrese usuario </h5> </div>
+    <div #error1 class="error-form"><h5 class="error-text"> Ingrese usuario </h5> 
+    </div>
   </div>
 
   <div  class="center">
@@ -31,10 +29,12 @@
     </ion-input>
   </div>
   <div  class="center">
-    <div #error2 class="error-form"><h5 class="error-text"> Ingrese contraseña </h5> </div>
+    <div #error2 class="error-form"><h5 class="error-text"> Ingrese contraseña </h5> 
+    </div>
   </div>
 
-  <a href="#" class="verdeC center">He olvidado mi contraseña </a>
+  <a class="verdeC center uline" id="open-modal"> He olvidado mi contraseña </a>
+
   <br>
   <div  class="center">
     <ion-button class="summonbutton" (click)="Ingreso()"> INGRESO </ion-button>
@@ -44,5 +44,42 @@
   <div  class="center">
     <ion-button class="summonbutton" [routerDirection]="'root'" [routerLink]="'/registro'"> REGISTRO</ion-button>
   </div>
-</div>
+
+  <div>
+      <ion-modal trigger="open-modal">
+        <ng-template>
+
+          <ion-header>
+            <ion-toolbar>
+                
+              <ion-title> Recuperar contraseña </ion-title>
+
+              <ion-buttons slot="end">
+                <ion-button (click)="cancel()"> Cerrar </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content class="ion-padding">
+              <div class="center">
+              <ion-input  class="inputsummon blanco" label="Ingresa tu Nick" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnombre">
+              </ion-input>
+              </div>
+              
+              <div class="center">
+              <ion-input class="inputsummon blanco" label="Ingresa tu correo" type="text" label-placement="floating" fill="outline"  [(ngModel)]="Vcorreo">
+              </ion-input>
+              </div> 
+
+              <div  class="center">
+                <ion-button [disabled]="botonDeshabilitado" class="summonbutton" (click)="Recuperar()"> RECUPERAR </ion-button>
+              </div>
+
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+
+  </div>
+  
+</div>  
 </ion-content>

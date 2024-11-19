@@ -76,12 +76,24 @@ export class MenuPage implements OnInit {
   }
 
   authLogged() {
+    if(this.estado == 1){
+      this.alerta.presentAlert("Has ingresado con una contraseña temporal", "Por favor cambiala cuanto antes.");
+      let navigationExtras: NavigationExtras = {
+        state: {
+          Vid: this.Vid,
+          estado: this.estado,
+        }
+      }
+      this.router.navigate(['/configclave'],navigationExtras)
+    }
     if (this.estado == 5 || this.estado == 9) {
       console.log("estado del usuario: " + this.estado)
     } else {
       this.alerta.presentAlert("Re-enviado a login", "Su usuario es inexistente o se encuentra bloqueado, IDestado: " + this.estado + "Contacte a soporte: Summonapp@soporte.cl");
       this.router.navigate(['/login']);
+      return false;
     }
+    return;
   }
 
 

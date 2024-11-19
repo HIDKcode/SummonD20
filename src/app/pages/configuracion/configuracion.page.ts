@@ -48,24 +48,21 @@ export class ConfiguracionPage implements OnInit {
   ngOnInit(){
   }
 
+  irCambioclave(){
+
+  }
+  
   foto(){
     this.camaraservicio.takePicture()
     .then((img) => {
       this.Vprofile = img;
-      
+      this.datab.modificafoto(this.Vprofile, this.Vnick);
     }) 
 
   }
 
   Actualiza(){
       let hasE = false;
-
-      if (this.Vnick == "" || this.Vnick.length <= 5) {
-        this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
-        hasE = true;
-      } else {
-        this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
-      }
 
       if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
@@ -76,10 +73,8 @@ export class ConfiguracionPage implements OnInit {
       if (hasE) {
         return false;
       }
-
-        this.variable = true;
-      
-        return true;
+      this.datab.modificaCorreo(this.Vnick, this.Vcorreo);
+      return;
     }
 
   

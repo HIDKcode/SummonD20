@@ -23,7 +23,7 @@ export class DatabaseService {
   correo!: string;
   perfil_media!: Blob;
 
-  // Estado 0 Bloqueado, 5 Usuario permitido, 9 Admin.
+  // Estado 0 Bloqueado, 1 Usuario contraseña temporal, 5 Usuario permitido, 9 Admin.
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB, estado INTEGER NOT NULL);";
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, page_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
@@ -35,6 +35,7 @@ export class DatabaseService {
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
+  t_pregseg: string = "CREATE TABLE IF NOT EXISTS PREGUNTAS_SEGURIDAD(pregunta TEXT NOT NULL, respuesta TEXT NOT NULL, userID INTEGER NOT NULL, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
   ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'martin123@correo.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
@@ -253,6 +254,15 @@ async crearTablas(){
 
 
 // VALIDADORES
+async validaRecuperar(nick: string, correo: string): Promise<boolean> {
+  const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND correo = ?', [nick, correo]);
+
+  if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
   async validaClave(nick: string, clave: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
 
@@ -266,11 +276,11 @@ async crearTablas(){
   async validaClaveGrupo(id: number, pass: number): Promise<boolean>{
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?',[id, pass]);
 
-      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
-        return true;
-      } else {
-        return false;
-      }
+    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
@@ -317,17 +327,55 @@ async crearTablas(){
 
 // UPDATE
   modificafoto(imgblob: Blob, nick: string){
-    return this.database.executeSql('UPDATE SET perfil_media = ?, nick = ?',[imgblob, nick]).then(res=>{
+    return this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE nick = ?',[imgblob, nick]).then(res=>{
       this.alerta.presentAlert("Alerta", "Fotografia modificada");
       this.fetchUsuario(nick);
     }).catch(e=>{
-      this.alerta.presentAlert("Error en modificar foto", "Contacte soporte");
+      this.alerta.presentAlert("Error en modificar foto", "Contacte soporte" + e.message);
     })
-
   }
 
-// DELETE
+  modificaCorreo(nick: string, correo: string){
+    return this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE nick = ?',[correo, nick]).then(res=>{
+      this.alerta.presentAlert("Alerta", "Correo modificado");
+      this.fetchUsuario(nick);
+    }).catch(e=>{
+      this.alerta.presentAlert("Error en modificar correo", "Contacte soporte" + e.message);
+    })
+  }
 
+  modificaClave(clave: string, nick: string){
+    return this.database.executeSql('UPDATE USER SET clave = ? WHERE nick = ?',[clave, nick]).then(res=>{
+      this.alerta.presentAlert("Alerta", "Contraseña modificada");
+      this.fetchUsuario(nick);
+    }).catch(e=>{
+      this.alerta.presentAlert("Error en modificar contraseña", "Contacte soporte" + e.message);
+    })
+  } 
+
+  modificaClaveEnSec(clave: string, nick: string){
+    return this.database.executeSql('UPDATE USER SET clave = ? WHERE nick = ?',[clave, nick]).then(res=>{
+      this.fetchUsuario(nick);
+    }).catch(e=>{
+      console.log("Error en modificar contraseña", e.message);
+    })
+  } 
+
+  modificaEstadoEnSecreto(int: number, nick: string){
+    const valoresPermitidos = [0, 1, 5, 9];
+    if(valoresPermitidos.includes(int)){
+      return this.database.executeSql('UPDATE USER SET estado = ? WHERE nick = ?',[int, nick]).then(res=>{
+        this.fetchUsuario(nick);
+      }).catch(e=>{
+        console.log("Error en modificar contraseña", e.message);
+      })
+    }
+    return;
+  }
+
+  
+// DELETE
+  
 
 // INSERTS
 
@@ -403,6 +451,19 @@ async crearTablas(){
     }
   }
 
-  
+  // UTILIDADES
+  generarClaveAleatoria(){
+    const longitud = 8;
+    const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const caracteresMayus = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+    let clave = caracteresMayus.charAt(Math.floor(Math.random() * caracteresMayus.length));
+
+    for (let i = 1; i < longitud; i++) {
+      const charSet = Math.random() < 0.2 ? caracteresMayus : caracteres;
+      clave += charSet.charAt(Math.floor(Math.random() * charSet.length));
+    }
+    return clave.split('').sort(() => 0.5 - Math.random()).join('');
+  }
 
 }
