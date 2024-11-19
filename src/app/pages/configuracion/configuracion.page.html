@@ -25,16 +25,22 @@
     </div>
 
     <div class="center">
-      <ion-item class="inputsummon blanco"> {{Vnick}} </ion-item>
-      <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick"  disabled="true"></ion-input>
+    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick"  [readonly]="true"></ion-input>
     </div>
 
     <div class="center">
       <div #error1 class="error-form"><h5 class="error-text">Usuario inválido (Min 5 char.)</h5></div>
     </div>
 
+    <div class="center"> 
+      <h2 class="blanco sombraV"> 
+        <ion-checkbox [(ngModel)]="isReadonly" (ionChange)="onCheckboxChange($event)"> </ion-checkbox>
+        Habiltiar cambio de correo 
+      </h2> 
+    </div>
+
     <div class="center">
-      <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating" fill="outline" [(ngModel)]="Vcorreo" maxlength="70"></ion-input>
+      <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating" fill="outline" [(ngModel)]="Vcorreo" maxlength="70" [readonly]="!isReadonly"></ion-input>
     </div>
 
     <div class="center">

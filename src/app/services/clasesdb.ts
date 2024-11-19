@@ -2,7 +2,7 @@ export class User {
     userID!: number;              
     nick!: string;                          
     correo!: string;            
-    perfil_media!: string; 
+    perfil_media!: Blob; 
     estado!: number;     
 }
 export class Grupo {
@@ -10,6 +10,13 @@ export class Grupo {
     nombre_sala!: string; 
     descripcion!: string; 
     owner!: number;
+}
+
+export class Participante {
+    participanteID!: number;
+    nick!: string;
+    perfil_media!: Blob;
+
 }
 
 /*

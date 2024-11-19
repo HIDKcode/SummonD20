@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { User, Grupo } from './clasesdb';
+import { User, Grupo, Participante } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { HttpClient } from '@angular/common/http';
@@ -31,7 +31,7 @@ export class DatabaseService {
   t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
-  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(PARTICIPA INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
+  t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
@@ -52,6 +52,7 @@ export class DatabaseService {
   //Variable para guardar registros resultantes de select
   listadomisgrupos = new BehaviorSubject([]);
   listadogrupos = new BehaviorSubject([]);
+  listadoparticipantes = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService, private nativeStorage: NativeStorage,private http: HttpClient, private router: Router){
         this.platform.ready().then(()=>{
@@ -66,7 +67,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV3',
+        name: 'summonBetaV4',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -135,6 +136,32 @@ async crearTablas(){
     });
   }
   
+  async consultaparticipantes(grupoID: number){
+    try{
+      const CONSULTA = `
+      SELECT participanteID, nick, perfil_media
+      FROM PARTICIPANTE PA
+      LEFT JOIN USER US ON PA.USER_userID = US.userID
+      WHERE PA.GRUPO_grupoID = ?
+      `;
+      return this.database.executeSql(CONSULTA, [grupoID]).then(res=>{
+        let items: Participante[] = [];
+        if (res.rows.length > 0) {
+          for(let i = 0; i < res.rows.length; i++){
+            items.push({
+              participanteID: res.rows.item(i).participanteID,
+              nick: res.rows.item(i).nick,
+              perfil_media: res.rows.item(i).perfil_media,
+            });
+          }
+          this.listadoparticipantes.next(items as any);
+        }
+      })
+    } catch (e){
+      this.alerta.presentAlert("Fallo en proceso fetch", "" + e);
+    }
+  }
+
   async consultamisgrupos(nick: string) {
     try {
       // Obtener el userID de forma asíncrona
@@ -203,14 +230,17 @@ async crearTablas(){
   fetchgrupos(): Observable<any[]>{
     return this.listadogrupos.asObservable();
   }
-
+  fetchparticipantes(): Observable<any[]>{
+    return this.listadoparticipantes.asObservable();
+  }
+ 
+  
   fetchUsuario(nick: string): Observable<User[]> {
     const CONSULTA = `
     SELECT userID, nick, correo, perfil_media, estado
     FROM USER
     WHERE nick = ?
     `;
-
     return new Observable(MIRAUSER => {
       this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
@@ -293,6 +323,7 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
     }
   }
 
+ 
   async UnicoGrupo(x: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?', [x]);
     // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
@@ -302,12 +333,30 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
       return false;
     }
   }
-
+ // GETTERS o SELECTS 
   async getID(nick: string) {
   const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
   if (SELECT.rows.length > 0) {
     return SELECT.rows.item(0).userID;
    } 
+  }
+
+  async getOWNER(grupoID: number){
+    const SELECT = await this.database.executeSql('SELECT owner FROM GRUPO WHERE grupoID = ?',[grupoID]);
+    if (SELECT.rows.length > 0){
+      return SELECT.rows.item(0).nombre_sala;
+    } else {
+      this.alerta.presentAlert("Fallo en get OWNER grupo", "Contacte soporte o reinicie vista.");
+    }
+  }
+
+  async getGrupoNombre(grupoID: number){
+    const SELECT = await this.database.executeSql('SELECT nombre_sala FROM GRUPO WHERE grupoID = ?',[grupoID]);
+    if (SELECT.rows.length > 0){
+      return SELECT.rows.item(0).nombre_sala;
+    } else {
+      this.alerta.presentAlert("Fallo en get ID grupo", "Contacte soporte o reinicie vista."+grupoID);
+    }
   }
 
   async getArchivoIdMas1(): Promise<number | null>{
@@ -336,7 +385,7 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
   }
 
   modificaCorreo(nick: string, correo: string){
-    return this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE nick = ?',[correo, nick]).then(res=>{
+    return this.database.executeSql('UPDATE USER SET correo = ? WHERE nick = ?',[correo, nick]).then(res=>{
       this.alerta.presentAlert("Alerta", "Correo modificado");
       this.fetchUsuario(nick);
     }).catch(e=>{

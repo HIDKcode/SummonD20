@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
+import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
@@ -12,30 +13,52 @@ export class SalaPage implements OnInit {
 
   //VARIABLES
   VgrupoID!: number;
+  Vnombre_sala!: string;
   VpartId!: number;
   variable: boolean = false;
 
-  constructor(private menuCtrl: MenuController, private activatedroute: ActivatedRoute, private datab: DatabaseService) {
+  claseParticipante : any = [{
+    participanteID:  '',
+    nick: '',
+    perfil_media:  '',
+    molde: '',
+  }];
+
+  constructor(private menuCtrl: MenuController, private datab: DatabaseService,
+              private nativestorage: NativeStorage, private alerta: AlertService
+  ) {
     this.menuCtrl.enable(true); }
 
-  ngOnInit() {
-        // Obtener el idgrupo de los parámetros de la URL
-        this.VgrupoID = Number(this.activatedroute.snapshot.paramMap.get('grupoID'));
-        console.log('El id del grupo es: ', this.VgrupoID);
+  async ngOnInit() {
+    await this.cargaID();
+    await this.cargaNombre();
+    await this.alerta.presentAlert("Aviso",""+ this.VgrupoID)
+    await this.datab.consultaparticipantes(this.VgrupoID);
+    this.datab.dbState().subscribe(data=>{
+      if(data){
+        this.datab.fetchparticipantes().subscribe(res=>{
+          this.claseParticipante = res;
+          //this.alerta.presentAlert("Aviso1", "" + res);
+        });
+
+      }
+    })
   }
 
-  VerifParticipa(){
-    //Select para obtener Participate ID
+  async cargaNombre(){
+    const FUNCION = await this.datab.getGrupoNombre(this.VgrupoID);
+    this.Vnombre_sala = FUNCION;
+  }
 
-    // Si participante ID = NULL -> Retornar Salacreate
-    
-    // Si participante ID = NULL -> Finalizar funcion
-    if(this.variable = false){
-    
-      
+  async cargaID(){
+    try {
+        const grupoData = await this.nativestorage.getItem('grupoData');
+        this.VgrupoID = grupoData.grupoID;
+        return true;
+    } catch (error) {
+        console.error("Error en Almacen Nativo: ", error);
+        return null;
     }
-
   }
-
 }
 

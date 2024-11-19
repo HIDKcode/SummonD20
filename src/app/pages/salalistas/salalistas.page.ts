@@ -92,7 +92,7 @@ export class SalalistasPage implements OnInit {
     if (VALIDADOR) {
       try {
         await this.datab.insertParticipante(this.Vnick, grupoID);
-        this.router.navigate(['/sala', grupoID]);
+        this.irmigrupo(grupoID);
         return true;
       } catch (e) {
         this.alerta.presentAlert("Error unirse a grupo:", "" + e);
@@ -103,7 +103,8 @@ export class SalalistasPage implements OnInit {
     return false;
   }
 
-  irmigrupo(grupoID: number) {
+  async irmigrupo(grupoID: number) {
+        await this.nativestorage.setItem('grupoData',{grupoID});
         this.router.navigate(['/sala', grupoID]);
   }
 

@@ -22,7 +22,7 @@ export class ConfiguracionPage implements OnInit {
   @ViewChild('error3', {static: true}) er3!: ElementRef
   @ViewChild('error4', {static: true}) er4!: ElementRef
   
-
+  isReadonly = true;
   VuserID: any;
   Vnick: any;
   Vcorreo: any;
@@ -108,6 +108,10 @@ export class ConfiguracionPage implements OnInit {
         console.error("Error Native Storage:", error);
         return null;
     }
+  } 
+
+  onCheckboxChange(event: any) {
+    this.isReadonly = event.detail.checked;
   }
   
 }
