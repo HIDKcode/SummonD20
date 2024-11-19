@@ -12,15 +12,17 @@
     <div class="center">
 
       <div class="center summon-foto1x1" *ngIf="Vprofile; else placeholder">
-        <img [src]="Vprofile" alt="{{Vprofile}}" />
+        <ion-card class="center">
+          <ion-card-header>
+            <img [src]="Vprofile" alt="{{Vprofile}}" />
+          </ion-card-header>
+        </ion-card>
       </div>
-      
-      <ng-template class="center summon-foto1x1" #placeholder>
+
+      <ng-template #placeholder>
         <img src="assets/images/def_profile.png" alt="Default Profile"/>
       </ng-template>
-
       
-
       <ion-button class="summonbutton" (click)="foto()">CAMBIAR IMAGEN</ion-button>
     </div>
 

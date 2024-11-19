@@ -48,7 +48,7 @@ export class DatabaseService {
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
   
-  //Variable para guardar rtegistros resultantes de select
+  //Variable para guardar registros resultantes de select
   listadomisgrupos = new BehaviorSubject([]);
   listadogrupos = new BehaviorSubject([]);
 
@@ -58,7 +58,6 @@ export class DatabaseService {
       })
    }
   
-  // devuelve estado de db
   dbState(){
     return this.isDBReady.asObservable();
   }
@@ -116,7 +115,7 @@ async crearTablas(){
     await this.nativeStorage.setItem('userData', { nick });
   }
 
-  // Lista de usuarios
+// Lista de usuarios
 
   ListaUsers(): Observable<User[]> {
     const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
@@ -204,11 +203,13 @@ async crearTablas(){
     return this.listadogrupos.asObservable();
   }
 
-  fetchUser(nick: string): Observable<User[]> {
-    this.setNick(nick);
-    const CONSULTA = `SELECT userID, nick, correo, perfil_media, estado
-        FROM USER
-        WHERE nick = ?`
+  fetchUsuario(nick: string): Observable<User[]> {
+    const CONSULTA = `
+    SELECT userID, nick, correo, perfil_media, estado
+    FROM USER
+    WHERE nick = ?
+    `;
+
     return new Observable(MIRAUSER => {
       this.database.executeSql(CONSULTA, [nick]).then(res => {
           let fetchedUser: User[] = [];
@@ -220,9 +221,6 @@ async crearTablas(){
               perfil_media: res.rows.item(0).perfil_media,
               estado: res.rows.item(0).estado
             });
-          } else { 
-            this.alerta.presentAlert("Usuario no encontrado", "Fallo");
-            this.router.navigate(['/login']);
           }
           MIRAUSER.next(fetchedUser);
           MIRAUSER.complete();
@@ -233,29 +231,24 @@ async crearTablas(){
         });
     });
   }
-  
-// MODULOS
-  async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
-    try {
-      // Las alertas funcionarán como console.log en android studio para testing. 5 es = a Usuario permitido
-        await this.database.executeSql('INSERT INTO USER(nick, clave, correo, estado) VALUES (?, ?, ?, ?)', [nick, Vpassword, Vcorreo, 5]);
-        //this.alerta.presentAlert("1", "a");
-        const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
-        //this.alerta.presentAlert("1", "b");
-        const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
-        //this.alerta.presentAlert("1", "c");
-        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?)', [userid]);
-        //this.alerta.presentAlert("1", "d");
-        await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
-        //this.alerta.presentAlert("1", "f");
-        this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
-        return true; // Registro exitoso
-    } catch (e: any) {
-      await this.logError("registerUser", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
-      return false; // Fallo en el registro
-    }
+
+  LoginUser(nick: string) {
+    this.setNick(nick);
+    this.fetchUsuario(nick).subscribe({
+      next: (usuarios: User[]) => {
+        if (usuarios.length < 1) {
+          this.alerta.presentAlert("Usuario no encontrado", "Redirigiendo a login.");
+          this.nativeStorage.remove('userData');
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (error) => {
+        this.alerta.presentAlert("Error", error.message);
+        this.router.navigate(['/login']); 
+      }
+    });
   }
+  
 
 
 
@@ -322,6 +315,18 @@ async crearTablas(){
     }
   }
 
+// UPDATE
+  modificafoto(imgblob: Blob, nick: string){
+    return this.database.executeSql('UPDATE SET perfil_media = ?, nick = ?',[imgblob, nick]).then(res=>{
+      this.alerta.presentAlert("Alerta", "Fotografia modificada");
+      this.fetchUsuario(nick);
+    }).catch(e=>{
+      this.alerta.presentAlert("Error en modificar foto", "Contacte soporte");
+    })
+
+  }
+
+// DELETE
 
 
 // INSERTS
@@ -372,6 +377,29 @@ async crearTablas(){
           }
     } else {
       this.alerta.presentAlert("Fallo en creacion de grupo", "Nombre de grupo ya existe");
+    }
+  }
+
+// INSERT MODULO REGISTRO
+  async registerUser(nick: string, Vcorreo: string, Vpassword: string): Promise<boolean> {
+    try {
+      // Las alertas funcionarán como console.log en android studio para testing. 5 es = a Usuario permitido
+        await this.database.executeSql('INSERT INTO USER(nick, clave, correo, estado) VALUES (?, ?, ?, ?)', [nick, Vpassword, Vcorreo, 5]);
+        //this.alerta.presentAlert("1", "a");
+        const userCheck = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
+        //this.alerta.presentAlert("1", "b");
+        const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
+        //this.alerta.presentAlert("1", "c");
+        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?)', [userid]);
+        //this.alerta.presentAlert("1", "d");
+        await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
+        //this.alerta.presentAlert("1", "f");
+        this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
+        return true; // Registro exitoso
+    } catch (e: any) {
+      await this.logError("registerUser", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
+      return false; // Fallo en el registro
     }
   }
 

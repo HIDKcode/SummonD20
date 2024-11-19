@@ -54,7 +54,7 @@ export class MenuPage implements OnInit {
 
 
   getUserData2(){
-    this.datab.fetchUser(this.Vnick).subscribe({
+    this.datab.fetchUsuario(this.Vnick).subscribe({
       next: (userData: User[]) => {
         if (userData.length > 0) {
           // Procesar datos del usuario
@@ -69,9 +69,8 @@ export class MenuPage implements OnInit {
           this.alerta.presentAlert("Usuario no encontrado", "");
         }
       },
-      error: (e) => {
-        const em = e.message;
-        this.alerta.presentAlert("Fallo en carga de datos", "Error: " + em);
+      error: (e: any) => {
+        this.alerta.presentAlert("Fallo en carga de datos", "Error: " + e.message);
       }
     });
   }

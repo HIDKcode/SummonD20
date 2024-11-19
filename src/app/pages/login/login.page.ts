@@ -57,7 +57,7 @@ export class LoginPage implements OnInit {
   try {
     const VALIDADOR = await this.datab.validaClave(this.Vnick, this.Vpassword);
     if (VALIDADOR) {
-      await this.datab.fetchUser(this.Vnick);
+      await this.datab.LoginUser(this.Vnick);
 
       let navigationExtras: NavigationExtras = {
         state: {
