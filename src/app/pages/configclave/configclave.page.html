@@ -6,10 +6,10 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-    <h3 class="center">Cambiar Contraseña</h3>
-
+    <h3 class="center blanco sombraV"> Cambiar Contraseña {{Vnick}}!{{estado}} </h3>
+    
     <div class="center">
-      <ion-input class="inputsummon blanco" label="Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Claveoriginal" maxlength="20"></ion-input>
+      <ion-input class="inputsummon blanco" label="Contraseña original o temporal" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Claveoriginal" maxlength="20"></ion-input>
     </div>
 
     <div class="center">
@@ -35,6 +35,7 @@
     <div class="center">
       <ion-button class="summonbutton" (click)="CambiarPass()"> CAMBIAR CLAVE</ion-button>
     </div>
+    <br>
     <div class="center upmargin">
       <ion-button class="summonbutton" (click)="volver()"> VOLVER ATRAS </ion-button>
     </div>

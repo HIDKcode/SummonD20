@@ -355,6 +355,7 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
 
   modificaClaveEnSec(clave: string, nick: string){
     return this.database.executeSql('UPDATE USER SET clave = ? WHERE nick = ?',[clave, nick]).then(res=>{
+      console.log("Contraseña modificada");
       this.fetchUsuario(nick);
     }).catch(e=>{
       console.log("Error en modificar contraseña", e.message);

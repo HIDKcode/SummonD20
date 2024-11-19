@@ -18,10 +18,10 @@ export class ConfigclavePage implements OnInit {
   Vid!: any;
   estado!: any;
 
-  Vnick: any;
-  Claveoriginal: any;
-  Vpass: any;
-  Vpass2: any;
+  Vnick!: string;
+  Claveoriginal!: string;
+  Vpass!: string;
+  Vpass2!: string;
   variable: boolean = false;
 
   exprPass = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{7,}$/;
@@ -46,10 +46,11 @@ export class ConfigclavePage implements OnInit {
 
      }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.cargaNick();
   }
 
-  CambiarPass(){
+  async CambiarPass(){
       let hasE = false;
 
     if (this.Vpass == "") {
@@ -76,11 +77,12 @@ export class ConfigclavePage implements OnInit {
     if (hasE) {
       return false;
     }
+
     if(this.estado == 1){
-      this.datab.modificaEstadoEnSecreto(5, this.Vnick);
+      await this.datab.modificaEstadoEnSecreto(5, this.Vnick);
     }
-      this.datab.modificaClave(this.Vpass, this.Vnick);
-      return true;
+      await this.datab.modificaClave(this.Vpass, this.Vnick);
+    return;
   }
 
   volver() {
