@@ -1,34 +1,76 @@
-ion-col{
+ion-col {
     background-color: #d3ae4e;
     border: 3px solid #171717;
     border-radius: 60px;
 }
 
-#body{
+#body {
     border-radius: 30px;
     min-width: 90vw;
-    min-height: 47vh;
+    max-width: 90vw;
+    height: auto;  /* Ajuste flexible */
     background-color: #d3ae4e;
     border: 3px solid #171717;
 }
 
-#IMGMAP{
-    box-sizing: auto;
-    max-width: auto;
-    max-height: auto;
-
+#IMGMAP {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
 }
 
-#body{
-    border-radius: 30px;
-    min-width: 90vw;
-    min-height: 28vh;
-    background-color: #d3ae4e;
-    border: 3px solid #171717;
-}
-
-.imgcard{
+.imgcard {
     width: 35px;
     height: 35px;
     background-color: transparent;
+}
+
+#chat {
+    border-radius: 30px;
+    min-width: 90vw;
+    max-width: 90vw;
+    min-height: 10vh;
+    height: auto;
+    background-color: #d3ae4e;
+    border: 3px solid #171717;
+    overflow-y: auto;  /* Asegura que se pueda desplazar verticalmente */
+}
+
+.mensaje {
+    margin: 10px;
+    padding: 10px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+}
+
+.mensaje h5 {
+    margin: 0;
+    font-weight: bold;
+}
+
+.mensaje p {
+    margin: 5px 0;
+}
+
+.mensaje small {
+    color: gray;
+    font-size: 0.8em;
+}
+
+.summonbtnsmall {
+    --background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+    --background-hover: #0d271e;
+    --background-activated: #000000;
+    --background-focused: #d3ae4e;
+    --color: #fffdee;
+    --ripple-color: rgb(238, 255, 0);
+}
+
+.gridform {
+    --background: linear-gradient(90deg, #d3ae4e, #171717, #d3ae4e);
+    max-width: 55vw;
+}
+
+ion-content {
+    overflow-y: auto; /* Permite que el contenido se desplace */
 }

@@ -77,6 +77,7 @@ export class LoginPage implements OnInit {
         }
       };
       await this.router.navigate(['/menu'], navigationExtras);
+      this.limpiar();
       return true;
     } else {
       this.alerta.presentAlert("Usuario o contraseña incorrecto", "Reintente por favor");
@@ -115,6 +116,7 @@ export class LoginPage implements OnInit {
       return false;
     }
     this.envia();
+    
     return;
   }
 
@@ -132,6 +134,9 @@ export class LoginPage implements OnInit {
     }, 8000);
     this.alerta.presentAlert("Recuperación de contraseña","Si el email y nick coinciden, se enviará una contraseña temporal")
   }
-
+  limpiar(){
+    this.Vnick = '';
+    this.Vpassword = '';
+  }
 }
 

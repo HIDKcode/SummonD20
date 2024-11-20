@@ -11,6 +11,8 @@ import { MenuController } from '@ionic/angular';
 })
 export class AdminPage implements OnInit {
 
+  grupos: any[] = [];
+
   arregloUsuario : any = [{
     userID: '',
     nick: '',
@@ -22,6 +24,7 @@ export class AdminPage implements OnInit {
 
   Vid!: any;
   estado!: any;
+  Vint: number = 0;
   
   constructor(private router: Router,
      private datab: DatabaseService, private alerta: AlertService,
@@ -55,6 +58,14 @@ export class AdminPage implements OnInit {
         console.log('Carga de usuarios completada.');
       }
     });
+
+    this.datab.dbState().subscribe(data=>{
+      if(data){
+        this.datab.fetchgrupos().subscribe(res=>{
+          this.grupos = res;
+        });
+      }
+    })
   }
 
   AdminPage(){
@@ -67,5 +78,12 @@ export class AdminPage implements OnInit {
       this.router.navigate(['/menu']);
     }
   }
- 
+  
+  cambestado(nick: string, int: number){
+    this.datab.modificaEstado(int, nick);
+  }
+  borragrupo(grupoID: number){
+    this.datab.eliminarGrupo(grupoID);
+  }
+
 }

@@ -53,6 +53,7 @@ export class DatabaseService {
   listadomisgrupos = new BehaviorSubject([]);
   listadogrupos = new BehaviorSubject([]);
   listadoparticipantes = new BehaviorSubject([]);
+  listadomensajes = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService, private nativeStorage: NativeStorage,private http: HttpClient, private router: Router){
         this.platform.ready().then(()=>{
@@ -222,6 +223,29 @@ async crearTablas(){
     })
   }
 
+  consultarmensajes(grupoID: number){
+      const CONSULTA = `
+        SELECT msjID, msj_autor, msj_texto, msj_media, msj_date
+        FROM MENSAJE
+        WHERE PARTICIPANTE_participanteID IN (
+          SELECT participanteID FROM PARTICIPANTE WHERE GRUPO_grupoID = ?
+        )
+        ORDER BY msj_date ASC
+      `;
+      return this.database.executeSql(CONSULTA,[grupoID]).then(res =>{
+        let item = [];
+        if(res.rows.lenght > 0){
+          for (let i = 0; i < res.rows.length; i++){
+            item.push(res.rows.item(i));
+          }
+        }
+        this.listadomensajes.next(item as any);
+      })
+  }
+
+  fetchmensajes(): Observable<any[]>{
+    return this.listadomensajes.asObservable();
+  }
 
  // Retorno como observables
   fetchmisgrupos(): Observable<any[]>{
@@ -235,6 +259,7 @@ async crearTablas(){
   }
  
   
+
   fetchUsuario(nick: string): Observable<User[]> {
     const CONSULTA = `
     SELECT userID, nick, correo, perfil_media, estado
@@ -423,11 +448,42 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
     return;
   }
 
-  
+  modificaEstado(int: number, nick: string){
+    const valoresPermitidos = [0, 1, 5, 9];
+    if(valoresPermitidos.includes(int)){
+      return this.database.executeSql('UPDATE USER SET estado = ? WHERE nick = ?',[int, nick]).then(res=>{
+      this.alerta.presentAlert("Alerta", "Contraseña modificada");  
+      this.fetchUsuario(nick);
+      }).catch(e=>{
+        this.alerta.presentAlert("Alerta", ""+e.message);
+      })
+    }
+    return;
+  }
 // DELETE
-  
+eliminarGrupo(id: number){
+  return this.database.executeSql('DELETE FROM GRUPO WHERE grupoID = ?',[id]).then(res=>{
+    this.alerta.presentAlert("Eliminar", "Grupo Eliminado");
+    this.consultagrupos();
+  }).catch(e=>{
+    this.alerta.presentAlert("Eliminar", "Error: " + JSON.stringify(e));
+  })
+
+}
 
 // INSERTS
+async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null): Promise<void> {
+  try {
+    const INSERT = `
+      INSERT INTO MENSAJE (msj_autor, msj_texto, msj_media, msj_date, PARTICIPANTE_participanteID)
+      VALUES (?, ?, ?, date('now'), ?)
+    `;
+    await this.database.executeSql(INSERT, [msjAutor, msjTexto, msjMedia, 1]);
+  } catch (error) {
+    console.error("Error al enviar mensaje: ", error);
+  }
+  
+}
 
   logError(title: any, msj: any){
     // Se debe ingresar en title el nombre de la función y en mensaje eCode||': '||eMessage

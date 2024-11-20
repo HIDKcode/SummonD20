@@ -22,7 +22,7 @@ export class ConfiguracionPage implements OnInit {
   @ViewChild('error3', {static: true}) er3!: ElementRef
   @ViewChild('error4', {static: true}) er4!: ElementRef
   
-  isReadonly = true;
+  isReadonly = false;
   VuserID: any;
   Vnick: any;
   Vcorreo: any;
@@ -63,7 +63,6 @@ export class ConfiguracionPage implements OnInit {
 
   Actualiza(){
       let hasE = false;
-
       if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
         hasE = true;
@@ -76,8 +75,6 @@ export class ConfiguracionPage implements OnInit {
       this.datab.modificaCorreo(this.Vnick, this.Vcorreo);
       return;
     }
-
-  
 
   getUserData(){
     this.datab.fetchUsuario(this.Vnick).subscribe({
