@@ -45,10 +45,7 @@ export class SalaPage implements OnInit {
           //this.alerta.presentAlert("Aviso1", "" + res);
         });
 
-        this.datab.fetchmensajes().subscribe(res=>{
-          this.mensajes = res;
-          //this.alerta.presentAlert("Aviso", "" + res);
-        });
+        
       }
     })
   }
@@ -90,12 +87,18 @@ export class SalaPage implements OnInit {
     const msjAutor = this.Vnick; 
     const msjMedia = null; 
   
-    this.datab.enviarMensaje(msjAutor, msjTexto, msjMedia).then(() => {
+    this.datab.enviarMensaje(msjAutor, msjTexto, msjMedia, this.VgrupoID, this.Vnick).then(() => {
       this.mensajeInput = ''; // Limpiar el input
-      this.datab.consultarmensajes(this.VgrupoID); // Refrescar la lista de mensajes
+      this.datab.consultarmensajes(this.VgrupoID);
+      this.refrescar();
     });
   }
 
-
+  refrescar(){
+    this.datab.fetchmensajes().subscribe(res=>{
+      this.mensajes = res;
+      //this.alerta.presentAlert("Aviso", "" + res);
+    });
+  }
 }
 

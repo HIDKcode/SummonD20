@@ -223,24 +223,26 @@ async crearTablas(){
     })
   }
 
-  consultarmensajes(grupoID: number){
-      const CONSULTA = `
-        SELECT msjID, msj_autor, msj_texto, msj_media, msj_date
-        FROM MENSAJE
-        WHERE PARTICIPANTE_participanteID IN (
-          SELECT participanteID FROM PARTICIPANTE WHERE GRUPO_grupoID = ?
-        )
-        ORDER BY msj_date ASC
-      `;
-      return this.database.executeSql(CONSULTA,[grupoID]).then(res =>{
-        let item = [];
-        if(res.rows.lenght > 0){
-          for (let i = 0; i < res.rows.length; i++){
-            item.push(res.rows.item(i));
-          }
+  consultarmensajes(grupoID: number) {
+    const CONSULTA = `
+      SELECT msjID, msj_autor, msj_texto, msj_media, msj_date
+      FROM MENSAJE
+      WHERE PARTICIPANTE_participanteID IN (
+        SELECT participanteID FROM PARTICIPANTE WHERE GRUPO_grupoID = ?
+      )
+      ORDER BY msj_date ASC
+    `;
+    
+    return this.database.executeSql(CONSULTA, [grupoID]).then(res => {
+      let item = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          item.push(res.rows.item(i));
         }
-        this.listadomensajes.next(item as any);
-      })
+      }
+      // Actualiza el listado de mensajes
+      this.listadomensajes.next(item as any);
+    });
   }
 
   fetchmensajes(): Observable<any[]>{
@@ -340,7 +342,7 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
 
   async Unico(Vnick: string, Vcorreo: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT * FROM USER WHERE nick = ? OR correo = ?', [Vnick, Vcorreo]);
-    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
+    // Si row.length === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
     if (CONSULTA.rows.length === 0) {
       return true;
     } else {
@@ -351,7 +353,7 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
  
   async UnicoGrupo(x: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?', [x]);
-    // Si row.lenght === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
+    // Si row.length === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
     if (CONSULTA.rows.length === 0) {
       return true;
     } else {
@@ -472,13 +474,23 @@ eliminarGrupo(id: number){
 }
 
 // INSERTS
-async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null): Promise<void> {
+async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null, grupoID: number, nick: string): Promise<void> {
   try {
+    const userID = await this.getID(nick);
+    const Selectt = await this.database.executeSql(
+      'SELECT participanteID FROM PARTICIPANTE WHERE USER_userID = ? AND GRUPO_grupoID = ?',
+      [userID, grupoID]
+    );
+    const Participante = Selectt.rows.item(0).participanteID;
+
     const INSERT = `
       INSERT INTO MENSAJE (msj_autor, msj_texto, msj_media, msj_date, PARTICIPANTE_participanteID)
       VALUES (?, ?, ?, date('now'), ?)
     `;
-    await this.database.executeSql(INSERT, [msjAutor, msjTexto, msjMedia, 1]);
+
+    await this.database.executeSql(INSERT, [msjAutor, msjTexto, msjMedia, Participante]);
+    this.alerta.presentAlert("Mensaje exitoso","")
+    this.consultarmensajes(grupoID);
   } catch (error) {
     console.error("Error al enviar mensaje: ", error);
   }
