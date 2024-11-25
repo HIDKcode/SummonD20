@@ -52,6 +52,8 @@ ion-col {
 }
 
 .mensaje p {
+    color: #fffdee;
+    text-shadow: #1fea00 1px 0 5px;
     margin: 5px 0;
     color: #000000;
 }
@@ -93,4 +95,14 @@ ion-col {
 
 ion-content {
     overflow-y: auto;
+}
+
+.chatimg{
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.previewimg{
+    max-width: 40px;
+    max-height: 40px;
 }

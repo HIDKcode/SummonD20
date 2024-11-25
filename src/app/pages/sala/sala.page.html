@@ -52,22 +52,39 @@
       <div class="center">
 
         <div id="chat" #chatcaja>
-          <div *ngFor="let mensaje of mensajes">
+          <div *ngFor="let x of mensajes">
             <div class="mensaje">
-              <h5>{{ mensaje.msj_autor }}</h5>
-              <p>{{ mensaje.msj_texto }}</p>
-              <small>{{ mensaje.msj_date }}</small>
+              <h5>{{ x.msj_autor }}</h5>
+              <p>{{ x.msj_texto }}</p>
+              <div *ngIf="x.archivo">
+                <img class="chatimg"  [src]="x.archivo" alt="{{x.archivo}}"/>
+              </div>
+              <small>{{ x.msj_date }}</small>
             </div>
           </div>
         </div>
 
       </div>
-  
-      <div class="center">
 
+      <div class="center">
+        <div *ngIf="archivoAdjunto" class="blanco">
+          <img class="previewimg" [src]="archivoAdjunto" alt="{{archivoAdjunto}}"/>
+          <div *ngIf="archivoAdjunto">
+          </div>
+          <ion-progress-bar value="1" buffer="1" color="primary"></ion-progress-bar>
+        </div>
+        
+      </div>
+
+      <div class="center">
         <div id="send">
+
           <ion-input class="chatform blanco" label="Envia mensaje!" type="text" label-placement="floating" fill="outline" [(ngModel)]="mensajeInput">
           </ion-input>
+
+          <ion-button class="summonbtnsmall" (click)="seleccionarArchivo()">
+            <ion-icon name="attach-outline"></ion-icon>
+          </ion-button>
 
           <ion-button class="summonbtnsmall" (click)="enviarMensaje()"> 
             <ion-icon name="arrow-forward-outline"></ion-icon>

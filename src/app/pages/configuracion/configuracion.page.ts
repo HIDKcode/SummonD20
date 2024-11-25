@@ -65,7 +65,6 @@ export class ConfiguracionPage implements OnInit {
       this.Vprofile = img;
       this.datab.modificafoto(this.Vprofile, this.Vnick);
     }) 
-
   }
 
   ActualizaCorreo(){

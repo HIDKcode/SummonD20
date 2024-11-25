@@ -19,6 +19,12 @@ export class Participante {
 
 }
 
+export class Mensaje{
+    msj_autor!: string;
+    msj_texto!: string;
+    msj_date!: string;
+    msj_media!: Blob;
+}
 /*
 export class ULT_CONEX {
     conexID!: number;       

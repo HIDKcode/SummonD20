@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { User, Grupo, Participante } from './clasesdb';
+import { User, Grupo, Participante, Mensaje } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { HttpClient } from '@angular/common/http';
@@ -27,17 +27,18 @@ export class DatabaseService {
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB, estado INTEGER NOT NULL);";
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, pago_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER, FOREING KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
+  t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(USER_userID INTEGER PRIMARY KEY, espacio_disponible INTEGER NOT NULL, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
+  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT, archivo BLOB, nombre TEXT, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER NOT NULL, FOREIGN KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
-  t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
+  // mensaje media es un ID que copia el ID de archivo.
+  t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
   t_pregseg: string = "CREATE TABLE IF NOT EXISTS PREGUNTAS_SEGURIDAD(preguntaID INTEGER, respuesta TEXT, userID INTEGER NOT NULL, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
   ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.cl', NULL, 9);";
-  ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
-  ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('editor', 'png', 1024, date('now'), 1, 1);";
+  ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(USER_userID, espacio_disponible) VALUES(1, 900);";
+  ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, bibliotecaID) VALUES('archivo', 'png', 24, date('now'), 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
@@ -66,7 +67,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV6',
+        name: 'summonBetaV13',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -218,26 +219,31 @@ async crearTablas(){
     })
   }
 
-  consultarmensajes(grupoID: number) {
-    const CONSULTA = `
-      SELECT msjID, msj_autor, msj_texto, msj_media, msj_date
-      FROM MENSAJE
-      WHERE PARTICIPANTE_participanteID IN (
-        SELECT participanteID FROM PARTICIPANTE WHERE GRUPO_grupoID = ?
-      )
-      ORDER BY msj_date ASC
-    `;
-    
-    return this.database.executeSql(CONSULTA, [grupoID]).then(res => {
-      let item = [];
-      if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          item.push(res.rows.item(i));
+  async consultarmensajes(grupoID: number) {
+      const CONSULTA = `
+        SELECT 
+          msj_autor, msj_texto, msj_date, msj_media
+        FROM MENSAJE m
+        WHERE m.PARTICIPANTE_participanteID IN (
+          SELECT participanteID FROM PARTICIPANTE WHERE GRUPO_grupoID = ?
+        )
+        ORDER BY m.msj_date ASC
+      `;
+      return this.database.executeSql(CONSULTA, [grupoID]).then(res => {
+        let item: Mensaje [] = [];
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            const mensaje = res.rows.item(i);
+            item.push({
+              msj_autor: res.rows.item(i).msj_autor,
+              msj_texto: res.rows.item(i).msj_texto,
+              msj_date: res.rows.item(i).msj_date,
+              msj_media: res.rows.item(i).msj_media
+            })
+          }
         }
-      }
-      // Actualiza el listado de mensajes
-      this.listadomensajes.next(item as any);
-    });
+        this.listadomensajes.next(item as any);
+      });
   }
 
   fetchmensajes(): Observable<any[]>{
@@ -368,7 +374,7 @@ async crearTablas(){
     return SELECT.rows.item(0).userID;
    } 
   }
-
+  
   async getOWNER(grupoID: number){
     const SELECT = await this.database.executeSql('SELECT owner FROM GRUPO WHERE grupoID = ?',[grupoID]);
     if (SELECT.rows.length > 0){
@@ -387,21 +393,6 @@ async crearTablas(){
     }
   }
 
-  async getArchivoIdMas1(): Promise<number | null>{
-    try{
-      const CONSULTA = await this.database.executeSql('SELECT MAX(mediaID) as maxID from ARCHIVO');
-      if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).maxID !== null){
-        return CONSULTA.rows.item(0).maxID + 1;
-      } else {
-        return 1;
-      } 
-    } catch (e: any) {
-      await this.logError("getArchivo", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Fallo en getArchivo", "Contacte soporte por errorr:" + e.message);
-      return null;
-    }
-  }
-
 // UPDATE
   modificafoto(imgblob: Blob, nick: string){
     return this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE nick = ?',[imgblob, nick]).then(res=>{
@@ -409,6 +400,7 @@ async crearTablas(){
       this.fetchUsuario(nick);
     }).catch(e=>{
       this.alerta.presentAlert("Error en modificar foto", "Contacte soporte" + e.message);
+      this.logError("modificafoto", e.code ||': '|| e.message);
     })
   }
 
@@ -418,6 +410,7 @@ async crearTablas(){
       this.fetchUsuario(nick);
     }).catch(e=>{
       this.alerta.presentAlert("Error en modificar correo", "Contacte soporte" + e.message);
+      this.logError("modificacorreo", e.code ||': '|| e.message);
     })
   }
 
@@ -427,6 +420,7 @@ async crearTablas(){
       this.fetchUsuario(nick);
     }).catch(e=>{
       this.alerta.presentAlert("Error en modificar contraseña", "Contacte soporte" + e.message);
+      this.logError("modificaclave", e.code ||': '|| e.message);
     })
   } 
 
@@ -436,6 +430,7 @@ async crearTablas(){
       this.fetchUsuario(nick);
     }).catch(e=>{
       console.log("Error en modificar contraseña", e.message);
+      this.logError("modificaclaveensec", e.code ||': '|| e.message);
     })
   } 
 
@@ -446,6 +441,7 @@ async crearTablas(){
         this.fetchUsuario(nick);
       }).catch(e=>{
         console.log("Error en modificar contraseña", e.message);
+        this.logError("modificaestadoensecreto", e.code ||': '|| e.message);
       })
     }
     return;
@@ -459,6 +455,7 @@ async crearTablas(){
       this.fetchUsuario(nick);
       }).catch(e=>{
         this.alerta.presentAlert("Alerta", ""+e.message);
+        this.logError("modificaestado", e.code ||': '|| e.message);
       })
     }
     return;
@@ -471,50 +468,73 @@ async crearTablas(){
         this.alerta.presentAlert("Alerta", "Respuesta modificada");  
         }).catch(e=>{
           this.alerta.presentAlert("Alerta", ""+e.message);
+          this.logError("modifcarespuesta", e.code ||': '|| e.message);
         })
       }
     return;
   }
   
-// DELETE
+// DELETEmsjMedia
 eliminarGrupo(id: number){
   return this.database.executeSql('DELETE FROM GRUPO WHERE grupoID = ?',[id]).then(res=>{
     this.alerta.presentAlert("Eliminar", "Grupo Eliminado");
     this.consultagrupos();
   }).catch(e=>{
     this.alerta.presentAlert("Eliminar", "Error: " + JSON.stringify(e));
+    this.logError("elimargrupo", e.code ||': '|| e.message);
   })
 
 }
 
 // INSERTS
-async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null, grupoID: number, nick: string): Promise<void> {
-  try {
-    const userID = await this.getID(nick);
-    const Selectt = await this.database.executeSql(
-      'SELECT participanteID FROM PARTICIPANTE WHERE USER_userID = ? AND GRUPO_grupoID = ?',
-      [userID, grupoID]
-    );
-    const Participante = Selectt.rows.item(0).participanteID;
+async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID: number): Promise<void> {
+    try {
+      const userID = await this.getID(msjAutor);
+      const Selectt = await this.database.executeSql(
+        'SELECT participanteID FROM PARTICIPANTE WHERE USER_userID = ? AND GRUPO_grupoID = ?',
+        [userID, grupoID]
+      );
+      const Participante = Selectt.rows.item(0).participanteID;
 
-    const INSERT = `
-      INSERT INTO MENSAJE (msj_autor, msj_texto, msj_media, msj_date, PARTICIPANTE_participanteID)
-      VALUES (?, ?, ?, date('now'), ?)
-    `;
+      if (msjMedia) {
+      await this.insertarArchivo(msjMedia, msjAutor);  // Insertamos en archivo y obtenemos ID
+      }
 
-    await this.database.executeSql(INSERT, [msjAutor, msjTexto, msjMedia, Participante]);
-    this.alerta.presentAlert("Mensaje exitoso","")
-    this.consultarmensajes(grupoID);
-  } catch (error) {
-    console.error("Error al enviar mensaje: ", error);
+      const INSERT = `
+        INSERT INTO MENSAJE (msj_autor, msj_texto, msj_media, msj_date, PARTICIPANTE_participanteID)
+        VALUES (?, ?, ?, date('now'), ?)
+      `;
+
+      await this.database.executeSql(INSERT, [msjAutor, msjTexto, msjMedia, Participante]);
+      this.consultarmensajes(grupoID);
+    } catch (e: any) {
+      await this.logError("enviarmensaje", e.code ||': '|| e.message);
+    }
   }
-  
-}
+
+  async insertarArchivo(Media: Blob, nick: string): Promise<number | null> {
+    try {
+      const bibliotecaID = await this.getID(nick);
+      const extension = 'png';
+      const tamanio = '12';
+      const INSERT = `
+        INSERT INTO ARCHIVO(archivo, extension, tamaño, subida_date, bibliotecaID)
+        VALUES (?, ?, ?, date('now'), ?)
+      `;
+
+      const result = await this.database.executeSql(INSERT, [Media, extension, tamanio, bibliotecaID]);
+      return result.insertId;
+    } catch (e: any) {
+      await this.logError("insertarchivo", e.code ||': '|| e.message);
+      return null;
+    }
+  }
 
   logError(title: any, msj: any){
     // Se debe ingresar en title el nombre de la función y en mensaje eCode||': '||eMessage
     this.database.executeSql('INSERT INTO ERRORES VALUES(?,?)', [title, msj])
   }
+
   async  insertParticipante(nick: string, grupoID: number){
     try {
       const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
@@ -527,7 +547,8 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null,
         this.alerta.presentAlert("Error en registro de participante", "Contacte soporte");
         return;
       }
-    } catch (e) {
+    } catch (e: any) {
+      await this.logError("insertparticipante", e.code ||': '|| e.message);
       this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error: " + JSON.stringify(e));
     }
   }
@@ -551,9 +572,8 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null,
           this.alerta.presentAlert("Error en creación de grupo", "Contacte soporte");
           return;
         }
-          } catch (e) {
-        console.error('Error al crear el grupo:', e);
-        throw e; // Enviamos el error a funcion valida
+          } catch (e: any) {
+          await this.logError("insertGrupo", e.code ||': '|| e.message);
           }
     } else {
       this.alerta.presentAlert("Fallo en creacion de grupo", "Nombre de grupo ya existe");
@@ -570,9 +590,8 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null,
         //this.alerta.presentAlert("1", "b");
         const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
         //this.alerta.presentAlert("1", "c");
-        await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?)', [userid]);
+        await this.database.executeSql('INSERT INTO BIBLIOTECA(USER_userID, espacio_disponible ) VALUES (?, 900)', [userid]);
         //this.alerta.presentAlert("1", "d");
-        await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
         await this.database.executeSql('INSERT INTO PREGUNTAS_SEGURIDAD(userID) VALUES(?)', [userid])
         //this.alerta.presentAlert("1", "f");
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");

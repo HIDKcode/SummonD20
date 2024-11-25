@@ -3,6 +3,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
+import { CamaraService } from 'src/app/services/camara.service';
 @Component({
   selector: 'app-sala',
   templateUrl: './sala.page.html',
@@ -11,6 +12,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class SalaPage implements OnInit {
 
   //VARIABLES
+  Vvacia!: any;
   Vnick: any;
   VgrupoID!: number;
   Vnombre_sala!: string;
@@ -19,6 +21,7 @@ export class SalaPage implements OnInit {
   //LISTA MENSAJES
   mensajeInput: any;
   mensajes: any[] = [];
+  archivoAdjunto!: Blob;
   @ViewChild('chatcaja') chatcaja!: ElementRef;
   //LISTA PARTICIPANTES
   claseParticipante : any = [{
@@ -29,8 +32,8 @@ export class SalaPage implements OnInit {
   }];
 
   constructor(private menuCtrl: MenuController, private datab: DatabaseService,
-              private nativestorage: NativeStorage, private alerta: AlertService
-  ) {
+              private nativestorage: NativeStorage, private alerta: AlertService,
+              private camaraservicio: CamaraService) {
     this.menuCtrl.enable(true); }
 
   async ngOnInit() {
@@ -90,14 +93,29 @@ export class SalaPage implements OnInit {
       return;
     }
   
-    const msjAutor = this.Vnick; 
-    const msjMedia = null; 
+      await this.datab.enviarMensaje(this.Vnick, msjTexto, this.archivoAdjunto, this.VgrupoID).then(() => {
+        this.mensajeInput = ''; // Limpiar el input
+        this.archivoAdjunto = this.Vvacia;
+        this.datab.consultarmensajes(this.VgrupoID);
+        this.refrescar();
+      });
+    
+  }
+
   
-    await this.datab.enviarMensaje(msjAutor, msjTexto, msjMedia, this.VgrupoID, this.Vnick).then(() => {
-      this.mensajeInput = ''; // Limpiar el input
-      this.datab.consultarmensajes(this.VgrupoID);
-      this.refrescar();
-    });
+
+  ScrollBottom(): void {
+    if (this.chatcaja) {
+      const element = this.chatcaja.nativeElement;
+      element.scrollTop = element.scrollHeight; // Desplaza al final
+    }
+  }
+
+  async seleccionarArchivo() {
+    this.camaraservicio.takePicture()
+    .then((img) => {
+      this.archivoAdjunto = img;
+    }) 
   }
 
   refrescar(){
@@ -109,13 +127,6 @@ export class SalaPage implements OnInit {
       }, 100);
     });
   }
-
-  ScrollBottom(): void {
-    if (this.chatcaja) {
-      const element = this.chatcaja.nativeElement;
-      element.scrollTop = element.scrollHeight; // Desplaza al final
-    }
-  }
-
+  
 }
 
