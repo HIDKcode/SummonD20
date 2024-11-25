@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
+import { CamaraService } from 'src/app/services/camara.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
   
@@ -17,6 +18,7 @@ export class BibliotecaPage implements OnInit {
 
   Vnick!: string;
   bibliotecaID!: number;
+  Varchivo!: Blob;
 
   claseArchivo : any = [{
     archivoID:  '',
@@ -27,7 +29,8 @@ export class BibliotecaPage implements OnInit {
   }];
 
   constructor(private alerta: AlertService, private datab: DatabaseService,
-    private menuCtrl: MenuController, private nativestorage: NativeStorage) {
+    private menuCtrl: MenuController, private nativestorage: NativeStorage,
+    private camaraservicio: CamaraService) {
       this.menuCtrl.enable(true);
      }
 
@@ -47,7 +50,13 @@ export class BibliotecaPage implements OnInit {
     })
   }
 
-
+  subirfoto(){
+    this.camaraservicio.takePicture()
+    .then((img) => {
+      this.Varchivo = img;
+      this.datab.insertarArchivo(this.Varchivo, this.Vnick);
+    }) 
+  }
 
   async cargaNick(){
     try {
