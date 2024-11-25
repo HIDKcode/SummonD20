@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AlertService } from './alert.service';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { User, Grupo, Participante, Mensaje } from './clasesdb';
+import { User, Grupo, Participante, Mensaje, Archivo } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { HttpClient } from '@angular/common/http';
@@ -53,6 +53,7 @@ export class DatabaseService {
   listadogrupos = new BehaviorSubject([]);
   listadoparticipantes = new BehaviorSubject([]);
   listadomensajes = new BehaviorSubject([]);
+  listadoarchivos = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService, private nativeStorage: NativeStorage,private http: HttpClient, private router: Router){
         this.platform.ready().then(()=>{
@@ -67,7 +68,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV13',
+        name: 'summonBetaV15',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -233,7 +234,6 @@ async crearTablas(){
         let item: Mensaje [] = [];
         if (res.rows.length > 0) {
           for (let i = 0; i < res.rows.length; i++) {
-            const mensaje = res.rows.item(i);
             item.push({
               msj_autor: res.rows.item(i).msj_autor,
               msj_texto: res.rows.item(i).msj_texto,
@@ -246,11 +246,38 @@ async crearTablas(){
       });
   }
 
-  fetchmensajes(): Observable<any[]>{
-    return this.listadomensajes.asObservable();
+  async consultaarchivos(bibliotecaID: number){
+    const CONSULTA = `
+    SELECT 
+    archivoID, archivo, extension, tamaño, subida_date
+    FROM ARCHIVO 
+    WHERE bibliotecaID = ?
+    `;
+    return this.database.executeSql(CONSULTA, [bibliotecaID]).then(res =>{
+      let item: Archivo [] = [];
+      if (res.rows.length > 0){
+        for (let i = 0; i < res.rows.length; i++){
+          item.push({
+            archivoID: res.rows.item(i).archivoID,
+            archivo: res.rows.item(i).archivo,
+            extension: res.rows.item(i).extension,
+            tamaño: res.rows.item(i).tamaño,
+            subida_date: res.rows.item(i).subida_date,
+          })
+        }
+      }
+      this.listadoarchivos.next(item as any);
+    })
   }
+  
 
  // Retorno como observables
+ fetcharchivos(): Observable<any[]>{
+  return this.listadoarchivos.asObservable();
+}
+ fetchmensajes(): Observable<any[]>{
+  return this.listadomensajes.asObservable();
+}
   fetchmisgrupos(): Observable<any[]>{
     return this.listadomisgrupos.asObservable();
   }

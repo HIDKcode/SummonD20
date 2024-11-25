@@ -19,21 +19,14 @@
       
       <div class="center awdmargin"> 
         <ion-grid fixed="true"> 
-          <ion-row>
-            <!-- *ngFor=let image of [1,2,3...]""-->
-            <ion-col size="6"> Archivo </ion-col>
-            <ion-col > Archivo2 </ion-col>
-            <ion-col size="6"> Archivo3 </ion-col>
-            <ion-col > Archivo4 </ion-col>
-            
-            <ion-col size="6"> Archivo5 </ion-col>
-            <ion-col > Archivo6 </ion-col>
+          <ion-row *ngFor="let x of claseArchivo">
+            <ion-col *ngIf="x.archivo" size="12">  <p class="blanco"> {{x.archivoID}} {{x.subida_date}} </p><img class="fixsize"  [src]="x.archivo" alt="{{x.archivo}}"/> </ion-col>
           </ion-row>
         </ion-grid>  
       </div>
       
       <div class="center">
-        <ion-button class="summonbutton" [routerDirection]="'root'" [routerLink]="'/biblioteca-archivo'"> EDITAR ARCHIVO </ion-button>
+        <ion-button class="summonbutton" [routerDirection]="'root'" [routerLink]="'/menu'"> VOLVER MENU </ion-button>
       </div>
 
     </div>

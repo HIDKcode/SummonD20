@@ -4,7 +4,8 @@ ion-grid{
     border: solid 5px #d3ae4e;
     color: #fffdee;
     text-align: center;
-
+    max-height: 80vh;
+    overflow-y: auto; 
   }
 
 ion-col{
@@ -31,4 +32,9 @@ ion-segment-button{
 
 ion-segment-button::part(indicator-background) {
   background: #1fea00;
+}
+
+.fixsize{
+  max-width: 40vw;
+  max-height: 40vw;
 }

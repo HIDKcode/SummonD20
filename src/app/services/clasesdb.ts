@@ -25,6 +25,14 @@ export class Mensaje{
     msj_date!: string;
     msj_media!: Blob;
 }
+
+export class Archivo{
+    archivoID!: number;
+    archivo!: Blob;
+    extension!: string;
+    tamaño!: number;
+    subida_date!: string;
+}
 /*
 export class ULT_CONEX {
     conexID!: number;       
