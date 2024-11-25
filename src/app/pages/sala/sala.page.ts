@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
@@ -16,10 +16,11 @@ export class SalaPage implements OnInit {
   Vnombre_sala!: string;
   VpartId!: number;
   variable: boolean = false;
-
+  //LISTA MENSAJES
   mensajeInput: any;
   mensajes: any[] = [];
-
+  @ViewChild('chatcaja') chatcaja!: ElementRef;
+  //LISTA PARTICIPANTES
   claseParticipante : any = [{
     participanteID:  '',
     nick: '',
@@ -37,6 +38,7 @@ export class SalaPage implements OnInit {
     await this.cargaID();
     await this.cargaNombre();
     await this.cargaNick();
+
     await this.datab.consultaparticipantes(this.VgrupoID);
     this.datab.dbState().subscribe(data=>{
       if(data){
@@ -48,6 +50,9 @@ export class SalaPage implements OnInit {
         
       }
     })
+
+    await this.datab.consultarmensajes(this.VgrupoID);
+    await this.refrescar();
   }
 
   async cargaNombre(){
@@ -77,8 +82,9 @@ export class SalaPage implements OnInit {
     }
   } 
 
-  enviarMensaje() {
+  async enviarMensaje() {
     const msjTexto = this.mensajeInput; 
+
     if (!msjTexto || msjTexto.trim() === '') {
       this.alerta.presentAlert('Error', 'El mensaje no puede estar vacío.');
       return;
@@ -87,7 +93,7 @@ export class SalaPage implements OnInit {
     const msjAutor = this.Vnick; 
     const msjMedia = null; 
   
-    this.datab.enviarMensaje(msjAutor, msjTexto, msjMedia, this.VgrupoID, this.Vnick).then(() => {
+    await this.datab.enviarMensaje(msjAutor, msjTexto, msjMedia, this.VgrupoID, this.Vnick).then(() => {
       this.mensajeInput = ''; // Limpiar el input
       this.datab.consultarmensajes(this.VgrupoID);
       this.refrescar();
@@ -98,7 +104,18 @@ export class SalaPage implements OnInit {
     this.datab.fetchmensajes().subscribe(res=>{
       this.mensajes = res;
       //this.alerta.presentAlert("Aviso", "" + res);
+      setTimeout(() => {
+        this.ScrollBottom();
+      }, 100);
     });
   }
+
+  ScrollBottom(): void {
+    if (this.chatcaja) {
+      const element = this.chatcaja.nativeElement;
+      element.scrollTop = element.scrollHeight; // Desplaza al final
+    }
+  }
+
 }
 

@@ -23,6 +23,8 @@ export class ConfiguracionPage implements OnInit {
   @ViewChild('error4', {static: true}) er4!: ElementRef
   
   isReadonly = false;
+  isReadonly2 = false;
+  seleccion!: number;
   VuserID: any;
   Vnick: any;
   Vcorreo: any;
@@ -31,9 +33,14 @@ export class ConfiguracionPage implements OnInit {
   Vprofile!: any;
   estado: any;
   Vclave: any;
+  Vrespuesta!: string;
 
   variable: boolean = false;
   Vprivado: string = "";
+
+  customPopoverOptions: any = {
+    cssClass: 'popover',
+  };
 
   constructor(private router: Router, private activatedroute: ActivatedRoute, 
     private alerta: AlertService ,private renderer2: Renderer2, 
@@ -61,7 +68,9 @@ export class ConfiguracionPage implements OnInit {
 
   }
 
-  Actualiza(){
+  ActualizaCorreo(){
+    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
+    if(this.isReadonly){
       let hasE = false;
       if (this.Vcorreo == "" || !this.exprMail.test(this.Vcorreo)) {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
@@ -69,12 +78,41 @@ export class ConfiguracionPage implements OnInit {
       } else {
         this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
       }
+      if (regexprohibido.test(this.Vcorreo)) {
+        this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+        hasE = true;
+      } else {
+        this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+      }
+
       if (hasE) {
         return false;
       }
       this.datab.modificaCorreo(this.Vnick, this.Vcorreo);
       return;
     }
+    return; 
+  }
+
+  ActualizaPreguntaSeg(){
+    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
+    if(this.isReadonly2){
+      let hasE = false;
+      if (this.Vrespuesta == "" || regexprohibido.test(this.Vrespuesta)){
+        this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
+        hasE = true;
+      } else {
+        this.renderer2.setStyle(this.er1.nativeElement, 'display', 'none');
+      }
+
+      if (hasE) {
+        return false;
+      }
+      this.datab.modificaRespuesta(this.seleccion, this.Vrespuesta, this.VuserID);
+      return;
+    }
+    return;
+  }
 
   getUserData(){
     this.datab.fetchUsuario(this.Vnick).subscribe({

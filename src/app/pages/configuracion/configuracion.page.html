@@ -7,7 +7,7 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
     
-    <h3 class="center blanco sombraV">{{Vnick}}#{{VuserID}} </h3>
+    <h3 class="center blanco sombraV">USUARIO: {{Vnick}} ID:#{{VuserID}} </h3>
 
     <div class="center">
 
@@ -24,20 +24,34 @@
       <ion-button class="summonbutton" (click)="foto()">CAMBIAR IMAGEN</ion-button>
     </div>
 
+    <h3 class="center blanco sombraV"> PREGUNTA DE SEGURIDAD </h3>
+
     <div class="center">
-    <ion-input class="inputsummon blanco" label="Usuario" type="text" label-placement="floating" fill="outline" [(ngModel)]="Vnick"  [readonly]="true"></ion-input>
+        <ion-list class="center vwfix">
+            <ion-select interface="popover" class="blanco" placeholder="Selecciona pregunta" [(ngModel)]="seleccion">
+              <ion-select-option value="1"> ¿Serie favorita de la infancia? </ion-select-option>
+              <ion-select-option value="2"> ¿Nombre de mi primera mascota? </ion-select-option>
+              <ion-select-option value="3"> ¿Nombre de mi héroe favorito? </ion-select-option>
+            </ion-select>
+        </ion-list>
     </div>
 
     <div class="center">
-      <div #error1 class="error-form"><h5 class="error-text">Usuario inválido (Min 5 char.)</h5></div>
+      <ion-input class="inputsummon blanco" label="Respuesta" type="email" label-placement="floating" fill="outline" [(ngModel)]="Vrespuesta" maxlength="20" [readonly]="!isReadonly2"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error1 class="error-form"><h5 class="error-text"> Formato vacio o caracteres inválidos </h5></div>
     </div>
 
     <div class="center"> 
-      <h2 class="blanco sombraV"> 
-        <ion-checkbox [(ngModel)]="isReadonly" (ionChange)="onCheckboxChange($event)"> </ion-checkbox>
-        Habilitar cambio de correo 
-      </h2> 
+      <h4 class="blanco sombraV"> 
+        <ion-checkbox [(ngModel)]="isReadonly2" (ionChange)="onCheckboxChange($event)"> </ion-checkbox>
+        Habilitar cambio pregunta y respuesta
+      </h4> 
     </div>
+
+    <h3 class="center blanco sombraV"> CORREO </h3>
 
     <div class="center">
       <ion-input class="inputsummon blanco" label="Correo" type="email" label-placement="floating" fill="outline" [(ngModel)]="Vcorreo" maxlength="70" [readonly]="!isReadonly"></ion-input>
@@ -47,8 +61,15 @@
       <div #error2 class="error-form"><h5 class="error-text">Correo inválido</h5></div>
     </div>
 
+    <div class="center"> 
+      <h4 class="blanco sombraV"> 
+        <ion-checkbox [(ngModel)]="isReadonly" (ionChange)="onCheckboxChange($event)"> </ion-checkbox>
+        Habilitar cambio de correo 
+      </h4> 
+    </div>
+
     <div class="center">
-      <ion-button class="summonbutton" (click)="Actualiza()"> ACTUALIZAR CORREO </ion-button>
+      <ion-button class="summonbutton" (click)="ActualizaCorreo()"> ACTUALIZAR CORREO </ion-button>
     </div>
 
     <!-- Redirige a la página de cambio de contraseña -->

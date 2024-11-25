@@ -26,26 +26,24 @@ export class DatabaseService {
   // Estado 0 Bloqueado, 1 Usuario contraseña temporal, 5 Usuario permitido, 9 Admin.
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB, estado INTEGER NOT NULL);";
   t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, page_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
+  t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, pago_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(bibliotecaID INTEGER PRIMARY KEY AUTOINCREMENT, espacio_disponible INTEGER NOT NULL, USER_userID INTEGER,FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
-  t_CARPETA: string = "CREATE TABLE IF NOT EXISTS CARPETA(carpetaID INTEGER PRIMARY KEY AUTOINCREMENT,parent_carpetaID INTEGER,nombre TEXT NOT NULL,creacion_date TEXT NOT NULL, BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID),FOREIGN KEY (parent_carpetaID) REFERENCES CARPETA(carpetaID));";
-  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL,subida_date TEXT NOT NULL,CARPETA_carpetaID INTEGER,CARPETA_BIBLIOTECA_bibliotecaID INTEGER,FOREIGN KEY (CARPETA_carpetaID) REFERENCES CARPETA(carpetaID),FOREIGN KEY (CARPETA_BIBLIOTECA_bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
+  t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER, FOREING KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
-  t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media TEXT,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
-  t_ADJUNTO: string = "CREATE TABLE IF NOT EXISTS ADJUNTO(mediaID INTEGER PRIMARY KEY AUTOINCREMENT,enviado_date TEXT NOT NULL, filepath_msj TEXT NOT NULL,media_tipo TEXT,MENSAJE_msjID INTEGER,FOREIGN KEY (MENSAJE_msjID) REFERENCES MENSAJE(msjID));";
+  t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL,msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
-  t_pregseg: string = "CREATE TABLE IF NOT EXISTS PREGUNTAS_SEGURIDAD(pregunta TEXT NOT NULL, respuesta TEXT NOT NULL, userID INTEGER NOT NULL, FOREIGN KEY (userID) REFERENCES USER(userID));";
+  t_pregseg: string = "CREATE TABLE IF NOT EXISTS PREGUNTAS_SEGURIDAD(preguntaID INTEGER, respuesta TEXT, userID INTEGER NOT NULL, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
-  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'martin123@correo.cl', NULL, 9);";
+  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES(900, 1);";
-  ins_CARPETA: string = "INSERT OR IGNORE INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES('summon_nube', date('now'), 1);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, CARPETA_carpetaID, CARPETA_BIBLIOTECA_bibliotecaID) VALUES('editor', 'png', 1024, date('now'), 1, 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
-
+  ins_pregseg: string = "INSERT OR IGNORE INTO PARTICIPANTE VALUES(1, 'respuestamartin123', 1);";
+  
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
   
@@ -68,7 +66,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV4',
+        name: 'summonBetaV6',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -92,17 +90,14 @@ async crearTablas(){
       await this.database.executeSql(this.t_ULT_CONEX,[]);
       await this.database.executeSql(this.t_BENEFICIO,[]);
       await this.database.executeSql(this.t_BIBLIOTECA,[]);
-      await this.database.executeSql(this.t_CARPETA,[]);
       await this.database.executeSql(this.t_ARCHIVO,[]);
       await this.database.executeSql(this.t_GRUPO,[]);
       await this.database.executeSql(this.t_PARTICIPANTE,[]);
       await this.database.executeSql(this.t_MENSAJE,[]);
-      await this.database.executeSql(this.t_ADJUNTO,[]);
       await this.database.executeSql(this.t_ERRORES,[]);
       //generamos los insert en caso que existan
       await this.database.executeSql(this.ins_USER, []);
       await this.database.executeSql(this.ins_BIBLIOTECA, []);
-      await this.database.executeSql(this.ins_CARPETA, []);
       await this.database.executeSql(this.ins_ARCHIVO, []);
       await this.database.executeSql(this.ins_GRUPO, []);
       await this.database.executeSql(this.ins_PARTICIPANTE, []);
@@ -311,15 +306,21 @@ async crearTablas(){
 
 
 // VALIDADORES
-async validaRecuperar(nick: string, correo: string): Promise<boolean> {
-  const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND correo = ?', [nick, correo]);
+  async validaRecuperar(nick: string, correo: string, respuesta: string): Promise<boolean> {
+    const userID = await this.getID(nick);
+    const CONSULTA1 = await this.database.executeSql('SELECT COUNT(*) as count FROM PREGUNTAS_SEGURIDAD WHERE respuesta = ? AND userID = ?', [respuesta, userID]);
+    const CONSULTA2 = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND correo = ?', [nick, correo]);
 
-  if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
-    return true;
-  } else {
+    const count1 = CONSULTA1.rows.item(0).count;
+    const count2 = CONSULTA2.rows.item(0).count;
+
+    if (count1 > 0 && count2 > 0) {
+      return true;
+    } 
+    
     return false;
   }
-}
+
   async validaClave(nick: string, clave: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND clave = ?', [nick, clave]);
 
@@ -462,6 +463,19 @@ async validaRecuperar(nick: string, correo: string): Promise<boolean> {
     }
     return;
   }
+
+  modificaRespuesta(seleccion: number, respuesta: string, userID: number){
+    const valoresPermitidos = [1, 2, 3];
+    if(valoresPermitidos.includes(seleccion)){
+      return this.database.executeSql('UPDATE PREGUNTAS_SEGURIDAD SET preguntaID = ? , respuesta = ? WHERE userID = ?',[seleccion, respuesta, userID]).then(res=>{
+        this.alerta.presentAlert("Alerta", "Respuesta modificada");  
+        }).catch(e=>{
+          this.alerta.presentAlert("Alerta", ""+e.message);
+        })
+      }
+    return;
+  }
+  
 // DELETE
 eliminarGrupo(id: number){
   return this.database.executeSql('DELETE FROM GRUPO WHERE grupoID = ?',[id]).then(res=>{
@@ -559,6 +573,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: string | null,
         await this.database.executeSql('INSERT INTO BIBLIOTECA(espacio_disponible, USER_userID) VALUES (900, ?)', [userid]);
         //this.alerta.presentAlert("1", "d");
         await this.database.executeSql('INSERT INTO CARPETA(nombre, creacion_date, BIBLIOTECA_bibliotecaID) VALUES (?, date("now"), ?)', ['summon_nube', userid]);
+        await this.database.executeSql('INSERT INTO PREGUNTAS_SEGURIDAD(userID) VALUES(?)', [userid])
         //this.alerta.presentAlert("1", "f");
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso

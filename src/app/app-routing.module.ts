@@ -32,10 +32,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/biblioteca/biblioteca.module').then( m => m.BibliotecaPageModule)
   },
   {
-    path: 'salachat',
-    loadChildren: () => import('./pages/salachat/salachat.module').then( m => m.SalachatPageModule)
-  },
-  {
     path: 'salalistas',
     loadChildren: () => import('./pages/salalistas/salalistas.module').then( m => m.SalalistasPageModule)
   },

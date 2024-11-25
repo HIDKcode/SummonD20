@@ -23,6 +23,7 @@ export class LoginPage implements OnInit {
 
   Vnombre!: string;
   Vcorreo!: string;
+  Vrespuesta!: string;
   botonDeshabilitado: boolean = false;
 
   @ViewChild('error1', {static: true}) er1!: ElementRef
@@ -106,10 +107,12 @@ export class LoginPage implements OnInit {
     if (this.Vcorreo === "" || regexprohibido.test(this.Vcorreo)) {
       hasE = true;
     } 
-
     if (!this.exprMail.test(this.Vcorreo)){
       hasE = true;
     }
+    if (this.Vrespuesta === "" || regexprohibido.test(this.Vrespuesta)) {
+      hasE = true;
+    } 
 
     if (hasE) {
       this.alerta.presentAlert("Formatos incorrectos","Reintente por favor");
@@ -121,7 +124,7 @@ export class LoginPage implements OnInit {
   }
 
   async envia(){
-    const VALIDADOR = await this.datab.validaRecuperar(this.Vnombre, this.Vcorreo);
+    const VALIDADOR = await this.datab.validaRecuperar(this.Vnombre, this.Vcorreo, this.Vrespuesta);
     if (VALIDADOR){
       const random = this.datab.generarClaveAleatoria();
       await this.datab.modificaClaveEnSec(random, this.Vnombre);
@@ -132,7 +135,7 @@ export class LoginPage implements OnInit {
     setTimeout(() => {
       this.botonDeshabilitado = false; // para habilitarlo despues de 8sg
     }, 8000);
-    this.alerta.presentAlert("Recuperación de contraseña","Si el email y nick coinciden, se enviará una contraseña temporal")
+    this.alerta.presentAlert("Recuperación de contraseña","Si la información es correcta, se enviará respuesta a su correo, de otras maneras contacte a soporte.")
   }
   limpiar(){
     this.Vnick = '';

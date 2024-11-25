@@ -9,7 +9,7 @@
 
     <div class="center"> <h2 class="blanco sombraV"> Bienvenido a sala: {{Vnombre_sala}}#{{VgrupoID}} </h2> </div>
 
-    <div class="center"> 
+    <div class="center vw90"> 
       <ion-grid>
         <ion-row>
           <ion-col id="hover-trigger" size="2" *ngFor="let x of claseParticipante.slice(0,7)"> 
@@ -50,7 +50,8 @@
     <div>
 
       <div class="center">
-        <div id="chat" >
+
+        <div id="chat" #chatcaja>
           <div *ngFor="let mensaje of mensajes">
             <div class="mensaje">
               <h5>{{ mensaje.msj_autor }}</h5>
@@ -59,17 +60,23 @@
             </div>
           </div>
         </div>
+
       </div>
   
-      <div  class="center">
-        <ion-input class="gridform blanco" label="Envia mensaje!" type="text" label-placement="floating" fill="outline" [(ngModel)]="mensajeInput">
-        </ion-input>
-        <br>
-        <ion-button class="summonbtnsmall" (click)="enviarMensaje()"> 
-          <ion-icon name="arrow-forward-outline"></ion-icon>
-        </ion-button>
+      <div class="center">
+
+        <div id="send">
+          <ion-input class="chatform blanco" label="Envia mensaje!" type="text" label-placement="floating" fill="outline" [(ngModel)]="mensajeInput">
+          </ion-input>
+
+          <ion-button class="summonbtnsmall" (click)="enviarMensaje()"> 
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+
       </div>
-      <br> <br>
+      <br>
+
     </div>
 
   </div>

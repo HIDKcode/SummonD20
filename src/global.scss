@@ -12,13 +12,11 @@
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 
-
-
 *{
     font-family: 'Chau'
 }
 
-.NoSeUsa{
+.COLORESEMPRESA{
     --background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
 }
  
@@ -111,6 +109,11 @@ background-color: transparent;
 
 // Utilidades
 
+.vw90{
+    min-width: 90vw;
+    max-width: 90vw;
+}
+
 .txtL{
     font-size: larger;
     color: #171717;
@@ -141,6 +144,7 @@ background-color: transparent;
     margin-left: auto;
     margin-right: auto;
 }
+
 
 @font-face{
     font-family: Chau;
