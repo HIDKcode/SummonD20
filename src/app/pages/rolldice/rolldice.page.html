@@ -7,21 +7,15 @@
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
 
-  <div  class="center">
-    <ion-card class="center">
-        <ion-img src="assets/images/Dice.gif"> </ion-img>
-    </ion-card>
-  </div>
-
   <div class="center">  <h3 class="blanco sombraV"> ¡Lanza dados rápidos o personalizálos!</h3> </div>
     
   <div class="center"> 
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-button class="summonbutton"> d20 </ion-button>
-          <ion-button class="summonbutton"> 2d6 </ion-button>
-          <ion-button class="summonbutton"> 2d10 </ion-button>
+          <ion-button class="summonbutton" (click)="rolld20()"> d20 </ion-button>
+          <ion-button class="summonbutton" (click)="roll3d6()"> 3d6 </ion-button>
+          <ion-button class="summonbutton" (click)="rolld100()"> 1d100 </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -31,11 +25,28 @@
     <ion-input class="custom-input inputsummon blanco" label="Dado" type="text" label-placement="floating" fill="outline" maxlength="11" [(ngModel)]="Vstring">
     </ion-input> 
   </div>
-  <div class="center">
-    <ion-button class="summonbutton" (click)="roll()"> LANZAR DADO </ion-button>
-  </div>
-  <div class="center">
-    <H3 CLASS="blanco"> RESULTADO: <H3 CLASS="blanco sombraV"> {{Vresultado}} </H3> </H3> 
-  </div>
+
+    <div class="center">
+      <ion-button class="summonbutton" (click)="roll()"> LANZAR DADO </ion-button>
+    </div>
+
+    <div class="center"> 
+      <h3 class="blanco sombraV"> RESULTADO: </h3>
+    </div>
+
+    <div class="center">
+      <div class="dice-container">
+        <ion-card>
+          <ion-img src="assets/images/Dice.gif"></ion-img>
+        </ion-card>
+        <div class="dice-result blanco sombraV">
+          {{ Vresultado.total }}
+        </div>
+      </div>
+    </div>
+
+    <div class="center"> 
+      <h5 class="blanco sombraV"> Calculo: {{ Vresultado.rolls }} </h5>
+    </div>
  </div>
 </ion-content>
