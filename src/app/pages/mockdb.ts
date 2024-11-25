@@ -13,7 +13,7 @@ const mockDB = {
   ListaMisGrupos: () => of([])
 };
 
-describe('SalalistasPage', () => {
+describe('mockdb', () => {
   let component: SalalistasPage;
   let fixture: ComponentFixture<SalalistasPage>;
 
