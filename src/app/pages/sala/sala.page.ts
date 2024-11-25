@@ -20,7 +20,6 @@ export class SalaPage implements OnInit {
   variable: boolean = false;
   //LISTA MENSAJES
   mensajeInput: any;
-  mensajes: any[] = [];
   archivoAdjunto!: Blob;
   @ViewChild('chatcaja') chatcaja!: ElementRef;
   //LISTA PARTICIPANTES
@@ -30,6 +29,13 @@ export class SalaPage implements OnInit {
     perfil_media:  '',
     molde: '',
   }];
+
+  claseMSJ : any = [{
+    msj_autor:  '',
+    msj_texto:  '',
+    msj_date:  '',
+    msj_media:  '',
+  }]
 
   constructor(private menuCtrl: MenuController, private datab: DatabaseService,
               private nativestorage: NativeStorage, private alerta: AlertService,
@@ -120,7 +126,7 @@ export class SalaPage implements OnInit {
 
   refrescar(){
     this.datab.fetchmensajes().subscribe(res=>{
-      this.mensajes = res;
+      this.claseMSJ = res;
       //this.alerta.presentAlert("Aviso", "" + res);
       setTimeout(() => {
         this.ScrollBottom();

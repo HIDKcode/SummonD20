@@ -52,12 +52,12 @@
       <div class="center">
 
         <div id="chat" #chatcaja>
-          <div *ngFor="let x of mensajes">
+          <div *ngFor="let x of claseMSJ">
             <div class="mensaje">
               <h5>{{ x.msj_autor }}</h5>
               <p>{{ x.msj_texto }}</p>
-              <div *ngIf="x.archivo">
-                <img class="chatimg"  [src]="x.archivo" alt="{{x.archivo}}"/>
+              <div *ngIf="x.msj_media">
+                <img class="chatimg"  [src]="x.msj_media" alt="{{x.msj_media}}"/>
               </div>
               <small>{{ x.msj_date }}</small>
             </div>
