@@ -96,7 +96,7 @@ export class SalalistasPage implements OnInit {
         this.irmigrupo(grupoID);
         return true;
       } catch (e) {
-        this.alerta.presentAlert("Error unirse a grupo:", "" + e);
+        this.alerta.presentAlert("Error unirse a grupo:", "Contacte soporte");
       }
     } else {
       this.alerta.presentAlert("Clave errónea", "Contacte al dueño de la sala");

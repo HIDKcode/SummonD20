@@ -5,7 +5,6 @@ import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { User, Grupo, Participante, Mensaje, Archivo } from './clasesdb';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -54,7 +53,8 @@ export class DatabaseService {
   listadomensajes = new BehaviorSubject([]);
   listadoarchivos = new BehaviorSubject([]);
 
-  constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService, private nativeStorage: NativeStorage,private http: HttpClient, private router: Router){
+  constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService,
+      private nativeStorage: NativeStorage, private router: Router, private nativestorage: NativeStorage){
         this.platform.ready().then(()=>{
         this.crearDB();
       })
@@ -571,7 +571,6 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
       if (SELECT.rows.length > 0) {
         const userID = SELECT.rows.item(0).userID;
       await this.database.executeSql('INSERT OR IGNORE INTO PARTICIPANTE (USER_userID, GRUPO_grupoID) VALUES (?, ?)',[userID, grupoID]);
-      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Con exito");
       this.consultamisgrupos(nick);
       } else {
         this.alerta.presentAlert("Error en registro de participante", "Contacte soporte");
@@ -579,7 +578,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
       }
     } catch (e: any) {
       await this.logError("insertparticipante", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error: " + JSON.stringify(e));
+      this.alerta.presentAlert("Ingreso a sala numero:" + grupoID, "Error, contacte soporte");
     }
   }
 
@@ -592,12 +591,13 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         if (SELECT.rows.length > 0) {
         const userID = SELECT.rows.item(0).userID;
         const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES (?, ?, ?, ?)',[nombre, clave, descr, userID]);
-        const IDgrupo = CONSULTA.insertId;
+        const IDgrupo = await CONSULTA.insertId;
         await this.insertParticipante(nick, IDgrupo);
         this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ IDgrupo);
         this.consultagrupos();
         this.consultamisgrupos(nick);
-        this.router.navigate(['/sala', IDgrupo]);
+        await this.nativestorage.setItem('grupoData',{IDgrupo});
+        await this.router.navigate(['/sala', IDgrupo]);
         } else {
           this.alerta.presentAlert("Error en creación de grupo", "Contacte soporte");
           return;

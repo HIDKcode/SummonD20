@@ -113,7 +113,7 @@ export class SalaPage implements OnInit {
   ScrollBottom(): void {
     if (this.chatcaja) {
       const element = this.chatcaja.nativeElement;
-      element.scrollTop = element.scrollHeight; // Desplaza al final
+      element.scrollTop = element.scrollHeight; // Desplaza al final 
     }
   }
 
