@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { AlertService } from './services/alert.service';
+import { DatabaseService } from './services/database.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { AlertService } from './services/alert.service';
 
 export class AppComponent {
   
-  constructor(private router: Router, private nativestorage: NativeStorage, private alerta: AlertService) {
+  constructor(private router: Router, private nativestorage: NativeStorage, private alerta: AlertService, private datab: DatabaseService) {
     
   }
 
@@ -41,11 +42,12 @@ export class AppComponent {
 
   async Logout(){
     try {
+      await this.datab.logoff();
       await this.nativestorage.remove('userData')
       await this.router.navigate(['/login']);
       await this.alerta.presentAlert("Cierre de sesión","Realizado con éxito");
     } catch (error) {
-      console.error('Error en Servidor: LogOut', error);
+      console.error('Error en servidor', "Error en cierre de sesión, contacte soporte");
     }
   }
 }

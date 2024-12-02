@@ -90,8 +90,7 @@ background-color: transparent;
     font-family: 'Chau';
     display: none;
     overflow: visible;
-    white-space: normal;
-    
+    white-space: normal; 
 }
 
 .error-div{
@@ -123,7 +122,7 @@ background-color: transparent;
     text-decoration: underline;
 }
 .upmargin{
-    margin-top: 15px;
+    margin-top: 25px;
 }
 .awdmargin{
     margin-left: 5vw;
@@ -145,6 +144,9 @@ background-color: transparent;
     margin-right: auto;
 }
 
+.codigoseguridad{
+    display: none;
+}
 
 @font-face{
     font-family: Chau;

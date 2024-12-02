@@ -41,8 +41,10 @@ export class AdminPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.datab.acceso();
     await this.AdminPage();
     this.listarUser();
+    
   }
 
   listarUser() {

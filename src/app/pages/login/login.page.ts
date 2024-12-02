@@ -27,11 +27,12 @@ export class LoginPage implements OnInit {
   StoreCorreo!: string;
   Vcodigo!: string;
   botonDeshabilitado: boolean = false;
-
+  visible: boolean = false;
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
+
   @ViewChild(IonModal) modal!: IonModal;
-  @ViewChild('codigoseguridad', {static: true}) divocultable!: ElementRef
+ 
 
   constructor(
     private alerta: AlertService,
@@ -102,6 +103,7 @@ export class LoginPage implements OnInit {
   async ValidaCodigo(){
     const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
     if (this.Vcodigo === "" || regexprohibido.test(this.Vcodigo)) {
+      this.alerta.presentAlert("Codigo de recuperación", "Codigo vacío o caracter inválido");
       return false;
     } 
     const VALIDA = await this.datab.validaCodigo(this.Vcodigo);
@@ -157,9 +159,9 @@ export class LoginPage implements OnInit {
       this.botonDeshabilitado = false; 
     }, 8000);
     // Mostramos formulario y boton de codigo seg, sean o no validos los datos. Se oculta después de 300sg
-    this.renderer2.setStyle(this.divocultable.nativeElement, 'display', 'flex');
+    this.visible = true; 
     setTimeout(() => {
-      this.renderer2.setStyle(this.divocultable.nativeElement, 'display', 'none');
+      this.visible = false;
     }, 300000);
     // Generamos codigo, lo enviamos y se genera un delete a 300sg apx
     const VALIDADOR = await this.datab.validaRecuperar(this.StoreNombre, this.StoreCorreo);

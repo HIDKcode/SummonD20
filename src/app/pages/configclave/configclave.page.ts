@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
-import { MenuController, NavController } from '@ionic/angular';
+import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -33,27 +33,20 @@ export class ConfigclavePage implements OnInit {
 
   constructor(private alerta: AlertService ,private renderer2: Renderer2, 
     private datab: DatabaseService, private menuCtrl: MenuController,
-    private navCtrl: NavController, private nativestorage: NativeStorage,
-    private activatedroute: ActivatedRoute, private router: Router) {
-      this.menuCtrl.enable(true);
-
-      this.activatedroute.queryParams.subscribe(params => {
-        if(this.router.getCurrentNavigation()?.extras.state){
-          this.Vid = this.router.getCurrentNavigation()?.extras?.state?.['Vid'];
-          this.estado = this.router.getCurrentNavigation()?.extras?.state?.['estado'];
-        }
-      });
-
+    private router: Router, private nativestorage: NativeStorage) {
+      this.menuCtrl.enable(true)
      }
 
   async ngOnInit() {
+    this.datab.acceso();
     await this.cargaNick();
   }
 
   async CambiarPass(){
       let hasE = false;
-
-    if (this.Vpass == "") {
+      const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
+      
+    if (this.Claveoriginal == "" || regexprohibido.test(this.Claveoriginal)) {
       this.renderer2.setStyle(this.er1.nativeElement, 'display', 'flex');
       hasE = true;
     } else {
@@ -67,6 +60,13 @@ export class ConfigclavePage implements OnInit {
       this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
     }
 
+    if(regexprohibido.test(this.Vpass)){
+      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'flex');
+      hasE = true;
+    } else {
+      this.renderer2.setStyle(this.er2.nativeElement, 'display', 'none');
+    }
+  
     if (this.Vpass != this.Vpass2) {
       this.renderer2.setStyle(this.er3.nativeElement, 'display', 'flex');
       hasE = true;
@@ -76,13 +76,21 @@ export class ConfigclavePage implements OnInit {
 
     if (hasE) {
       return false;
-    }
+    } 
+    const VALIDA = await this.datab.validaClave(this.Vnick, this.Claveoriginal);
+
+    if(VALIDA){
       await this.datab.modificaClave(this.Vpass, this.Vnick);
+    } else {
+      this.alerta.presentAlert("Cambio de clave","Clave original errónea")
+    }
+
     return;
   }
 
+
   volver() {
-    this.navCtrl.back(); //página anterior del historial
+    this.router.navigate(['/configuracion'])
   }
 
   async cargaNick(){

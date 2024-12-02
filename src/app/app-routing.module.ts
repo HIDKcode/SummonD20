@@ -60,16 +60,13 @@ const routes: Routes = [
     loadChildren: () => import('./pages/configclave/configclave.module').then( m => m.ConfigclavePageModule)
   },
   {
-    path: '**',
-    loadChildren: () => import('./pages/notfound/notfound.module').then( m => m.NotfoundPageModule)
-  },
-  {
     path: 'recuperarclave',
     loadChildren: () => import('./pages/recuperarclave/recuperarclave.module').then( m => m.RecuperarclavePageModule)
   },
-  
-  
-  
+  {
+    path: '**',
+    loadChildren: () => import('./pages/notfound/notfound.module').then( m => m.NotfoundPageModule)
+  }
 ];
 
 @NgModule({

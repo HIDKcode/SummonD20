@@ -43,7 +43,7 @@ export class SalaPage implements OnInit {
     this.menuCtrl.enable(true); }
 
   async ngOnInit() {
-    
+    this.datab.acceso();
     await this.cargaID();
     await this.cargaNombre();
     await this.cargaNick();

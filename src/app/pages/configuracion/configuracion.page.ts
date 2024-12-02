@@ -38,10 +38,6 @@ export class ConfiguracionPage implements OnInit {
   variable: boolean = false;
   Vprivado: string = "";
 
-  customPopoverOptions: any = {
-    cssClass: 'popover',
-  };
-
   constructor(private router: Router, private activatedroute: ActivatedRoute, 
     private alerta: AlertService ,private renderer2: Renderer2, 
     private datab: DatabaseService, private nativeStorage: NativeStorage,
@@ -53,6 +49,7 @@ export class ConfiguracionPage implements OnInit {
   }
 
   ngOnInit(){
+    this.datab.acceso();
   }
 
   irCambioclave(){
@@ -93,6 +90,7 @@ export class ConfiguracionPage implements OnInit {
     return; 
   }
 
+  /*
   ActualizaPreguntaSeg(){
     const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
     if(this.isReadonly2){
@@ -111,7 +109,7 @@ export class ConfiguracionPage implements OnInit {
       return;
     }
     return;
-  }
+  }*/
 
   getUserData(){
     this.datab.fetchUsuario(this.Vnick).subscribe({

@@ -51,6 +51,7 @@ export class SalalistasPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.datab.acceso();
     await this.cargaNick();
     this.datab.consultamisgrupos(this.Vnick);
     this.datab.consultagrupos();

@@ -35,12 +35,13 @@ export class BibliotecaPage implements OnInit {
      }
 
   async ngOnInit() {
+    this.datab.acceso();
     await this.cargaNick();
     this.bibliotecaID = await this.datab.getID(this.Vnick);
     await this.datab.consultaarchivos(this.bibliotecaID);
     this.datab.dbState().subscribe(data=>{
       if(data){
-      
+
         this.datab.fetcharchivos().subscribe(res=>{
           this.claseArchivo = res;
           //this.alerta.presentAlert("Aviso", "" + res);
@@ -55,6 +56,7 @@ export class BibliotecaPage implements OnInit {
     .then((img) => {
       this.Varchivo = img;
       this.datab.insertarArchivo(this.Varchivo, this.Vnick);
+      this.datab.consultaarchivos(this.bibliotecaID);
     }) 
   }
 

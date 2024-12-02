@@ -17,6 +17,7 @@ export class DatabaseService {
 
   //varaibles any
   Vvalida: any;
+  isLogged = false;
 
   userID!: number;
   clave!: string;
@@ -77,7 +78,7 @@ export class DatabaseService {
         //modificar el observable del status de la base de datos
         this.isDBReady.next(true);
       }).catch(e=>{
-        this.alerta.presentAlert("Creación de BD", "Error creando la BD: " + JSON.stringify(e));
+        this.alerta.presentAlert("Creación de BD", "Error creando la BD");
       })
     
    }
@@ -103,8 +104,8 @@ async crearTablas(){
       await this.database.executeSql(this.ins_PARTICIPANTE, []);
       await this.database.executeSql(this.ins_GRUPO2, []);
       await this.database.executeSql(this.ins_PARTICIPANTE2, []);
-    }catch(e){
-      this.alerta.presentAlert("Creación de Tabla", "Error creando las Tablas: " + JSON.stringify(e));
+    }catch(e: any){
+      this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-DB01");
     }
   }
 
@@ -153,8 +154,9 @@ async crearTablas(){
           this.listadoparticipantes.next(items as any);
         }
       })
-    } catch (e){
-      this.alerta.presentAlert("Fallo en proceso fetch", "" + e);
+    } catch (e: any){
+      this.logError("consultaparticipantes", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-CMP01");
     }
   }
 
@@ -190,8 +192,9 @@ async crearTablas(){
         }
         this.listadomisgrupos.next(items as any);
       });
-    } catch (error) {
-      this.alerta.presentAlert("Fallo en proceso fetch", "" + error);
+    } catch (e: any) {
+      this.logError("consultamisgrupos", e.code ||': '|| e.message);
+      this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-CMG01");
     }
   }
 
@@ -310,24 +313,27 @@ async crearTablas(){
           MIRAUSER.complete();
         })
         .catch(e => {
-          this.alerta.presentAlert("Fallo en proceso fetch", "E: "+ e.message);
+          this.logError("fetchUsuario(variable)", e.code ||': '|| e.message);
+          this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-F01");
           MIRAUSER.error(e);
         });
     });
   }
 
   LoginUser(nick: string) {
+    this.isLogged = true;
     this.setNick(nick);
     this.fetchUsuario(nick).subscribe({
       next: (usuarios: User[]) => {
         if (usuarios.length < 1) {
-          this.alerta.presentAlert("Usuario no encontrado", "Redirigiendo a login.");
+          this.alerta.presentAlert("Usuario no encontrado", "Redirigiendo a ingreso");
           this.nativeStorage.remove('userData');
           this.router.navigate(['/login']);
         }
       },
-      error: (error) => {
-        this.alerta.presentAlert("Error", error.message);
+      error: (e: any) => {
+        this.logError("LoginUser", e.code ||': '|| e.message);
+        this.alerta.presentAlert("Error de sistema", "Redirigido a ingreso");
         this.router.navigate(['/login']); 
       }
     });
@@ -386,7 +392,6 @@ async crearTablas(){
       return false;
     }
   }
-
  
   async UnicoGrupo(x: string): Promise<boolean> {
     const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?', [x]);
@@ -397,6 +402,16 @@ async crearTablas(){
       return false;
     }
   }
+
+  acceso(){
+    if (this.isLogged){
+      return;
+    } else {
+      this.alerta.presentAlert("Verificación de acceso","Fallo al verificar credencial de usuario, contacte soporte.")
+      this.router.navigate(['/login']);
+    }
+  }
+
  // GETTERS o SELECTS 
   async getID(nick: string) {
   const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
@@ -413,7 +428,7 @@ async crearTablas(){
       this.alerta.presentAlert("Fallo en get OWNER grupo", "Contacte soporte o reinicie vista.");
     }
   }
-
+  
   async getGrupoNombre(grupoID: number){
     const SELECT = await this.database.executeSql('SELECT nombre_sala FROM GRUPO WHERE grupoID = ?',[grupoID]);
     if (SELECT.rows.length > 0){
@@ -429,7 +444,7 @@ async crearTablas(){
       this.alerta.presentAlert("Alerta", "Fotografia modificada");
       this.fetchUsuario(nick);
     }).catch(e=>{
-      this.alerta.presentAlert("Error en modificar foto", "Contacte soporte" + e.message);
+      this.alerta.presentAlert("Error en modificar foto", "Contacte soporte");
       this.logError("modificafoto", e.code ||': '|| e.message);
     })
   }
@@ -439,7 +454,7 @@ async crearTablas(){
       this.alerta.presentAlert("Alerta", "Correo modificado");
       this.fetchUsuario(nick);
     }).catch(e=>{
-      this.alerta.presentAlert("Error en modificar correo", "Contacte soporte" + e.message);
+      this.alerta.presentAlert("Error en modificar correo", "Contacte soporte");
       this.logError("modificacorreo", e.code ||': '|| e.message);
     })
   }
@@ -449,7 +464,7 @@ async crearTablas(){
       this.alerta.presentAlert("Alerta", "Contraseña modificada");
       this.fetchUsuario(nick);
     }).catch(e=>{
-      this.alerta.presentAlert("Error en modificar contraseña", "Contacte soporte" + e.message);
+      this.alerta.presentAlert("Error en modificar contraseña", "Contacte soporte");
       this.logError("modificaclave", e.code ||': '|| e.message);
     })
   } 
@@ -461,25 +476,13 @@ async crearTablas(){
       this.alerta.presentAlert("Alerta", "Contraseña modificada");  
       this.fetchUsuario(nick);
       }).catch(e=>{
-        this.alerta.presentAlert("Alerta", ""+e.message);
+        this.alerta.presentAlert("Error en modificar estado", "Contacte soporte");
         this.logError("modificaestado", e.code ||': '|| e.message);
       })
     }
     return;
   }
 
-  modificaRespuesta(seleccion: number, respuesta: string, userID: number){
-    const valoresPermitidos = [1, 2, 3];
-    if(valoresPermitidos.includes(seleccion)){
-      return this.database.executeSql('UPDATE PREGUNTAS_SEGURIDAD SET preguntaID = ? , respuesta = ? WHERE userID = ?',[seleccion, respuesta, userID]).then(res=>{
-        this.alerta.presentAlert("Alerta", "Respuesta modificada");  
-        }).catch(e=>{
-          this.alerta.presentAlert("Alerta", ""+e.message);
-          this.logError("modifcarespuesta", e.code ||': '|| e.message);
-        })
-      }
-    return;
-  }
   
 // DELETEmsjMedia
 eliminarGrupo(id: number){
@@ -528,7 +531,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         INSERT INTO ARCHIVO(archivo, extension, tamaño, subida_date, bibliotecaID)
         VALUES (?, ?, ?, date('now'), ?)
       `;
-
+      
       const result = await this.database.executeSql(INSERT, [Media, extension, tamanio, bibliotecaID]);
       return result.insertId;
     } catch (e: any) {
@@ -640,6 +643,10 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
       clave += charSet.charAt(Math.floor(Math.random() * charSet.length));
     }
     return clave.split('').sort(() => 0.5 - Math.random()).join('');
+  }
+
+  logoff(){
+    this.isLogged = false;
   }
 
 }

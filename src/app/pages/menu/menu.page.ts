@@ -27,8 +27,9 @@ export class MenuPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.datab.acceso();
     await this.cargaNick();
-      await this.getUserData2();
+    await this.getUserData2();
   }
 
   irAdmin(){
@@ -63,8 +64,6 @@ export class MenuPage implements OnInit {
           this.any2 = userData[0].correo;
           this.any3 = userData[0].perfil_media;
           this.estado = userData[0].estado;
-
-          this.authLogged();
         } else {
           this.alerta.presentAlert("Usuario no encontrado", "");
         }
@@ -73,29 +72,6 @@ export class MenuPage implements OnInit {
         this.alerta.presentAlert("Fallo en carga de datos", "Error: " + e.message);
       }
     });
-  }
-
-  authLogged(){
-    if(this.estado == 1){
-      this.alerta.presentAlert("Has ingresado con una contraseña temporal", "Por favor cambiala cuanto antes.");
-      let navigationExtras: NavigationExtras = {
-        state: {
-          Vid: this.Vid,
-          estado: this.estado,
-        }
-      }
-      this.router.navigate(['/configclave'],navigationExtras)
-    }else{
-      if (this.estado == 5 || this.estado == 9) {
-        console.log("estado del usuario: " + this.estado)
-      } else {
-        this.alerta.presentAlert("Re-enviado a login", "Su usuario es inexistente o se encuentra bloqueado, IDestado: " + this.estado + "Contacte a soporte: Summonapp@soporte.cl");
-        this.router.navigate(['/login']);
-        return false;
-      }
-      return;
-    }
-    return;
   }
 
 }

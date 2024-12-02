@@ -6,14 +6,14 @@
 
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-    <h3 class="center blanco sombraV"> Cambiar Contraseña {{Vnick}}!{{estado}} </h3>
+    <h3 class="center blanco sombraV"> Menú de {{Vnick}} para cambio de contraseña </h3>
     
     <div class="center">
       <ion-input class="inputsummon blanco" label="Contraseña original o temporal" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Claveoriginal" maxlength="20"></ion-input>
     </div>
 
     <div class="center">
-      <div #error1 class="error-form"><h5 class="error-text"> Ingrese contraseña </h5></div>
+      <div #error1 class="error-form"><h5 class="error-text"> Contraseña vacía o formato inválido </h5></div>
     </div>
 
     <div class="center">

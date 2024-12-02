@@ -32,6 +32,7 @@ export class SalacreatePage implements OnInit {
   }
 
   ngOnInit() {
+    this.datab.acceso();
   }
 
   irSalalistas(){

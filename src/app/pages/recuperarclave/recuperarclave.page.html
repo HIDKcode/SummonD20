@@ -1,13 +1,37 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>recuperarclave</ion-title>
+  <ion-toolbar >
+   <img class="center-img" src="assets/images/lettering.png" width="110px"  alt="logo"> 
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">recuperarclave</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div id="container" class="divfondo1 body">
+    <h3 class="center blanco sombraV"> Recuperar contraseña de {{Vnick}} </h3>
+    
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass" maxlength="20"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error1 class="error-form"><h5 class="error-text"> Contraseña inválida <br> (Formato: 7 dígitos, 1 Mayúscula, 1 Signo) </h5></div>
+    </div>
+
+    <div class="center">
+      <ion-input class="inputsummon blanco" label="Repetir Contraseña Nueva" placeholder="******" type="password" label-placement="floating" fill="outline" [(ngModel)]="Vpass2" maxlength="20"></ion-input>
+    </div>
+
+    <div class="center">
+      <div #error2 class="error-form"><h5 class="error-text"> Las contraseñas no coinciden </h5></div>
+    </div>
+
+    <div class="center">
+      <ion-button class="summonbutton" (click)="CambiarPass()"> CAMBIAR CLAVE </ion-button>
+    </div>
+    <br>
+
+    <div class="center upmargin">
+      <ion-button class="summonbutton" (click)="volver()"> VOLVER ATRAS </ion-button>
+    </div>
+
+  </div>
 </ion-content>

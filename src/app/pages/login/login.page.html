@@ -76,7 +76,7 @@
                 <ion-button [disabled]="botonDeshabilitado" class="summonbutton" (click)="Recuperar()"> RECUPERAR </ion-button>
               </div>
 
-              <div #codigoseguridad>
+              <ng-template [ngIf]="visible" class="codigoseguridad">
                 <div class="center">
                   <h4 class="verdeO sombraV"> Ingrese codigo de seguridad </h4>
                 </div>
@@ -87,10 +87,10 @@
                 </div> 
 
                 <div  class="center">
-                  <ion-button [disabled]="botonDeshabilitado" class="summonbutton" (click)="ValidaCodigo()"> CONFIRMAR </ion-button>
+                  <ion-button class="summonbutton" (click)="ValidaCodigo()"> CONFIRMAR </ion-button>
                 </div>
 
-              </div>
+              </ng-template>
 
           </ion-content>
         </ng-template>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
+import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
   selector: 'app-rolldice',
@@ -16,12 +17,15 @@ export class RolldicePage implements OnInit {
   constructor(
     private menuCtrl: MenuController,
     private alerta: AlertService,
-    private nativestorage: NativeStorage
+    private nativestorage: NativeStorage,
+    private datab: DatabaseService
   ) {
     this.menuCtrl.enable(true);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.datab.acceso();
+  }
 
   rolld20(){
     this.rollCustomDiceLocal('d20')
@@ -44,7 +48,7 @@ export class RolldicePage implements OnInit {
 
     for (const part of parts) {
       const diceMatch = part.match(/(\d*)[dD](\d+)/);
-      const modifierMatch = part.match(/[+-](\d+)/);
+      const modifierMatch = part.match(/([+-])(\d+)/);
 
       if (diceMatch) {
         // Lógica para lanzar dados
@@ -57,8 +61,9 @@ export class RolldicePage implements OnInit {
           totalSum += roll;
         }
       } else if (modifierMatch) {
-        const modifier = parseInt(modifierMatch[1]);
-        totalSum += modifier;
+        const sign = modifierMatch[1] === '+' ? 1 : -1; 
+        const modifier = parseInt(modifierMatch[2]);
+        totalSum += sign * modifier; 
       }
     }
 
@@ -70,7 +75,7 @@ export class RolldicePage implements OnInit {
   }
 
   roll() {
-    const regex = /^[0-9dD+-]+$/;
+    const regex = /^(\d*[dD]\d+)([+-]\d+)?$/;
 
     if (!regex.test(this.Vstring)) {
       const titulo = 'Fallo al lanzar dado.';
