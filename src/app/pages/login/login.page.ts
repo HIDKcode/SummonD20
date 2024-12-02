@@ -4,7 +4,6 @@ import { MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { IonModal } from '@ionic/angular';
-import { OverlayEventDetail } from '@ionic/core/components';
 import { MailjsService } from 'src/app/services/mailjs.service';
 @Component({
   selector: 'app-login',
@@ -17,18 +16,22 @@ export class LoginPage implements OnInit {
   VuserID!: number;
   Vpassword: string = "";
   Vnick: string = "";
+  
 
   //regex
   exprMail = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
 
   Vnombre!: string;
   Vcorreo!: string;
-  Vrespuesta!: string;
+  StoreNombre!: string;
+  StoreCorreo!: string;
+  Vcodigo!: string;
   botonDeshabilitado: boolean = false;
 
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
   @ViewChild(IonModal) modal!: IonModal;
+  @ViewChild('codigoseguridad', {static: true}) divocultable!: ElementRef
 
   constructor(
     private alerta: AlertService,
@@ -85,8 +88,9 @@ export class LoginPage implements OnInit {
       return false;
     }
 
-  } catch (e) {
-    this.alerta.presentAlert("Error de sistema", "Reintente o contacte soporte por error: " + e);
+  } catch (e: any) {
+    this.datab.logError("Funcion Ingreso", e.code ||': '|| e.message)
+    this.alerta.presentAlert("Error de sistema", "Reintente o contacte soporte por error");
     return false; 
   }
 } 
@@ -95,12 +99,32 @@ export class LoginPage implements OnInit {
     this.modal.dismiss(null);
   }
   
+  async ValidaCodigo(){
+    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
+    if (this.Vcodigo === "" || regexprohibido.test(this.Vcodigo)) {
+      return false;
+    } 
+    const VALIDA = await this.datab.validaCodigo(this.Vcodigo);
+
+    if(VALIDA){
+      let navigationExtras: NavigationExtras = {
+        state: {
+          Vnick: this.StoreNombre
+        }
+      }
+      await this.router.navigate(['/recuperarclave'], navigationExtras);
+    } else {
+      this.alerta.presentAlert("Codigo de recuperación", "Codigo incorrecto, reintente o contacte soporte.");
+    }
+    return;
+  }
+
   Recuperar(){
     let hasE = false;
     const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
-
     this.Vnombre = this.Vnombre.toLowerCase();
-
+    this.Vcorreo = this.Vcorreo.toLowerCase();
+    
     if (this.Vnombre === "" || regexprohibido.test(this.Vnombre)) {
       hasE = true;
     }
@@ -110,36 +134,49 @@ export class LoginPage implements OnInit {
     if (!this.exprMail.test(this.Vcorreo)){
       hasE = true;
     }
-    if (this.Vrespuesta === "" || regexprohibido.test(this.Vrespuesta)) {
-      hasE = true;
-    } 
+    
 
     if (hasE) {
-      this.alerta.presentAlert("Formatos incorrectos","Reintente por favor");
+      this.alerta.presentAlert("Recuperación de clave","Formatos incorrectos, reintente por favor");
       return false;
     }
+    this.alerta.presentAlert("Recuperación de clave","Si los datos son válidos se ha enviado a su correo un codigo de seguridad con una validez de 5 minutos.")
     this.envia();
-    
     return;
   }
 
   async envia(){
-    const VALIDADOR = await this.datab.validaRecuperar(this.Vnombre, this.Vcorreo, this.Vrespuesta);
+    // Guardamos variables y borramos las de formulario
+    this.StoreNombre = this.Vnombre;
+    this.StoreCorreo = this.Vcorreo;
+    this.Vnombre = '';
+    this.Vcorreo = '';
+    // para habilitar boton de recuperar() despues de 8sg
+    this.botonDeshabilitado = true; 
+    setTimeout(() => {
+      this.botonDeshabilitado = false; 
+    }, 8000);
+    // Mostramos formulario y boton de codigo seg, sean o no validos los datos. Se oculta después de 300sg
+    this.renderer2.setStyle(this.divocultable.nativeElement, 'display', 'flex');
+    setTimeout(() => {
+      this.renderer2.setStyle(this.divocultable.nativeElement, 'display', 'none');
+    }, 300000);
+    // Generamos codigo, lo enviamos y se genera un delete a 300sg apx
+    const VALIDADOR = await this.datab.validaRecuperar(this.StoreNombre, this.StoreCorreo);
     if (VALIDADOR){
       const random = this.datab.generarClaveAleatoria();
-      await this.datab.modificaClaveEnSec(random, this.Vnombre);
-      await this.datab.modificaEstadoEnSecreto(1,this.Vnombre)
-      await this.mailjs.enviarCorreo(this.Vnombre, this.Vcorreo, random);
+      await this.datab.insertarCodigoSeguridad(this.StoreNombre, random);
+      await this.mailjs.enviarCorreo(this.StoreNombre, this.StoreCorreo, random);
+      setTimeout(() => {
+        this.datab.DeleteCodigoSeguridad(this.StoreNombre);
+      }, 300000);
     }
-    this.botonDeshabilitado = true;
-    setTimeout(() => {
-      this.botonDeshabilitado = false; // para habilitarlo despues de 8sg
-    }, 8000);
-    this.alerta.presentAlert("Recuperación de contraseña","Si la información es correcta, se enviará respuesta a su correo, de otras maneras contacte a soporte.")
   }
+  
   limpiar(){
     this.Vnick = '';
     this.Vpassword = '';
   }
+
 }
 

@@ -72,17 +72,24 @@
                 </ion-input>
               </div> 
 
-              <div class="center">
-                <h4 class="verdeO sombraV"> Respuesta a pregunta secreta </h4>
-              </div>
-
-              <div class="center">
-                <ion-input class="inputsummon blanco" label="Respuesta" type="text" label-placement="floating" fill="outline"  [(ngModel)]="Vrespuesta">
-                </ion-input>
-              </div> 
-
               <div  class="center">
                 <ion-button [disabled]="botonDeshabilitado" class="summonbutton" (click)="Recuperar()"> RECUPERAR </ion-button>
+              </div>
+
+              <div #codigoseguridad>
+                <div class="center">
+                  <h4 class="verdeO sombraV"> Ingrese codigo de seguridad </h4>
+                </div>
+
+                <div class="center">
+                  <ion-input class="inputsummon blanco" label="Respuesta" type="text" label-placement="floating" fill="outline"  [(ngModel)]="Vcodigo">
+                  </ion-input>
+                </div> 
+
+                <div  class="center">
+                  <ion-button [disabled]="botonDeshabilitado" class="summonbutton" (click)="ValidaCodigo()"> CONFIRMAR </ion-button>
+                </div>
+
               </div>
 
           </ion-content>

@@ -77,10 +77,6 @@ export class ConfigclavePage implements OnInit {
     if (hasE) {
       return false;
     }
-
-    if(this.estado == 1){
-      await this.datab.modificaEstadoEnSecreto(5, this.Vnick);
-    }
       await this.datab.modificaClave(this.Vpass, this.Vnick);
     return;
   }

@@ -25,7 +25,6 @@ export class DatabaseService {
 
   // Estado 0 Bloqueado, 1 Usuario contraseña temporal, 5 Usuario permitido, 9 Admin.
   t_USER: string = "CREATE TABLE IF NOT EXISTS USER(userID INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL UNIQUE, clave TEXT NOT NULL, correo TEXT NOT NULL UNIQUE, perfil_media BLOB, estado INTEGER NOT NULL);";
-  t_ULT_CONEX: string = "CREATE TABLE IF NOT EXISTS ULT_CONEX(conexID INTEGER PRIMARY KEY AUTOINCREMENT, conexDATE TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, pago_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(USER_userID INTEGER PRIMARY KEY, espacio_disponible INTEGER NOT NULL, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT, archivo BLOB, nombre TEXT, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER NOT NULL, FOREIGN KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
@@ -34,7 +33,7 @@ export class DatabaseService {
   // mensaje media es un ID que copia el ID de archivo.
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
-  t_pregseg: string = "CREATE TABLE IF NOT EXISTS PREGUNTAS_SEGURIDAD(preguntaID INTEGER, respuesta TEXT, userID INTEGER NOT NULL, FOREIGN KEY (userID) REFERENCES USER(userID));";
+  t_RECUPERAR: string = "CREATE TABLE IF NOT EXISTS RECUPERAR(userID INTEGER PRIMARY KEY NOT NULL, codigo_seguridad TEXT, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
   ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.cl', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(USER_userID, espacio_disponible) VALUES(1, 900);";
@@ -43,7 +42,6 @@ export class DatabaseService {
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
-  ins_pregseg: string = "INSERT OR IGNORE INTO PARTICIPANTE VALUES(1, 'respuestamartin123', 1);";
   
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -68,7 +66,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV15',
+        name: 'summonBetaV16',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -89,7 +87,6 @@ async crearTablas(){
     try{
       //mandar a ejecutar las tablas en el orden especifico
       await this.database.executeSql(this.t_USER,[]);
-      await this.database.executeSql(this.t_ULT_CONEX,[]);
       await this.database.executeSql(this.t_BENEFICIO,[]);
       await this.database.executeSql(this.t_BIBLIOTECA,[]);
       await this.database.executeSql(this.t_ARCHIVO,[]);
@@ -97,6 +94,7 @@ async crearTablas(){
       await this.database.executeSql(this.t_PARTICIPANTE,[]);
       await this.database.executeSql(this.t_MENSAJE,[]);
       await this.database.executeSql(this.t_ERRORES,[]);
+      await this.database.executeSql(this.t_RECUPERAR,[]);
       //generamos los insert en caso que existan
       await this.database.executeSql(this.ins_USER, []);
       await this.database.executeSql(this.ins_BIBLIOTECA, []);
@@ -339,19 +337,14 @@ async crearTablas(){
 
 
 // VALIDADORES
-  async validaRecuperar(nick: string, correo: string, respuesta: string): Promise<boolean> {
-    const userID = await this.getID(nick);
-    const CONSULTA1 = await this.database.executeSql('SELECT COUNT(*) as count FROM PREGUNTAS_SEGURIDAD WHERE respuesta = ? AND userID = ?', [respuesta, userID]);
-    const CONSULTA2 = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND correo = ?', [nick, correo]);
+  async validaRecuperar(nick: string, correo: string): Promise<boolean> {
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM USER WHERE nick = ? AND correo = ?', [nick, correo]);
 
-    const count1 = CONSULTA1.rows.item(0).count;
-    const count2 = CONSULTA2.rows.item(0).count;
-
-    if (count1 > 0 && count2 > 0) {
+    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
       return true;
-    } 
-    
-    return false;
+    } else {
+      return false;
+    }
   }
 
   async validaClave(nick: string, clave: string): Promise<boolean> {
@@ -367,6 +360,16 @@ async crearTablas(){
   async validaClaveGrupo(id: number, pass: number): Promise<boolean>{
     const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM GRUPO WHERE grupoID = ? AND clave = ?',[id, pass]);
 
+    if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async validaCodigo(codigo: string): Promise<boolean>{
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM RECUPERAR WHERE codigo_seguridad = ?',[codigo])
+    
     if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
       return true;
     } else {
@@ -450,29 +453,6 @@ async crearTablas(){
       this.logError("modificaclave", e.code ||': '|| e.message);
     })
   } 
-
-  modificaClaveEnSec(clave: string, nick: string){
-    return this.database.executeSql('UPDATE USER SET clave = ? WHERE nick = ?',[clave, nick]).then(res=>{
-      console.log("Contraseña modificada");
-      this.fetchUsuario(nick);
-    }).catch(e=>{
-      console.log("Error en modificar contraseña", e.message);
-      this.logError("modificaclaveensec", e.code ||': '|| e.message);
-    })
-  } 
-
-  modificaEstadoEnSecreto(int: number, nick: string){
-    const valoresPermitidos = [0, 1, 5, 9];
-    if(valoresPermitidos.includes(int)){
-      return this.database.executeSql('UPDATE USER SET estado = ? WHERE nick = ?',[int, nick]).then(res=>{
-        this.fetchUsuario(nick);
-      }).catch(e=>{
-        console.log("Error en modificar contraseña", e.message);
-        this.logError("modificaestadoensecreto", e.code ||': '|| e.message);
-      })
-    }
-    return;
-  }
 
   modificaEstado(int: number, nick: string){
     const valoresPermitidos = [0, 1, 5, 9];
@@ -562,6 +542,26 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
     this.database.executeSql('INSERT INTO ERRORES VALUES(?,?)', [title, msj])
   }
 
+  async insertarCodigoSeguridad(nick: string, codigo: string){
+    try{
+      const userid = await this.getID(nick);
+      await this.database.executeSql('INSERT INTO RECUPERAR(userID, codigo_seguridad) VALUES(?, ?)', [userid])
+    } catch (e: any) {
+      await this.logError("insertCodigoSeguridad", e.code ||': '|| e.message);
+    }
+  }
+
+  async DeleteCodigoSeguridad(nick: string){
+    try{
+      const userid = await this.getID(nick);
+      await this.database.executeSql('DELETE FROM RECUPERAR WHERE userID = ?', [userid])
+    } catch (e: any) {
+      await this.logError("DeleteCodigoSeguridad", e.code ||': '|| e.message);
+    }
+  }
+  
+
+
   async  insertParticipante(nick: string, grupoID: number){
     try {
       const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
@@ -618,15 +618,12 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
         //this.alerta.presentAlert("1", "c");
         await this.database.executeSql('INSERT INTO BIBLIOTECA(USER_userID, espacio_disponible ) VALUES (?, 900)', [userid]);
-        //this.alerta.presentAlert("1", "d");
-        await this.database.executeSql('INSERT INTO PREGUNTAS_SEGURIDAD(userID) VALUES(?)', [userid])
-        //this.alerta.presentAlert("1", "f");
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {
       await this.logError("registerUser", e.code ||': '|| e.message);
-      this.alerta.presentAlert("Fallo en registro", "Contacte soporte por error:" + e.message);
-      return false; // Fallo en el registro
+      this.alerta.presentAlert("Fallo en registro", "Contacte soporte o reintente");
+      return false; 
     }
   }
 
