@@ -33,15 +33,16 @@ export class DatabaseService {
   // mensaje media es un ID que copia el ID de archivo.
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
-  t_RECUPERAR: string = "CREATE TABLE IF NOT EXISTS RECUPERAR(userID INTEGER PRIMARY KEY NOT NULL, codigo_seguridad TEXT, FOREIGN KEY (userID) REFERENCES USER(userID));";
+  t_RECUPERAR: string = "CREATE TABLE IF NOT EXISTS RECUPERAR(userID INTEGER PRIMARY KEY NOT NULL, codigo_seguridad TEXT UNIQUE, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
-  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.cl', NULL, 9);";
+  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.com', NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(USER_userID, espacio_disponible) VALUES(1, 900);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, bibliotecaID) VALUES('archivo', 'png', 24, date('now'), 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
+  ins_RECUPERAR: string = "INSERT OR IGNORE INTO RECUPERAR (userID) VALUES(1);"
   
   //ESTADO Base de datos
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -67,7 +68,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV18',
+        name: 'summonBetaV22',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -104,6 +105,7 @@ async crearTablas(){
       await this.database.executeSql(this.ins_PARTICIPANTE, []);
       await this.database.executeSql(this.ins_GRUPO2, []);
       await this.database.executeSql(this.ins_PARTICIPANTE2, []);
+      await this.database.executeSql(this.ins_RECUPERAR, []);
     }catch(e: any){
       this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-DB01");
     }
@@ -373,9 +375,10 @@ async crearTablas(){
     }
   }
 
-  async validaCodigo(codigo: string): Promise<boolean>{
-    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM RECUPERAR WHERE codigo_seguridad = ?',[codigo])
-    
+
+  async validaCodigo(codigo: string, nick: string): Promise<boolean>{
+    const userid = await this.getID(nick);
+    const CONSULTA = await this.database.executeSql('SELECT COUNT(*) as count FROM RECUPERAR WHERE userID = ? AND codigo_seguridad = ?',[userid, codigo])
     if (CONSULTA.rows.length > 0 && CONSULTA.rows.item(0).count > 0) {
       return true;
     } else {
@@ -397,6 +400,7 @@ async crearTablas(){
     const CONSULTA = await this.database.executeSql('SELECT * FROM GRUPO WHERE nombre_sala = ?', [x]);
     // Si row.length === 0 es porque el usuario no existe, UNICO true, ver qué debe entregar y como recepcionar el TRUE
     if (CONSULTA.rows.length === 0) {
+      
       return true;
     } else {
       return false;
@@ -413,12 +417,16 @@ async crearTablas(){
   }
 
  // GETTERS o SELECTS 
-  async getID(nick: string) {
+  async getID(nick: string): Promise<number>{
   const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
   if (SELECT.rows.length > 0) {
     return SELECT.rows.item(0).userID;
-   } 
+   } else {
+    this.alerta.presentAlert("Error detección de usuario","Se ha generado un fallo intentando identificar su usuario correspondiente, reintente o contacte soporte");
+    return 0;
+   }
   }
+
   
   async getOWNER(grupoID: number){
     const SELECT = await this.database.executeSql('SELECT owner FROM GRUPO WHERE grupoID = ?',[grupoID]);
@@ -483,6 +491,24 @@ async crearTablas(){
     return;
   }
 
+  async ModificarCodigoSeguridad(nick: string, codigo: string){
+    try{
+      const userid = await this.getID(nick);
+      await this.database.executeSql('UPDATE RECUPERAR SET codigo_seguridad = ? WHERE userID = ?', [codigo, userid])
+    } catch (e: any) {
+      await this.logError("ModificarCodigoSeguridad", e.code ||': '|| e.message);
+    }
+  }
+
+  async NullifyCodigoSeguridad(nick: string){
+    try{
+      const userid = await this.getID(nick);
+      await this.database.executeSql('UPDATE RECUPERAR SET codigo_seguridad = NULL WHERE userID = ?', [userid])
+    } catch (e: any) { 
+      await this.logError("NullifyCodigoSeguridad", e.code ||': '|| e.message);
+    }
+  }
+  
   
 // DELETEmsjMedia
 eliminarGrupo(id: number){
@@ -545,24 +571,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
     this.database.executeSql('INSERT INTO ERRORES VALUES(?,?)', [title, msj])
   }
 
-  async insertarCodigoSeguridad(nick: string, codigo: string){
-    try{
-      const userid = await this.getID(nick);
-      await this.database.executeSql('INSERT INTO RECUPERAR(userID, codigo_seguridad) VALUES(?, ?)', [userid])
-    } catch (e: any) {
-      await this.logError("insertCodigoSeguridad", e.code ||': '|| e.message);
-    }
-  }
 
-  async DeleteCodigoSeguridad(nick: string){
-    try{
-      const userid = await this.getID(nick);
-      await this.database.executeSql('DELETE FROM RECUPERAR WHERE userID = ?', [userid])
-    } catch (e: any) {
-      await this.logError("DeleteCodigoSeguridad", e.code ||': '|| e.message);
-    }
-  }
-  
 
 
   async  insertParticipante(nick: string, grupoID: number){
@@ -621,6 +630,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         const userid = userCheck.rows.item(0).userID; // Accede al userID correctamente
         //this.alerta.presentAlert("1", "c");
         await this.database.executeSql('INSERT INTO BIBLIOTECA(USER_userID, espacio_disponible ) VALUES (?, 900)', [userid]);
+        await this.database.executeSql('INSERT INTO RECUPERAR(userID) VALUES (?)',[userid]);
         this.alerta.presentAlert("Funcion registro", "Registro exitoso.");
         return true; // Registro exitoso
     } catch (e: any) {
@@ -631,7 +641,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
   }
 
   // UTILIDADES
-  generarClaveAleatoria(){
+  generarClaveAleatoria(): string{
     const longitud = 8;
     const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
     const caracteresMayus = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -642,7 +652,8 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
       const charSet = Math.random() < 0.2 ? caracteresMayus : caracteres;
       clave += charSet.charAt(Math.floor(Math.random() * charSet.length));
     }
-    return clave.split('').sort(() => 0.5 - Math.random()).join('');
+    const ret_string = clave.split('').sort(() => 0.5 - Math.random()).join('');
+    return ret_string;
   }
 
   logoff(){

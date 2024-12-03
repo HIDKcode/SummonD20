@@ -67,7 +67,7 @@ async CambiarPass(){
       return false;
     }
       await this.datab.modificaClave(this.Vpass, this.Vnick);
-
+      this.router.navigate(['/login']);
     return;
   }
   

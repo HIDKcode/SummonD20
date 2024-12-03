@@ -81,6 +81,7 @@ export class LoginPage implements OnInit {
           Vnick: this.Vnick
         }
       };
+      
       await this.router.navigate(['/menu'], navigationExtras);
       this.limpiar();
       return true;
@@ -100,27 +101,6 @@ export class LoginPage implements OnInit {
     this.modal.dismiss(null);
   }
   
-  async ValidaCodigo(){
-    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
-    if (this.Vcodigo === "" || regexprohibido.test(this.Vcodigo)) {
-      this.alerta.presentAlert("Codigo de recuperación", "Codigo vacío o caracter inválido");
-      return false;
-    } 
-    const VALIDA = await this.datab.validaCodigo(this.Vcodigo);
-
-    if(VALIDA){
-      let navigationExtras: NavigationExtras = {
-        state: {
-          Vnick: this.StoreNombre
-        }
-      }
-      await this.router.navigate(['/recuperarclave'], navigationExtras);
-    } else {
-      this.alerta.presentAlert("Codigo de recuperación", "Codigo incorrecto, reintente o contacte soporte.");
-    }
-    return;
-  }
-
   Recuperar(){
     let hasE = false;
     const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
@@ -142,12 +122,35 @@ export class LoginPage implements OnInit {
       this.alerta.presentAlert("Recuperación de clave","Formatos incorrectos, reintente por favor");
       return false;
     }
-    this.alerta.presentAlert("Recuperación de clave","Si los datos son válidos se ha enviado a su correo un codigo de seguridad con una validez de 5 minutos.")
     this.envia();
     return;
   }
 
+  async ValidaCodigo(){
+    const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
+    if (this.Vcodigo === "" || regexprohibido.test(this.Vcodigo)) {
+      this.alerta.presentAlert("Codigo de recuperación", "Codigo vacío o caracter inválido");
+      return false;
+    } 
+    const VALIDA = await this.datab.validaCodigo(this.Vcodigo, this.StoreNombre);
+    if(VALIDA){
+      this.alerta.presentAlert("Codigo de recuperación","Codigo exitoso, redirigido a cambio de contraseña")
+      let navigationExtras: NavigationExtras = {
+        state: {
+          Vnick: this.StoreNombre
+        }
+      }
+      this.modal.dismiss(null);
+      await this.router.navigate(['/recuperarclave'], navigationExtras);
+    } else {
+      this.alerta.presentAlert("Codigo de recuperación", "Codigo incorrecto, reintente o contacte soporte.");
+    }
+    return;
+  }
+
+
   async envia(){
+    this.alerta.presentAlert("Recuperación de clave","Si los datos son válidos se ha enviado a su correo un codigo de seguridad con una validez de 5 minutos.")
     // Guardamos variables y borramos las de formulario
     this.StoreNombre = this.Vnombre;
     this.StoreCorreo = this.Vcorreo;
@@ -167,10 +170,10 @@ export class LoginPage implements OnInit {
     const VALIDADOR = await this.datab.validaRecuperar(this.StoreNombre, this.StoreCorreo);
     if (VALIDADOR){
       const random = this.datab.generarClaveAleatoria();
-      await this.datab.insertarCodigoSeguridad(this.StoreNombre, random);
+      await this.datab.ModificarCodigoSeguridad(this.StoreNombre, random);
       await this.mailjs.enviarCorreo(this.StoreNombre, this.StoreCorreo, random);
       setTimeout(() => {
-        this.datab.DeleteCodigoSeguridad(this.StoreNombre);
+        this.datab.NullifyCodigoSeguridad(this.StoreNombre);
       }, 300000);
     }
   }

@@ -9,16 +9,16 @@ export class MailjsService {
 
   private serviceID = 'service_ProgWeb_Proy2024';
   private templateID = 'template_9j9lpus'; 
-  private userID = 'XGSRyFVpmsTq_nYzy';
+  private emailjskey = 'XGSRyFVpmsTq_nYzy';
 
   constructor(private alerta: AlertService){ }
 
-  async enviarCorreo(nombre: string, correo: string, clave: string) {
+  async enviarCorreo(nombre: string, correo: string, codigo: string) {
 
     const templateParams = {
       user_nick: nombre,
-      user_password: clave,
       user_email: correo,
+      codigo: codigo,
     };
 
     try {
@@ -26,10 +26,10 @@ export class MailjsService {
         this.serviceID,
         this.templateID,
         templateParams,
-        this.userID // Esto es opcional si ya configuraste una clave pública en EmailJS
+        this.emailjskey 
       );
     } catch (e: any) {
-      this.alerta.presentAlert('Error','Contacte soporte:' + e.message);
+      this.alerta.presentAlert('Error en envio de mensaje','Contacte soporte');
     }
   }
 
