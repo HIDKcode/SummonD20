@@ -54,7 +54,7 @@ export class DatabaseService {
   listadoarchivos = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService,
-      private nativeStorage: NativeStorage, private router: Router, private nativestorage: NativeStorage){
+      private nativeStorage: NativeStorage, private router: Router){
         this.platform.ready().then(()=>{
         this.crearDB();
       })
@@ -67,7 +67,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV16',
+        name: 'summonBetaV18',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -591,13 +591,13 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         if (SELECT.rows.length > 0) {
         const userID = SELECT.rows.item(0).userID;
         const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES (?, ?, ?, ?)',[nombre, clave, descr, userID]);
-        const IDgrupo = await CONSULTA.insertId;
-        await this.insertParticipante(nick, IDgrupo);
-        this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ IDgrupo);
+        const grupoID = await CONSULTA.insertId;
+        await this.nativeStorage.setItem('grupoData',{grupoID});
+        await this.insertParticipante(nick, grupoID);
+        this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ grupoID);
         this.consultagrupos();
         this.consultamisgrupos(nick);
-        await this.nativestorage.setItem('grupoData',{IDgrupo});
-        await this.router.navigate(['/sala', IDgrupo]);
+        await this.router.navigate(['/sala', grupoID]);
         } else {
           this.alerta.presentAlert("Error en creación de grupo", "Contacte soporte");
           return;

@@ -43,7 +43,7 @@ export class SalaPage implements OnInit {
     this.menuCtrl.enable(true); }
 
   async ngOnInit() {
-    this.datab.acceso();
+    
     await this.cargaID();
     await this.cargaNombre();
     await this.cargaNick();
@@ -113,7 +113,7 @@ export class SalaPage implements OnInit {
   ScrollBottom(): void {
     if (this.chatcaja) {
       const element = this.chatcaja.nativeElement;
-      element.scrollTop = element.scrollHeight; // Desplaza al final 
+      element.scrollTop = element.scrollHeight; // Desplaza al final
     }
   }
 
@@ -134,5 +134,11 @@ export class SalaPage implements OnInit {
     });
   }
   
-}
+  openPopover(participanteID: number) {
+    const popover = document.getElementById('popover-' + participanteID) as any;
+    if (popover) {
+      popover.present();
+    }
+  }
+} 
 

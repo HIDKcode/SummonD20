@@ -12,24 +12,26 @@
     <div class="center vw90"> 
       <ion-grid>
         <ion-row>
-          <ion-col id="hover-trigger" size="2" *ngFor="let x of claseParticipante.slice(0,7)"> 
+          <ion-col size="2" *ngFor="let x of claseParticipante.slice(0,7)" [id]="'col-' + x.participanteID" (click)="openPopover(x.participanteID)">
+            <div>
 
-            <div  class="imgcard center-img" *ngIf="x.perfil_media; else placeholder">
-              <img [src]="x.perfil_media" alt="{{x.perfil_media}}"/>
-             </div>
-
-            <ng-template  #placeholder>
-              <div class="imgcard center-img">
-                <img src="assets/images/def_profile.png" alt="Default Profile"/>
-              </div >
-            </ng-template>
-
-            <ion-popover trigger="hover-trigger" triggerAction="hover">
-              <ng-template>
-                <ion-content class="ion-padding"> {{x.nick}} </ion-content>
+              <div class="imgcard center-img" *ngIf="x.perfil_media; else placeholder">
+                <img [src]="x.perfil_media" alt="{{x.perfil_media}}" />
+              </div>
+    
+              <ng-template #placeholder>
+                <div class="imgcard center-img">
+                  <img src="assets/images/def_profile.png" alt="Default Profile" />
+                </div>
               </ng-template>
-            </ion-popover>
-
+    
+              <ion-popover [id]="'popover-' + x.participanteID" [trigger]="'col-' + x.participanteID">
+                <ng-template>
+                  <ion-content class="ion-padding"> {{x.nick}} </ion-content>
+                </ng-template>
+              </ion-popover>
+              
+            </div>
           </ion-col>
         </ion-row>
       </ion-grid>
