@@ -30,7 +30,7 @@ export class DatabaseService {
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT, archivo BLOB, nombre TEXT, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER NOT NULL, FOREIGN KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT, nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
   // Imagenes deben mantener un ratio de 0.7:1 (350 x 500)
-  t_GRUPO_MAPA: string = "CREATE TABLE IF NOT EXISTS GRUPO_MAPA(grupoID INTEGER PRIMARY KEY, mapa BLOB, FOREIGN KEY (grupoID) REFERENCES GRUPO(grupoID));";
+  t_GRUPO_MAPA: string = "CREATE TABLE IF NOT EXISTS GRUPO_MAPA(grupoID INTEGER PRIMARY KEY, mapa INTEGER NOT NULL, FOREIGN KEY (grupoID) REFERENCES GRUPO(grupoID));";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   // mensaje media es un ID que copia el ID de archivo.
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
@@ -42,8 +42,8 @@ export class DatabaseService {
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, bibliotecaID) VALUES('archivo', 'png', 24, date('now'), 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
-  ins_MAPA: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID) VALUES(1);"
-  ins_MAPA2: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID) VALUES(2);"
+  ins_MAPA: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID, mapaID) VALUES(1, 1);"
+  ins_MAPA2: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID, mapaID) VALUES(2, 1);"
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
   ins_RECUPERAR: string = "INSERT OR IGNORE INTO RECUPERAR (userID) VALUES(1);"
@@ -73,7 +73,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV28',
+        name: 'summonVersionBeta1',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -618,7 +618,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         const userID = SELECT.rows.item(0).userID;
         const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES (?, ?, ?, ?)',[nombre, clave, descr, userID]);
         const grupoID = await CONSULTA.insertId;
-        await this.database.executeSql('INSERT INTO GRUPO_MAPA(grupoID) VALUES (?)',[grupoID])
+        await this.database.executeSql('INSERT INTO GRUPO_MAPA(grupoID, mapaID) VALUES (?, 1)',[grupoID])
         await this.nativeStorage.setItem('grupoData',{grupoID});
         await this.insertParticipante(nick, grupoID);
         this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ grupoID);

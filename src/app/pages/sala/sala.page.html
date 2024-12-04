@@ -55,8 +55,14 @@
    <div class="center">
     <div id="body">
 
-      <div *ngIf="isDuenioSala">
-        <ion-chip> Cambiar mapa </ion-chip>
+      <div *ngIf="isDuenioSala" class="center">
+          <ion-list class="summonlist">
+            <ion-select class="summonselect" label="Cambiar mapa" placeholder="1" okText="CONFIRMAR" cancelText="CANCELAR" fill="outline">
+                <ion-select-option class="opc" value="1"> 1 </ion-select-option>
+                <ion-select-option class="opc" value="2"> 2 </ion-select-option>
+                <ion-select-option class="opc" value="3"> 3 </ion-select-option>
+              </ion-select>
+          </ion-list>  
       </div>
       
       <div *ngIf="Vmapa; else placeholder">

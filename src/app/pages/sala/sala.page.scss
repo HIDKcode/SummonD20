@@ -1,129 +1,114 @@
 ion-col {
-    background-color: #d3ae4e;
-    border: 3px solid #0d271e;
-    border-radius: 10px;
+background-color: #d3ae4e;
+border: 3px solid #0d271e;
+border-radius: 10px;
 }
 
 #body {
-    border-radius: 10px;
-    min-width: 90vw;
-    max-width: 90vw;  
-    background-color: #d3ae4e;
-    border: 3px solid #0d271e;
-    overflow-y: auto;
-    max-height: 80vh;
-    min-height: 65vh;
+border-radius: 10px;
+min-width: 90vw;
+max-width: 90vw;  
+background-color: #d3ae4e;
+border: 3px solid #0d271e;
+overflow-y: auto;
+max-height: 80vh;
+min-height: 65vh;
 }
 
 .IMGMAP {
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
+box-sizing: border-box;
+width: 100%;
+height: auto;
+border-radius: 10px;
 }
 
 .imgcard {
-    width: 35px;
-    height: 35px;
-    background-color: transparent;
+width: 35px;
+height: 35px;
+background-color: transparent;
 }
 
 #chat {
-    border-radius: 30px;
-    min-width: 90vw;
-    max-width: 90vw;
-    min-height: 10vh;
-    max-height: 50vh;
-    height: auto;
-    background-color: #d3ae4e;
-    border: 3px solid #0d271e;
-    overflow-y: auto;  /* Asegura que se pueda desplazar verticalmente */
+border-radius: 30px;
+min-width: 90vw;
+max-width: 90vw;
+min-height: 10vh;
+max-height: 50vh;
+height: auto;
+background-color: #d3ae4e;
+border: 3px solid #0d271e;
+overflow-y: auto;  /* Asegura que se pueda desplazar verticalmente */
 }
 
 .mensaje {
-    margin: 6px;
-    padding: 6px;
-    background-color: #ecd392;
-    border-radius: 26px;
+margin: 6px;
+padding: 6px;
+background-color: #ecd392;
+border-radius: 26px;
 }
 
 .mensaje h5 {
-    margin: 0;
-    font-weight: bold;
-    color: #000000;
-    text-shadow: #1fea00 1px 0 5px;
+margin: 0;
+font-weight: bold;
+color: #000000;
+text-shadow: #1fea00 1px 0 5px;
 }
 
 .mensaje p {
-    color: #fffdee;
-    text-shadow: #1fea00 1px 0 5px;
-    margin: 5px 0;
-    color: #000000;
+color: #fffdee;
+text-shadow: #1fea00 1px 0 5px;
+margin: 5px 0;
+color: #000000;
 }
 
 .mensaje small {
-    color: gray;
-    font-size: 0.8em;
+color: gray;
+font-size: 0.8em;
 }
 
 #send {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    min-width: 90vw;
-    max-width: 90vw;
-    margin-top: 10px;
-    border-radius: 5px;
-    height: auto;
+display: flex;
+align-items: center;
+gap: 5px;
+min-width: 90vw;
+max-width: 90vw;
+margin-top: 10px;
+border-radius: 5px;
+height: auto;
 }
 
-
 .summonbtnsmall {
-    --background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
-    --background-hover: #0d271e;
-    --background-activated: #171717;
-    --background-focused: #d3ae4e;
-    --color: #fffdee;
-    --ripple-color: rgb(238, 255, 0);
-    height: 55px;
-    max-width: 18vw;
-    border: 3px solid #0d271e;
+--background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+--background-hover: #0d271e;
+--background-activated: #171717;
+--background-focused: #d3ae4e;
+--color: #fffdee;
+--ripple-color: rgb(238, 255, 0);
+height: 55px;
+max-width: 18vw;
+border: 3px solid #0d271e;
 }
 
 .chatform {
-    --background: linear-gradient(90deg, #d3ae4e, #171717, #d3ae4e);
-    max-width: 72vw;
-    border: 3px solid #0d271e;
+--background: linear-gradient(90deg, #d3ae4e, #171717, #d3ae4e);
+max-width: 72vw;
+border: 3px solid #0d271e;
 }
 
 ion-content {
-    overflow-y: auto;
+overflow-y: auto;
 }
 
 .chatimg{
-    max-width: 100px;
-    max-height: 100px;
+max-width: 100px;
+max-height: 100px;
 }
 
 .previewimg{
-    max-width: 40px;
-    max-height: 40px;
+max-width: 40px;
+max-height: 40px;
 }
 
-.dueniobutton{
-    max-width: 100px;
-    max-height: 30px;
-    --background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
-    --background-hover: #0d271e;
-    --background-activated: #000000;
-    --background-focused: #d3ae4e;
-    --color: #fffdee;
-    --border-radius: 10px;
-    --border-color: #0d271e;
-    --border-style: solid;
-    --border-width: 3px;
-    --ripple-color: rgb(238, 255, 0);
-    --padding-top: 10px;
-    --padding-bottom: 10px;
-    font-size: 12px;
-    }
+.divtittle{
+    background: #0d271e !important;
+}

@@ -131,7 +131,7 @@ export class SalaPage implements OnInit {
   }
 
   async seleccionarArchivo() {
-    this.camaraservicio.takePicture()
+    this.camaraservicio.takePictureFree()
     .then((img) => {
       this.archivoAdjunto = img;
     }) 

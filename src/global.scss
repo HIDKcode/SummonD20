@@ -13,39 +13,39 @@
 
 
 *{
-    font-family: 'Chau'
+font-family: 'Chau'
 }
 
 .COLORESEMPRESA{
-    --background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
+--background: linear-gradient(#171717, #1fea00, #fffdee, #0d271e, #d3ae4e, #f25165, #135d54);
 }
 
 ion-popover{
-    max-width: 33vw;
-    --background: transparent;
-    --box-shadow: none !important;
+max-width: 33vw;
+--background: transparent;
+--box-shadow: none !important;
 }
 ion-popover::part(backdrop){
-    --backdrop-opacity: 0;
+--backdrop-opacity: 0;
 }
 ion-popover ion-content {
-    --background: #d3ae4e !important;
-    --box-shadow: 0 5px 10px 0 #171717 !important;
-    border: 4px solid #0d271e !important;
-    border-radius: 10px;
-    --color: #fffdee !important;
-    max-width: 33vw;
-  }
-  
-  ion-fab-button {
-    --background: #d3ae4e;
-    --background-activated: #d3ae4e;
-    --background-hover: #aa8423;
-    --border-radius: 10px;
-    --box-shadow: 0px 1px 10px 3px #0d271e;
-    --color: #fffdee;
-  } 
-  
+--background: #d3ae4e !important;
+--box-shadow: 0 5px 10px 0 #171717 !important;
+border: 4px solid #0d271e !important;
+border-radius: 10px;
+--color: #fffdee !important;
+max-width: 33vw;
+}
+
+ion-fab-button {
+--background: #d3ae4e;
+--background-activated: #d3ae4e;
+--background-hover: #aa8423;
+--border-radius: 10px;
+--box-shadow: 0px 1px 10px 3px #0d271e;
+--color: #fffdee;
+} 
+
 .summonbutton{
 min-width: 200px;
 min-height: 50px;
@@ -96,137 +96,183 @@ background-color: transparent;
 // Formularios
 // Edit para ion input
 .inputsummon{
-    --background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
-    margin-left: 15px;
-    margin-right: 15px;
-    max-width: 815px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 5px solid #0d271e;
-    border-radius: 10px;
-    --padding-start: 5px;
+--background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
+margin-left: 15px;
+margin-right: 15px;
+max-width: 815px;
+margin-top: 10px;
+margin-bottom: 10px;
+border: 5px solid #0d271e;
+border-radius: 10px;
+--padding-start: 5px;
 }
 
 .error-form{
-    border-radius: 3px;
-    background: #171717;
-    padding-left: 10px;
-    padding-right: 10px;
-    color: #f3344b;
-    font-family: 'Chau';
-    display: none;
-    overflow: visible;
-    white-space: normal; 
+border-radius: 3px;
+background: #171717;
+padding-left: 10px;
+padding-right: 10px;
+color: #f3344b;
+font-family: 'Chau';
+display: none;
+overflow: visible;
+white-space: normal; 
 }
 
 .error-div{
-    padding-left: 5vw;
-    padding-right: 5vw;
+padding-left: 5vw;
+padding-right: 5vw;
 }
 
 .error-text{
-    white-space: normal;   
-    overflow: visible;  
-    word-wrap: break-word;
-    font-family: 'Chau' !important;
+white-space: normal;   
+overflow: visible;  
+word-wrap: break-word;
+font-family: 'Chau' !important;
 }
 
 
 // Utilidades
 
 .vw90{
-    min-width: 90vw;
-    max-width: 90vw;
+min-width: 90vw;
+max-width: 90vw;
 }
 
 .txtL{
-    font-size: larger;
-    color: #171717;
+font-size: larger;
+color: #171717;
 }
 
 .uline{
-    text-decoration: underline;
+text-decoration: underline;
 }
 .upmargin{
-    margin-top: 25px;
+margin-top: 25px;
 }
 .awdmargin{
-    margin-left: 5vw;
-    margin-right: 5vw;
-    margin-top: 20px;
-  }
-  
+margin-left: 5vw;
+margin-right: 5vw;
+margin-top: 20px;
+}
+
 .center {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    align-content: center;
-    align-items: center; 
+display: flex;
+justify-content: center;
+text-align: center;
+align-content: center;
+align-items: center; 
 }
 
 .center-img{
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
+display: flex;
+margin-left: auto;
+margin-right: auto;
 }
 
 .codigoseguridad{
-    display: none;
-    
+display: none;
+
+}
+
+.dueniobutton{
+max-width: 100px;
+max-height: 30px;
+--background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+--background-hover: #0d271e;
+--background-activated: #000000;
+--background-focused: #d3ae4e;
+--color: #fffdee;
+--border-radius: 10px;
+--border-color: #0d271e;
+--border-style: solid;
+--border-width: 3px;
+--ripple-color: rgb(238, 255, 0);
+--padding-top: 10px;
+--padding-bottom: 10px;
+font-size: 12px;
 }
 
 
+.summonselect{
+--background: #0d271e;
+color: #fffdee;
+max-width: 50vw;
+}
+ 
+.summonlist{
+background: #d3ae4e !important;
+max-width: 50vw;
+}
+
+.opc{
+background: #011fa7 !important;
+height: 50px;
+max-height: 50px;
+max-width: 250px;
+}
+.img1{
+    background-image: url(assets/images/background.jpg);
+}
+.img2{
+background: #011fa7 !important;
+}
+
+ion-alert{
+--backdrop-opacity: 0.7;
+
+}
 
 @font-face{
-    font-family: Chau;
-    src: url(assets/fonts/ChauPhilomeneOne-Regular.ttf)
+font-family: Chau;
+src: url(assets/fonts/ChauPhilomeneOne-Regular.ttf)
 }
 @font-face{
-    font-family: Chau-It;
-    src: url(assets/fonts/ChauPhilomeneOne-Italic.ttf)
+font-family: Chau-It;
+src: url(assets/fonts/ChauPhilomeneOne-Italic.ttf)
 }
 
 // Imagen de fondo
 @media (prefers-color-scheme: dark) {
-  
-    :root{
-        --ion-color-primary: #1fea00;
-        }    
-    .body{
-        background-image: url(assets/images/background.jpg);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment: fixed;
-        background-size: cover;
-    }
-    .body2{
-        background-image: url(assets/images/bcknotfound.jpg);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment: fixed;
-        background-size: cover;
-    }
-    
+
+:root{
+--ion-color-primary: #1fea00;
+}    
+.body{
+background-image: url(assets/images/background.jpg);
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+background-size: cover;
+}
+.body2{
+background-image: url(assets/images/bcknotfound.jpg);
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+background-size: cover;
+}
+
 }
 
 @media (prefers-color-scheme: light) {
-    :root{
-    --ion-color-primary: #1fea00;
-    }
-    .body{
-        background-image: url(assets/images/backgroundwhite.png);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment: fixed;
-        background-size: cover;
-    }    
-    .body2{
-        background-image: url(assets/images/bcknotfound.jpg);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment: fixed;
-        background-size: cover;
-    }
+:root{
+--ion-color-primary: #1fea00;
+}
+.body{
+background-image: url(assets/images/backgroundwhite.png);
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+background-size: cover;
+}    
+.body2{
+background-image: url(assets/images/bcknotfound.jpg);
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+background-size: cover;
+}
 }
 
 

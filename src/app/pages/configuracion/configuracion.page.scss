@@ -4,32 +4,6 @@
     background-color: transparent;
 }
 
-ion-select {
---placeholder-color: #fffdee;
---placeholder-opacity: 1;
-justify-content: center;
-text-align: center;
---background: transparent;
---border-radius: 10px;
---padding-start: 5px;
-}
-
-ion-list {
-    background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e) !important;
-    justify-content: center;
-    border:  5px solid #0d271e;
-    border-radius: 10px;
-    --padding-start: 5px;
-}
-
-ion-select-option{
-    background: linear-gradient(90deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e) !important;
-    justify-content: center;
-    border:  5px solid #0d271e;
-    border-radius: 10px;
-    --padding-start: 5px;
-}
-
 .vwfix{
     min-width: 91vw;
     max-width: 91vw;

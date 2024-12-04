@@ -52,7 +52,7 @@ export class BibliotecaPage implements OnInit {
   }
 
   subirfoto(){
-    this.camaraservicio.takePicture()
+    this.camaraservicio.takePictureFree()
     .then((img) => {
       this.Varchivo = img;
       this.datab.insertarArchivo(this.Varchivo, this.Vnick);

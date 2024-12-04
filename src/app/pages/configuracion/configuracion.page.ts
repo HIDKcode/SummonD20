@@ -57,7 +57,7 @@ export class ConfiguracionPage implements OnInit {
   }
   
   foto(){
-    this.camaraservicio.takePicture()
+    this.camaraservicio.takePicture1x1()
     .then((img) => {
       this.Vprofile = img;
       this.datab.modificafoto(this.Vprofile, this.Vnick);
