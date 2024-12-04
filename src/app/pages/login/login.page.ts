@@ -35,12 +35,9 @@ export class LoginPage implements OnInit {
  
 
   constructor(
-    private alerta: AlertService,
-    private renderer2: Renderer2,
-    private datab: DatabaseService,
-    private router: Router,
-    private menuCtrl: MenuController,
-    private mailjs: MailjsService
+    private alerta: AlertService, private renderer2: Renderer2,
+    private datab: DatabaseService, private router: Router,
+    private menuCtrl: MenuController, private mailjs: MailjsService
   ) {
     this.menuCtrl.enable(false);
   }
@@ -97,7 +94,7 @@ export class LoginPage implements OnInit {
   }
 } 
 
-  cancel() {
+  cancel(){
     this.modal.dismiss(null);
   }
   

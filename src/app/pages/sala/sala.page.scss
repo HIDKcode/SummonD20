@@ -1,22 +1,25 @@
 ion-col {
     background-color: #d3ae4e;
     border: 3px solid #0d271e;
-    border-radius: 60px;
+    border-radius: 10px;
 }
 
 #body {
-    border-radius: 30px;
+    border-radius: 10px;
     min-width: 90vw;
-    max-width: 90vw;
-    height: auto;  /* Ajuste flexible */
+    max-width: 90vw;  
     background-color: #d3ae4e;
     border: 3px solid #0d271e;
+    overflow-y: auto;
+    max-height: 80vh;
+    min-height: 65vh;
 }
 
-#IMGMAP {
+.IMGMAP {
     box-sizing: border-box;
     width: 100%;
     height: auto;
+    border-radius: 10px;
 }
 
 .imgcard {
@@ -107,3 +110,20 @@ ion-content {
     max-height: 40px;
 }
 
+.dueniobutton{
+    max-width: 100px;
+    max-height: 30px;
+    --background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+    --background-hover: #0d271e;
+    --background-activated: #000000;
+    --background-focused: #d3ae4e;
+    --color: #fffdee;
+    --border-radius: 10px;
+    --border-color: #0d271e;
+    --border-style: solid;
+    --border-width: 3px;
+    --ripple-color: rgb(238, 255, 0);
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    font-size: 12px;
+    }

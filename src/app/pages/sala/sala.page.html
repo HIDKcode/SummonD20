@@ -5,9 +5,24 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
+  <ion-fab slot="fixed" vertical="top" horizontal="start">
+    <ion-fab-button>
+      <ion-icon name="dice"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="end">
+      <ion-fab-button> d4 </ion-fab-button>
+      <ion-fab-button> d6 </ion-fab-button>
+      <ion-fab-button> d10 </ion-fab-button>
+      <ion-fab-button> d12 </ion-fab-button>
+      <ion-fab-button> d20 </ion-fab-button>
+      <ion-fab-button> d100 </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
   <div id="container" class="divfondo1 body">
 
-    <div class="center"> <h2 class="blanco sombraV"> Bienvenido a sala: {{Vnombre_sala}}#{{VgrupoID}} </h2> </div>
+    <div class="center"> <h2 class="blanco sombraV"> {{Vnombre_sala}}#{{VgrupoID}} </h2> </div>
 
     <div class="center vw90"> 
       <ion-grid>
@@ -39,10 +54,22 @@
 
    <div class="center">
     <div id="body">
-      <h2 class="sombraV blanco"> 
-        <img  class="IMGMAP" src="assets/images/MAP.png" alt="mapa"> 
-      </h2>
-    </div>
+
+      <div *ngIf="isDuenioSala">
+        <ion-chip> Cambiar mapa </ion-chip>
+      </div>
+      
+      <div *ngIf="Vmapa; else placeholder">
+        <img class="IMGMAP"  [src]="Vmapa" alt="{{Vmapa}}" />
+      </div>
+
+      <ng-template  #placeholder>
+        <div>
+          <img  class="IMGMAP" src="assets/images/MAP.png" alt="mapa"> 
+        </div>
+      </ng-template>
+        
+      </div>
    </div>
 
     <div class="center"> 

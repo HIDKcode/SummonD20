@@ -28,18 +28,22 @@ export class DatabaseService {
   t_BENEFICIO: string = "CREATE TABLE IF NOT EXISTS BENEFICIO(beneficioID INTEGER PRIMARY KEY AUTOINCREMENT, pago_date TEXT NOT NULL, USER_userID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_BIBLIOTECA: string = "CREATE TABLE IF NOT EXISTS BIBLIOTECA(USER_userID INTEGER PRIMARY KEY, espacio_disponible INTEGER NOT NULL, FOREIGN KEY (USER_userID) REFERENCES USER(userID));";
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT, archivo BLOB, nombre TEXT, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER NOT NULL, FOREIGN KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
-  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT,nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
+  t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT, nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
+  // Imagenes deben mantener un ratio de 0.7:1 (350 x 500)
+  t_GRUPO_MAPA: string = "CREATE TABLE IF NOT EXISTS GRUPO_MAPA(grupoID INTEGER PRIMARY KEY, mapa BLOB, FOREIGN KEY (grupoID) REFERENCES GRUPO(grupoID));";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   // mensaje media es un ID que copia el ID de archivo.
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
   t_ERRORES: string = "CREATE TABLE IF NOT EXISTS ERRORES(detalle TEXT NOT NULL, mensaje TEXT NOT NULL);";
   t_RECUPERAR: string = "CREATE TABLE IF NOT EXISTS RECUPERAR(userID INTEGER PRIMARY KEY NOT NULL, codigo_seguridad TEXT UNIQUE, FOREIGN KEY (userID) REFERENCES USER(userID));";
 
-  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.com', NULL, 9);";
+  ins_USER: string = "INSERT OR IGNORE INTO USER(nick, clave, correo, perfil_media, estado) VALUES('martin123', '123456', 'shun.okikura@gmail.com',  NULL, 9);";
   ins_BIBLIOTECA: string = "INSERT OR IGNORE INTO BIBLIOTECA(USER_userID, espacio_disponible) VALUES(1, 900);";
   ins_ARCHIVO: string = "INSERT OR IGNORE INTO ARCHIVO(nombre, extension, tamaño, subida_date, bibliotecaID) VALUES('archivo', 'png', 24, date('now'), 1);";
   ins_GRUPO: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin', 123456, 'Grupo de administración', 1);";
   ins_GRUPO2: string = "INSERT OR IGNORE INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES('GrupoAdmin2', 333666, 'Grupo de administración2', 1);";
+  ins_MAPA: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID) VALUES(1);"
+  ins_MAPA2: string = "INSERT OR IGNORE INTO GRUPO_MAPA(grupoID) VALUES(2);"
   ins_PARTICIPANTE: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 1);"; 
   ins_PARTICIPANTE2: string = "INSERT OR IGNORE INTO PARTICIPANTE(USER_userID, GRUPO_grupoID) VALUES(1, 2);"; 
   ins_RECUPERAR: string = "INSERT OR IGNORE INTO RECUPERAR (userID) VALUES(1);"
@@ -53,6 +57,7 @@ export class DatabaseService {
   listadoparticipantes = new BehaviorSubject([]);
   listadomensajes = new BehaviorSubject([]);
   listadoarchivos = new BehaviorSubject([]);
+  listadoerrores = new BehaviorSubject([]);
 
   constructor(private sqlite: SQLite, private platform: Platform,private alerta: AlertService,
       private nativeStorage: NativeStorage, private router: Router){
@@ -68,7 +73,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonBetaV22',
+        name: 'summonBetaV28',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -79,7 +84,7 @@ export class DatabaseService {
         //modificar el observable del status de la base de datos
         this.isDBReady.next(true);
       }).catch(e=>{
-        this.alerta.presentAlert("Creación de BD", "Error creando la BD");
+        this.alerta.presentAlert("Creación de BD", "Error creando BD, contacte soporte");
       })
     
    }
@@ -97,6 +102,7 @@ async crearTablas(){
       await this.database.executeSql(this.t_MENSAJE,[]);
       await this.database.executeSql(this.t_ERRORES,[]);
       await this.database.executeSql(this.t_RECUPERAR,[]);
+      await this.database.executeSql(this.t_GRUPO_MAPA,[]);
       //generamos los insert en caso que existan
       await this.database.executeSql(this.ins_USER, []);
       await this.database.executeSql(this.ins_BIBLIOTECA, []);
@@ -105,9 +111,11 @@ async crearTablas(){
       await this.database.executeSql(this.ins_PARTICIPANTE, []);
       await this.database.executeSql(this.ins_GRUPO2, []);
       await this.database.executeSql(this.ins_PARTICIPANTE2, []);
+      await this.database.executeSql(this.ins_MAPA, []);
+      await this.database.executeSql(this.ins_MAPA2, []);
       await this.database.executeSql(this.ins_RECUPERAR, []);
     }catch(e: any){
-      this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-DB01");
+      this.alerta.presentAlert("Error en sistema", "Contacte soporte o reintente por error SUMMON-DB01" + e.message);
     }
   }
 
@@ -200,6 +208,19 @@ async crearTablas(){
     }
   }
 
+  consultaerrores(){
+    const CONSULTA = ` SELECT detalle, mensaje FROM ERRORES `;
+    return this.database.executeSql(CONSULTA,[]).then(res =>{
+      let item: any[] = [];
+      if(res.rows.length > 0){
+        for(let i = 0; i < res.rows.length; i++){
+          item.push(res.rows.item(i));
+        }
+      }
+      this.listadoerrores.next(item as any);
+    })
+  }
+
   consultagrupos(){
     const CONSULTA = `
     SELECT grupoID, nombre_sala, descripcion, nick
@@ -273,7 +294,6 @@ async crearTablas(){
     })
   }
   
-
  // Retorno como observables
  fetcharchivos(): Observable<any[]>{
   return this.listadoarchivos.asObservable();
@@ -290,9 +310,10 @@ async crearTablas(){
   fetchparticipantes(): Observable<any[]>{
     return this.listadoparticipantes.asObservable();
   }
- 
+  fetcherrores(): Observable<any[]>{
+    return this.listadoerrores.asObservable();
+  }
   
-
   fetchUsuario(nick: string): Observable<User[]> {
     const CONSULTA = `
     SELECT userID, nick, correo, perfil_media, estado
@@ -340,9 +361,6 @@ async crearTablas(){
       }
     });
   }
-  
-
-
 
 // VALIDADORES
   async validaRecuperar(nick: string, correo: string): Promise<boolean> {
@@ -374,7 +392,6 @@ async crearTablas(){
       return false;
     }
   }
-
 
   async validaCodigo(codigo: string, nick: string): Promise<boolean>{
     const userid = await this.getID(nick);
@@ -427,11 +444,10 @@ async crearTablas(){
    }
   }
 
-  
   async getOWNER(grupoID: number){
     const SELECT = await this.database.executeSql('SELECT owner FROM GRUPO WHERE grupoID = ?',[grupoID]);
     if (SELECT.rows.length > 0){
-      return SELECT.rows.item(0).nombre_sala;
+      return SELECT.rows.item(0).owner;
     } else {
       this.alerta.presentAlert("Fallo en get OWNER grupo", "Contacte soporte o reinicie vista.");
     }
@@ -442,7 +458,7 @@ async crearTablas(){
     if (SELECT.rows.length > 0){
       return SELECT.rows.item(0).nombre_sala;
     } else {
-      this.alerta.presentAlert("Fallo en get ID grupo", "Contacte soporte o reinicie vista."+grupoID);
+      this.alerta.presentAlert("Fallo en get ID grupo", "Contacte soporte o reinicie vista.");
     }
   }
 
@@ -478,15 +494,21 @@ async crearTablas(){
   } 
 
   modificaEstado(int: number, nick: string){
-    const valoresPermitidos = [0, 1, 5, 9];
-    if(valoresPermitidos.includes(int)){
-      return this.database.executeSql('UPDATE USER SET estado = ? WHERE nick = ?',[int, nick]).then(res=>{
-      this.alerta.presentAlert("Alerta", "Contraseña modificada");  
-      this.fetchUsuario(nick);
-      }).catch(e=>{
-        this.alerta.presentAlert("Error en modificar estado", "Contacte soporte");
-        this.logError("modificaestado", e.code ||': '|| e.message);
-      })
+    const valoresPermitidos = [0, 5, 9];
+
+    if(nick = 'martin123') {
+      this.alerta.presentAlert("Alerta", "No se puede modificar administrador");  
+      return;
+    } else {
+      if(valoresPermitidos.includes(int)){
+        return this.database.executeSql('UPDATE USER SET estado = ? WHERE nick = ?',[int, nick]).then(res=>{
+        this.alerta.presentAlert("Alerta", "Estado modificado a" + int);  
+        this.fetchUsuario(nick);
+        }).catch(e=>{
+          this.alerta.presentAlert("Error en modificar estado", "Contacte soporte");
+          this.logError("modificaestado", e.code ||': '|| e.message);
+        })
+      }
     }
     return;
   }
@@ -508,7 +530,6 @@ async crearTablas(){
       await this.logError("NullifyCodigoSeguridad", e.code ||': '|| e.message);
     }
   }
-  
   
 // DELETEmsjMedia
 eliminarGrupo(id: number){
@@ -571,9 +592,6 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
     this.database.executeSql('INSERT INTO ERRORES VALUES(?,?)', [title, msj])
   }
 
-
-
-
   async  insertParticipante(nick: string, grupoID: number){
     try {
       const SELECT = await this.database.executeSql('SELECT userID FROM USER WHERE nick = ?', [nick]);
@@ -591,7 +609,6 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
     }
   }
 
-
   async insertGrupo(nombre: string, descr: string, clave: number, nick: string){
     const VERIFICA = await this.UnicoGrupo(nombre);
     if(VERIFICA){
@@ -601,6 +618,7 @@ async enviarMensaje(msjAutor: string, msjTexto: string, msjMedia: Blob, grupoID:
         const userID = SELECT.rows.item(0).userID;
         const CONSULTA = await this.database.executeSql('INSERT INTO GRUPO(nombre_sala, clave, descripcion, owner) VALUES (?, ?, ?, ?)',[nombre, clave, descr, userID]);
         const grupoID = await CONSULTA.insertId;
+        await this.database.executeSql('INSERT INTO GRUPO_MAPA(grupoID) VALUES (?)',[grupoID])
         await this.nativeStorage.setItem('grupoData',{grupoID});
         await this.insertParticipante(nick, grupoID);
         this.alerta.presentAlert("Sala creada con exito", "ID del grupo: "+ grupoID);

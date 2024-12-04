@@ -12,12 +12,14 @@ import { CamaraService } from 'src/app/services/camara.service';
 export class SalaPage implements OnInit {
 
   //VARIABLES
+  Vmapa!: Blob;
+  isDuenioSala = false;
   Vvacia!: any;
   Vnick: any;
   VgrupoID!: number;
   Vnombre_sala!: string;
   VpartId!: number;
-  variable: boolean = false;
+  
   //LISTA MENSAJES
   mensajeInput: any;
   archivoAdjunto!: Blob;
@@ -59,7 +61,7 @@ export class SalaPage implements OnInit {
         
       }
     })
-
+    await this.isDuenio();
     await this.datab.consultarmensajes(this.VgrupoID);
     await this.refrescar();
   }
@@ -67,6 +69,17 @@ export class SalaPage implements OnInit {
   async cargaNombre(){
     const FUNCION = await this.datab.getGrupoNombre(this.VgrupoID);
     this.Vnombre_sala = FUNCION;
+  }
+  
+  async isDuenio(){
+    const duenioID = await this.datab.getOWNER(this.VgrupoID);
+    const userID = await this.datab.getID(this.Vnick);
+
+    if (duenioID == userID){
+      this.isDuenioSala = true;
+    } else {
+      this.isDuenioSala = false;
+    }
   }
 
   async cargaID(){

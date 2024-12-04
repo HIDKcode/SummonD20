@@ -13,6 +13,8 @@ export class AdminPage implements OnInit {
 
   grupos: any[] = [];
 
+  arregloErrores: any[] = [];
+
   arregloUsuario : any = [{
     userID: '',
     nick: '',
@@ -41,10 +43,10 @@ export class AdminPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.datab.consultaerrores();
     this.datab.acceso();
     await this.AdminPage();
     this.listarUser();
-    
   }
 
   listarUser() {
@@ -66,6 +68,12 @@ export class AdminPage implements OnInit {
         this.datab.fetchgrupos().subscribe(res=>{
           this.grupos = res;
         });
+
+        this.datab.fetcherrores().subscribe(res=>{
+          this.arregloErrores = res;
+        });
+
+       
       }
     })
   }
@@ -84,6 +92,7 @@ export class AdminPage implements OnInit {
   cambestado(nick: string, int: number){
     this.datab.modificaEstado(int, nick);
   }
+  
   borragrupo(grupoID: number){
     this.datab.eliminarGrupo(grupoID);
   }

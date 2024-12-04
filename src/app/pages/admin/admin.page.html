@@ -5,9 +5,12 @@
 </ion-header>
 <ion-content [fullscreen]="true">
   <div id="container" class="divfondo1 body">
-
+    
     <div  class="center">
-      <H3 class="blanco sombraV"> Ingrese estado si selecciona botón. (0 = Ban, 5 = Activo, 9 = Admin)</H3>
+      <H3 class="blanco sombraV"> Manejo del estado de usuarios </H3>
+    </div>
+    <div  class="center">
+      <H6 class="blanco sombraV"> Ingrese estado si selecciona botón. (0 = Ban, 5 = Activo, 9 = Admin)</H6>
     </div>
 
     <div  class="center">
@@ -65,5 +68,22 @@
       </ion-grid>  
     </div>
     
+    <div  class="center">
+      <H3 class="blanco sombraV"> Listado de errores SUMMON VERSION B1.0 </H3>
+    </div>
+
+    <div class="center"> 
+      <ion-grid fixed="true"> 
+        <ion-row>
+          <ion-col size="3"> DETALLE Fx </ion-col>
+          <ion-col size="9"> MENSAJE ERROR </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let x of arregloErrores">
+          <ion-col size="3"> {{x.detalle}} </ion-col>
+          <ion-col size="9"> {{x.mensaje}} </ion-col>
+        </ion-row>
+      </ion-grid>  
+    </div>
+
   </div>
 </ion-content>
