@@ -5,6 +5,8 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { IonModal } from '@ionic/angular';
 import { MailjsService } from 'src/app/services/mailjs.service';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Network } from '@capacitor/network';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -16,7 +18,6 @@ export class LoginPage implements OnInit {
   VuserID!: number;
   Vpassword: string = "";
   Vnick: string = "";
-  
 
   //regex
   exprMail = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
@@ -28,6 +29,7 @@ export class LoginPage implements OnInit {
   Vcodigo!: string;
   botonDeshabilitado: boolean = false;
   visible: boolean = false;
+  
   @ViewChild('error1', {static: true}) er1!: ElementRef
   @ViewChild('error2', {static: true}) er2!: ElementRef
 
@@ -79,6 +81,19 @@ export class LoginPage implements OnInit {
         }
       };
       
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 1,
+            title: "¡Bienvenido!",
+            body: "Recuerda revisar las nuevas funciones de grupos!",
+            sound: 'default',
+            largeIcon: 'assets/images/logo',
+            smallIcon: 'assets/images/logo',
+          },
+        ],
+      });
+
       await this.router.navigate(['/menu'], navigationExtras);
       this.limpiar();
       return true;
@@ -98,12 +113,19 @@ export class LoginPage implements OnInit {
     this.modal.dismiss(null);
   }
   
-  Recuperar(){
+  async Recuperar(){
+    const status = await Network.getStatus();
     let hasE = false;
     const regexprohibido = /['";()--/*<>\\{}\[\]]|\s(OR|AND|DROP|SELECT|INSERT|DELETE|UPDATE)\s/i;
     this.Vnombre = this.Vnombre.toLowerCase();
     this.Vcorreo = this.Vcorreo.toLowerCase();
     
+    if (!status.connected) {
+      this.alerta.presentAlert("Error de conexión","No se puede completar la solicitud. Por favor, verifica tu conexión a Internet."
+      );
+      return;
+    }
+
     if (this.Vnombre === "" || regexprohibido.test(this.Vnombre)) {
       hasE = true;
     }
@@ -179,6 +201,7 @@ export class LoginPage implements OnInit {
     this.Vnick = '';
     this.Vpassword = '';
   }
-
+ 
+  
 }
 

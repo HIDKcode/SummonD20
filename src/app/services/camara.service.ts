@@ -16,14 +16,14 @@ export class CamaraService {
         quality: 70,
         width: 200,
         height: 200,
-        allowEditing: true,
+        allowEditing: false,
         resultType: CameraResultType.Uri
       })
       .then(photo => {
         resolve(photo.webPath);
       })
       .catch(error => {
-        this.alerta.presentAlert('Error al tomar foto: ', JSON.stringify(error.message));
+        this.alerta.presentAlert('Error al tomar foto: ', 'Reintente');
       })
     })
     
@@ -42,7 +42,7 @@ export class CamaraService {
         resolve(photo.webPath);
       })
       .catch(error => {
-        this.alerta.presentAlert('Error al tomar foto: ', JSON.stringify(error.message));
+        this.alerta.presentAlert('Error al tomar foto: ', 'Reintente');
       })
     })
     
@@ -59,7 +59,7 @@ export class CamaraService {
         resolve(photo.webPath);
       })
       .catch(error => {
-        this.alerta.presentAlert('Error al tomar foto: ', JSON.stringify(error.message));
+        this.alerta.presentAlert('Error al tomar foto: ', 'Reintente');
       })
     })
     

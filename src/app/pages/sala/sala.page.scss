@@ -4,22 +4,28 @@ border: 3px solid #0d271e;
 border-radius: 10px;
 }
 
-#body {
+#body{
 border-radius: 10px;
 min-width: 90vw;
 max-width: 90vw;  
 background-color: #d3ae4e;
 border: 3px solid #0d271e;
-overflow-y: auto;
-max-height: 80vh;
-min-height: 65vh;
+height: auto;
+position: relative;
 }
 
-.IMGMAP {
-box-sizing: border-box;
+.IMGMAP{
 width: 100%;
 height: auto;
 border-radius: 10px;
+}
+
+.superponer{
+top: 90%;
+left: 50%;
+transform: translate(-50%, -50%); 
+z-index: 99;
+position: absolute;
 }
 
 .imgcard {
@@ -95,7 +101,7 @@ max-width: 72vw;
 border: 3px solid #0d271e;
 }
 
-ion-content {
+ion-content{
 overflow-y: auto;
 }
 
@@ -111,4 +117,17 @@ max-height: 40px;
 
 .divtittle{
     background: #0d271e !important;
+}
+
+.mapslide{
+    width: 100%;
+    height: auto;
+    box-shadow: 0 0 0 0 !important;
+}
+
+.divoverflow{
+    overflow-y: auto;
+    margin-bottom: 10px;
+    height: 54vh;
+    max-height: 54vh;
 }

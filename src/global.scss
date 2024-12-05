@@ -21,7 +21,6 @@ font-family: 'Chau'
 }
 
 ion-popover{
-max-width: 33vw;
 --background: transparent;
 --box-shadow: none !important;
 }
@@ -34,7 +33,6 @@ ion-popover ion-content {
 border: 4px solid #0d271e !important;
 border-radius: 10px;
 --color: #fffdee !important;
-max-width: 33vw;
 }
 
 ion-fab-button {
@@ -63,6 +61,25 @@ min-height: 50px;
 --padding-bottom: 10px;
 font-size: 18px;
 }
+
+.summon2button{
+max-width: 100px;
+max-height: 30px;
+--background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
+--background-hover: #0d271e;
+--background-activated: #000000;
+--background-focused: #d3ae4e;
+--color: #fffdee;
+--border-radius: 10px;
+--border-color: #0d271e;
+--border-style: solid;
+--border-width: 3px;
+--ripple-color: rgb(238, 255, 0);
+--padding-top: 10px;
+--padding-bottom: 10px;
+font-size: 12px;
+}
+
 
 .imgcard{
 background: linear-gradient(135deg, #d3ae4e,#171717,#171717, #171717, #d3ae4e);
@@ -175,24 +192,6 @@ display: none;
 
 }
 
-.dueniobutton{
-max-width: 100px;
-max-height: 30px;
---background: linear-gradient(60deg, #d3ae4e, #171717, #d3ae4e);
---background-hover: #0d271e;
---background-activated: #000000;
---background-focused: #d3ae4e;
---color: #fffdee;
---border-radius: 10px;
---border-color: #0d271e;
---border-style: solid;
---border-width: 3px;
---ripple-color: rgb(238, 255, 0);
---padding-top: 10px;
---padding-bottom: 10px;
-font-size: 12px;
-}
-
 
 .summonselect{
 --background: #0d271e;
@@ -206,22 +205,26 @@ max-width: 50vw;
 }
 
 .opc{
-background: #011fa7 !important;
 height: 50px;
 max-height: 50px;
 max-width: 250px;
 }
-.img1{
-    background-image: url(assets/images/background.jpg);
-}
-.img2{
-background: #011fa7 !important;
-}
 
 ion-alert{
 --backdrop-opacity: 0.7;
-
 }
+
+ion-modal{
+--background: #0d271e !important;
+--border: 5px solid #d3ae4e!important;
+--border-radius: 30px !important;
+--border-style: solid !important;
+--max-height: 73vh !important;
+--max-width: 90vw !important;
+--ion-toolbar-background: #0d271e !important;
+--ion-toolbar-color:  #fffdee; 
+}
+    
 
 @font-face{
 font-family: Chau;

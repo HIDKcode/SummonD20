@@ -30,7 +30,7 @@ export class DatabaseService {
   t_ARCHIVO: string = "CREATE TABLE IF NOT EXISTS ARCHIVO(archivoID INTEGER PRIMARY KEY AUTOINCREMENT, archivo BLOB, nombre TEXT, extension TEXT NOT NULL, tamaño INTEGER NOT NULL, subida_date TEXT NOT NULL, bibliotecaID INTEGER NOT NULL, FOREIGN KEY (bibliotecaID) REFERENCES BIBLIOTECA(bibliotecaID));"; 
   t_GRUPO: string = "CREATE TABLE IF NOT EXISTS GRUPO(grupoID INTEGER PRIMARY KEY AUTOINCREMENT, nombre_sala TEXT NOT NULL UNIQUE,clave INTEGER NOT NULL,descripcion TEXT,owner INTEGER NOT NULL);";
   // Imagenes deben mantener un ratio de 0.7:1 (350 x 500)
-  t_GRUPO_MAPA: string = "CREATE TABLE IF NOT EXISTS GRUPO_MAPA(grupoID INTEGER PRIMARY KEY, mapa INTEGER NOT NULL, FOREIGN KEY (grupoID) REFERENCES GRUPO(grupoID));";
+  t_GRUPO_MAPA: string = "CREATE TABLE IF NOT EXISTS GRUPO_MAPA(grupoID INTEGER PRIMARY KEY, mapaID INTEGER NOT NULL, FOREIGN KEY (grupoID) REFERENCES GRUPO(grupoID));";
   t_PARTICIPANTE: string = "CREATE TABLE IF NOT EXISTS PARTICIPANTE(participanteID INTEGER PRIMARY KEY AUTOINCREMENT,USER_userID INTEGER, GRUPO_grupoID INTEGER, FOREIGN KEY (USER_userID) REFERENCES USER(userID),FOREIGN KEY (GRUPO_grupoID) REFERENCES GRUPO(grupoID), UNIQUE (USER_userID, GRUPO_grupoID));";
   // mensaje media es un ID que copia el ID de archivo.
   t_MENSAJE: string = "CREATE TABLE IF NOT EXISTS MENSAJE(msjID INTEGER PRIMARY KEY AUTOINCREMENT,msj_autor TEXT NOT NULL,msj_texto TEXT NOT NULL, msj_media BLOB,msj_date TEXT NOT NULL,PARTICIPANTE_participanteID INTEGER,FOREIGN KEY (PARTICIPANTE_participanteID) REFERENCES PARTICIPANTE(participanteID));";
@@ -73,7 +73,7 @@ export class DatabaseService {
    crearDB(){
       //procedemos a crear la Base de Datos
       this.sqlite.create({
-        name: 'summonVersionBeta1',
+        name: 'summonVersionBeta2',
         location:'default'
       }).then((db: SQLiteObject)=>{
         //capturar y guardar la conexión a la Base de Datos
@@ -461,8 +461,25 @@ async crearTablas(){
       this.alerta.presentAlert("Fallo en get ID grupo", "Contacte soporte o reinicie vista.");
     }
   }
+  async getMapaId(grupoID: number){
+    const SELECT = await this.database.executeSql('SELECT mapaID FROM GRUPO_MAPA WHERE grupoID = ?',[grupoID]);
+    if (SELECT.rows.length > 0){
+      return SELECT.rows.item(0).mapaID;
+    } else {
+      this.alerta.presentAlert("Fallo en get mapa", "Contacte soporte o reinicie vista.");
+    }
+  }
 
 // UPDATE
+  ModificarMapa(mapaid: number, grupoid: number){
+    return this.database.executeSql('UPDATE GRUPO_MAPA SET mapaID = ? WHERE grupoID = ?',[mapaid, grupoid]).then(res=>{
+      this.alerta.presentAlert("Alerta","Mapa modificado");
+    }).catch(e=>{
+      this.alerta.presentAlert("Error en modificar mapa", "Contacte soporte");
+      this.logError("modificamapa", e.code ||': '|| e.message);
+    })
+    
+  }
   modificafoto(imgblob: Blob, nick: string){
     return this.database.executeSql('UPDATE USER SET perfil_media = ? WHERE nick = ?',[imgblob, nick]).then(res=>{
       this.alerta.presentAlert("Alerta", "Fotografia modificada");

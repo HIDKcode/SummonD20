@@ -11,18 +11,64 @@
       <ion-icon name="dice"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="end">
-      <ion-fab-button> d4 </ion-fab-button>
-      <ion-fab-button> d6 </ion-fab-button>
-      <ion-fab-button> d10 </ion-fab-button>
-      <ion-fab-button> d12 </ion-fab-button>
-      <ion-fab-button> d20 </ion-fab-button>
-      <ion-fab-button> d100 </ion-fab-button>
+      <ion-fab-button (click)="d4()"> d4 </ion-fab-button>
+      <ion-fab-button (click)="d6()"> d6 </ion-fab-button>
+      <ion-fab-button (click)="d10()"> d10 </ion-fab-button>
+      <ion-fab-button (click)="d12()"> d12 </ion-fab-button>
+      <ion-fab-button (click)="d20()"> d20 </ion-fab-button>
+      <ion-fab-button (click)="d100()"> d100 </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
 
   <div id="container" class="divfondo1 body">
 
-    <div class="center"> <h2 class="blanco sombraV"> {{Vnombre_sala}}#{{VgrupoID}} </h2> </div>
+    <div class="center"> 
+      <h2 class="blanco sombraV"> {{Vnombre_sala}}#{{VgrupoID}} </h2>
+    </div>
+    
+    <div *ngIf="isDuenioSala" class="center">
+      <ion-button id="open-modal2" class="summon2button"> Cambiar mapa </ion-button>
+
+      <ion-modal trigger="open-modal2">
+        <ng-template>
+
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()"> Cerrar </ion-button>
+              </ion-buttons>
+              <ion-title> Cambiar mapa </ion-title>
+              <ion-buttons slot="end">
+                <ion-button class="sombraV" (click)="confirmar()"> CONFIRMAR </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content>
+              <div class="center">
+                <h4 class="verdeO sombraV"> Seleccione un mapa </h4>
+              </div>
+
+              <div class="center">
+
+              </div>
+              <div class="divoverflow"> 
+                <ion-button class="mapslide" [disabled]="boton1" color="transparent" (click)="seleccion(1)"> <img src="assets/images/mapslide1.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton2" color="transparent" (click)="seleccion(2)"> <img src="assets/images/mapslide2.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton3" color="transparent" (click)="seleccion(3)"> <img src="assets/images/mapslide3.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton4" color="transparent" (click)="seleccion(4)"> <img src="assets/images/mapslide4.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton5" color="transparent" (click)="seleccion(5)"> <img src="assets/images/mapslide5.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton6" color="transparent" (click)="seleccion(6)"> <img src="assets/images/mapslide6.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton7" color="transparent" (click)="seleccion(7)"> <img src="assets/images/mapslide7.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton8" color="transparent" (click)="seleccion(8)"> <img src="assets/images/mapslide8.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton9" color="transparent" (click)="seleccion(9)"> <img src="assets/images/mapslide9.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton10" color="transparent" (click)="seleccion(10)"> <img src="assets/images/mapslide10.png" class="mapslide" alt="map" /> </ion-button>
+                <ion-button class="mapslide" [disabled]="boton11" color="transparent" (click)="seleccion(11)"> <img src="assets/images/mapslide11.png" class="mapslide" alt="map" /> </ion-button>
+              </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+    </div>
 
     <div class="center vw90"> 
       <ion-grid>
@@ -36,7 +82,7 @@
     
               <ng-template #placeholder>
                 <div class="imgcard center-img">
-                  <img src="assets/images/def_profile.png" alt="Default Profile" />
+                  <img src="assets/images/def_profile.png" alt="Default Profile"/>
                 </div>
               </ng-template>
     
@@ -54,28 +100,9 @@
 
    <div class="center">
     <div id="body">
-
-      <div *ngIf="isDuenioSala" class="center">
-          <ion-list class="summonlist">
-            <ion-select class="summonselect" label="Cambiar mapa" placeholder="1" okText="CONFIRMAR" cancelText="CANCELAR" fill="outline">
-                <ion-select-option class="opc" value="1"> 1 </ion-select-option>
-                <ion-select-option class="opc" value="2"> 2 </ion-select-option>
-                <ion-select-option class="opc" value="3"> 3 </ion-select-option>
-              </ion-select>
-          </ion-list>  
-      </div>
-      
-      <div *ngIf="Vmapa; else placeholder">
-        <img class="IMGMAP"  [src]="Vmapa" alt="{{Vmapa}}" />
-      </div>
-
-      <ng-template  #placeholder>
-        <div>
-          <img  class="IMGMAP" src="assets/images/MAP.png" alt="mapa"> 
-        </div>
-      </ng-template>
-        
-      </div>
+      <img class="IMGMAP" [src]="Vmapa" alt="{{Vmapa}}"/>
+      <h2 class="superponer blanco sombraV" *ngIf="Vresultado"> <ion-icon name="dice"></ion-icon> {{Vresultado.total}} </h2>
+    </div>
    </div>
 
     <div class="center"> 
