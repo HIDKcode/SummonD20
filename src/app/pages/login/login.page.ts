@@ -5,7 +5,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { IonModal } from '@ionic/angular';
 import { MailjsService } from 'src/app/services/mailjs.service';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications, ScheduleOptions } from '@capacitor/local-notifications';
 import { Network } from '@capacitor/network';
 @Component({
   selector: 'app-login',
@@ -42,9 +42,49 @@ export class LoginPage implements OnInit {
     private menuCtrl: MenuController, private mailjs: MailjsService
   ) {
     this.menuCtrl.enable(false);
+    this.initializeLocalNotifications();
   }
   
   ngOnInit() {
+  }
+
+  async initializeLocalNotifications() {
+
+    const permissions = await LocalNotifications.requestPermissions();
+    if (permissions.display === 'granted') {
+      console.log('Permisos concedidos para notificaciones locales.');
+    } else {
+      console.error('Permisos denegados.');
+      return;
+    }
+    LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+      console.log('Notificación interactuada:', notification);
+    });
+    LocalNotifications.addListener('localNotificationReceived', (notification) => {
+      console.log('Notificación recibida:', notification);
+    });
+  }
+
+  
+  async scheduleNotification(){
+    let options: ScheduleOptions ={
+      notifications: [
+        {
+          id: 1,
+          title: "¡Bienvenido!",
+          body: "Recuerda revisar las nuevas funciones de grupos!",
+          sound: 'default',
+          largeIcon: 'assets/images/logo',
+          smallIcon: 'assets/images/logo',
+        }
+      ]
+    }
+
+    try{
+      await LocalNotifications.schedule(options)
+    } catch (e: any) {
+      this.datab.logError("scheduleNotification", " " + e.code + e.message)
+    }
   }
 
   async Ingreso() {
@@ -80,20 +120,7 @@ export class LoginPage implements OnInit {
           Vnick: this.Vnick
         }
       };
-      
-      await LocalNotifications.schedule({
-        notifications: [
-          {
-            id: 1,
-            title: "¡Bienvenido!",
-            body: "Recuerda revisar las nuevas funciones de grupos!",
-            sound: 'default',
-            largeIcon: 'assets/images/logo',
-            smallIcon: 'assets/images/logo',
-          },
-        ],
-      });
-
+      this.scheduleNotification();
       await this.router.navigate(['/menu'], navigationExtras);
       this.limpiar();
       return true;
