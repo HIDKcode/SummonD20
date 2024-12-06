@@ -8,3 +8,12 @@
     min-width: 91vw;
     max-width: 91vw;
 }
+
+.fill {
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.hidden{
+    overflow: hidden;
+}
