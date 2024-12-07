@@ -9,14 +9,19 @@ import { DatabaseService } from 'src/app/services/database.service';
 import { ActivatedRoute } from '@angular/router';
 
 const mockActiveRoute = {
-  subscribe: of({ get: () => 'mocked-id' })
+  queryParams: of({ state: { Vid: 'mockVid', estado: 9 } })
 };
 
 const mockDB = {
-  fetchProductos: () => of([]),
-  dbState: () => of([])
+  ListaUsers: () => of([]), 
+  fetchgrupos: () => of([]), 
+  dbState: () => of(true), 
+  modificaEstado: jasmine.createSpy('modificaEstado'), 
+  eliminarGrupo: jasmine.createSpy('eliminarGrupo') 
 };
-
+const mockNativeStorage = {
+  getItem: jasmine.createSpy('getItem').and.returnValue(Promise.resolve({})), // Simula NativeStorage
+};
 
 describe('AdminPage', () => {
   let component: AdminPage;
@@ -27,7 +32,9 @@ describe('AdminPage', () => {
       declarations: [AdminPage],
       imports: [IonicModule.forRoot()],
       providers: [
-        {provide: ActivatedRoute, useValue: mockActiveRoute}, { provide: DatabaseService, useValue: mockDB}, {provide:NativeStorage}
+        {provide: ActivatedRoute, useValue: mockActiveRoute},
+         { provide: DatabaseService, useValue: mockDB},
+          {provide:NativeStorage, useValue: mockNativeStorage}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

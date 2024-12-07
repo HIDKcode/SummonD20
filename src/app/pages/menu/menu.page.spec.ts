@@ -12,6 +12,10 @@ const mockDB = {
   fetchProductos: () => of([]),
   dbState: () => of([])
 };
+const mockNativeStorage = {
+  getItem: jasmine.createSpy('getItem').and.returnValue(Promise.resolve({ nick: 'testUser' })),
+  setItem: jasmine.createSpy('setItem').and.returnValue(Promise.resolve()),
+};
 
 describe('MenuPage', () => {
   let component: MenuPage;
@@ -22,7 +26,8 @@ describe('MenuPage', () => {
       declarations: [MenuPage],
       imports: [IonicModule.forRoot()],
       providers: [
-        { provide: DatabaseService, useValue: mockDB},{provide:NativeStorage}
+        { provide: DatabaseService, useValue: mockDB},
+        {provide:NativeStorage, useValue: mockNativeStorage}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -30,6 +35,11 @@ describe('MenuPage', () => {
     fixture = TestBed.createComponent(MenuPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('Deberia cargar nickname en Vista Menu', async () => {
+    await component.cargaNick();
+    expect(component.Vnick).toBe('testUser');
   });
 
   it('should create', () => {

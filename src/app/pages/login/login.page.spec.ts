@@ -17,11 +17,13 @@ describe('LoginPage', () => {
   let fixture: ComponentFixture<LoginPage>;
 
   beforeEach(async() => {
+    
     await TestBed.configureTestingModule({
       declarations: [LoginPage],
       imports: [IonicModule.forRoot()],
       providers: [
-        { provide: DatabaseService, useValue: mockDB}, {provide:NativeStorage}
+        {provide: DatabaseService, useValue: mockDB},
+        {provide:NativeStorage}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -34,4 +36,12 @@ describe('LoginPage', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+it('Deberia mostrar un mensaje de error si los campos estan vacios', () => {
+  component.Vnick = ''; 
+  component.Vpassword = '';  
+  component.Ingreso();
+  expect(component.er1.nativeElement.style.display).toBe('flex');
+  expect(component.er2.nativeElement.style.display).toBe('flex');
+});
 });

@@ -4,9 +4,14 @@ import { RolldicePage } from './rolldice.page';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { of } from 'rxjs';
-import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { DatabaseService } from 'src/app/services/database.service';
-import { HttpClientTestingModule} from '@angular/common/http/testing';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+
+const mockDB = {
+  fetchProductos: () => of([]),
+  dbState: () => of([]),
+  acceso: () => Promise.resolve(true),
+};
 
 describe('RolldicePage', () => {
   let component: RolldicePage;
@@ -17,16 +22,21 @@ describe('RolldicePage', () => {
       declarations: [RolldicePage],
       imports: [IonicModule.forRoot()],
       providers: [
-        {provide:HttpClient},{provide:NativeStorage}
+      {provide:DatabaseService, useValue: mockDB},
+      {provide:NativeStorage}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RolldicePage);
     component = fixture.componentInstance;
+
+    component.Vresultado = { total: 0, rolls: [] };
+
     fixture.detectChanges();
   });
-
+  
+  
   it('should create', () => {
     expect(component).toBeTruthy();
   });
